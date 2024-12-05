@@ -6,24 +6,24 @@ import { useScheduleStore } from "@/lib/store/schedule-store";
 
 interface ScheduleCellProps {
   day: string;
-  timeSlot: string;
+  columnId: string;
   rowIndex: number;
   section: string;
 }
 
-export function ScheduleCell({ day, timeSlot, rowIndex, section }: ScheduleCellProps) {
+export function ScheduleCell({ day, columnId, rowIndex, section }: ScheduleCellProps) {
   const { getEventByDayAndTime, updateEvent } = useScheduleStore();
   const [isEditing, setIsEditing] = useState(false);
   const [content, setContent] = useState("");
 
   useEffect(() => {
-    const event = getEventByDayAndTime(day, timeSlot, rowIndex, section);
+    const event = getEventByDayAndTime(day, columnId, rowIndex, section);
     if (event) {
       setContent(event.content);
     } else {
       setContent("");
     }
-  }, [day, timeSlot, rowIndex, section, getEventByDayAndTime]);
+  }, [day, columnId, rowIndex, section, getEventByDayAndTime]);
 
   const handleDoubleClick = () => {
     setIsEditing(true);
@@ -33,10 +33,10 @@ export function ScheduleCell({ day, timeSlot, rowIndex, section }: ScheduleCellP
     setIsEditing(false);
     if (content.trim()) {
       updateEvent({
-        id: `${day}-${timeSlot}-${section}-${rowIndex}`,
+        id: `${day}-${columnId}-${section}-${rowIndex}`,
         content,
         day,
-        timeSlot,
+        columnId,
         rowIndex,
         section,
       });

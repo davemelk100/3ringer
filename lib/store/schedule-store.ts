@@ -2,15 +2,15 @@
 
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { ScheduleEvent, ScheduleState, TimeSlot, ScheduleSection } from "@/lib/types/schedule";
+import { ScheduleEvent, ScheduleState, ColumnHeader, ScheduleSection } from "@/lib/types/schedule";
 import { scheduleConfig } from "@/lib/config/schedule";
 
 interface ScheduleStore extends ScheduleState {
   updateEvent: (event: ScheduleEvent) => void;
   deleteEvent: (eventId: string) => void;
-  getEventByDayAndTime: (day: string, timeSlot: string, rowIndex: number, section: string) => ScheduleEvent | undefined;
-  timeSlots: TimeSlot[];
-  updateTimeSlot: (index: number, slot: TimeSlot) => void;
+  getEventByDayAndTime: (day: string, columnId: string, rowIndex: number, section: string) => ScheduleEvent | undefined;
+  columns: ColumnHeader[];
+  updateColumn: (index: number, column: ColumnHeader) => void;
   addRow: (sectionId: string) => void;
   deleteRow: (sectionId: string, rowIndex: number) => void;
   updateSection: (section: ScheduleSection) => void;
@@ -21,12 +21,12 @@ export const useScheduleStore = create<ScheduleStore>()(
     (set, get) => ({
       events: {},
       sections: scheduleConfig.defaultSections,
-      timeSlots: [],
+      columns: scheduleConfig.defaultColumns,
       updateEvent: (event) => {
         set((state) => ({
           events: {
             ...state.events,
-            [`${event.day}-${event.timeSlot}-${event.section}-${event.rowIndex}`]: event,
+            [`${event.day}-${event.columnId}-${event.section}-${event.rowIndex}`]: event,
           },
         }));
       },
@@ -37,14 +37,14 @@ export const useScheduleStore = create<ScheduleStore>()(
           return { events: newEvents };
         });
       },
-      getEventByDayAndTime: (day, timeSlot, rowIndex, section) => {
-        return get().events[`${day}-${timeSlot}-${section}-${rowIndex}`];
+      getEventByDayAndTime: (day, columnId, rowIndex, section) => {
+        return get().events[`${day}-${columnId}-${section}-${rowIndex}`];
       },
-      updateTimeSlot: (index, slot) => {
+      updateColumn: (index, column) => {
         set((state) => {
-          const newTimeSlots = [...state.timeSlots];
-          newTimeSlots[index] = slot;
-          return { timeSlots: newTimeSlots };
+          const newColumns = [...state.columns];
+          newColumns[index] = column;
+          return { columns: newColumns };
         });
       },
       addRow: (sectionId) => {
@@ -63,7 +63,6 @@ export const useScheduleStore = create<ScheduleStore>()(
           
           if (!section || section.rows <= 1) return state;
 
-          // Delete events in the row and shift remaining ones
           Object.keys(newEvents).forEach((key) => {
             const event = newEvents[key];
             if (event.section === sectionId) {
@@ -98,6 +97,15 @@ export const useScheduleStore = create<ScheduleStore>()(
     }),
     {
       name: "schedule-storage",
+      partialize: (state) => ({
+        events: state.events,
+        columns: state.columns,
+      }),
+      merge: (persistedState: any, currentState) => ({
+        ...currentState,
+        ...persistedState,
+        sections: scheduleConfig.defaultSections,
+      }),
     }
   )
 );

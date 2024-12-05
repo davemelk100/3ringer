@@ -1,57 +1,58 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Plus, Minus } from "lucide-react";
 import { ScheduleCell } from "./schedule-cell";
-import { EditableTimeSlot } from "./editable-time-slot";
+import { EditableColumnHeader } from "./editable-column-header";
+import { EditableSectionTitle } from "./editable-section-title";
 import { getCurrentWeekDates } from "@/lib/utils/date";
-import { generateTimeSlots } from "@/lib/utils/time";
-import { scheduleConfig } from "@/lib/config/schedule";
 import { useScheduleStore } from "@/lib/store/schedule-store";
 
 export function ScheduleTable() {
   const weekDays = getCurrentWeekDates();
-  const { timeSlots, updateTimeSlot, sections, addRow, deleteRow } = useScheduleStore();
-
-  useEffect(() => {
-    if (timeSlots.length === 0) {
-      const initialTimeSlots = generateTimeSlots(
-        scheduleConfig.startHour,
-        scheduleConfig.endHour,
-        scheduleConfig.intervalMinutes
-      );
-      initialTimeSlots.forEach((slot, index) => updateTimeSlot(index, slot));
-    }
-  }, [timeSlots.length, updateTimeSlot]);
+  const { columns, updateColumn, sections, addRow, deleteRow } = useScheduleStore();
+  const [selectedDay, setSelectedDay] = useState(weekDays[0]);
 
   return (
     <div className="w-full max-w-[95vw] mx-auto p-4">
-      <Tabs defaultValue={weekDays[0].day} className="w-full">
-        <TabsList className="w-full mb-4 grid grid-cols-7 gap-1 h-auto">
+      <Tabs 
+        defaultValue={weekDays[0].day} 
+        className="w-full"
+        onValueChange={(value) => {
+          const day = weekDays.find(d => d.day === value);
+          if (day) setSelectedDay(day);
+        }}
+      >
+        <TabsList className="w-full mb-0 grid grid-cols-7 gap-[5px] h-auto bg-transparent p-0">
           {weekDays.map(({ day, date }) => (
             <TabsTrigger 
               key={day} 
               value={day} 
-              className="min-h-[3.5rem] px-2 py-2 data-[state=active]:bg-primary/10 flex flex-col items-center justify-center"
+              className="min-h-[3.5rem] px-2 py-2 text-white border-[#A1C6EA] border data-[state=active]:border-0 data-[state=active]:bg-[#A1C6EA] data-[state=active]:text-black flex flex-col items-center justify-center rounded-none"
             >
               <span className="font-medium text-sm truncate w-full text-center">
                 {day}
               </span>
-              <span className="text-xs text-muted-foreground">
+              <span className="text-xs opacity-70">
                 {date}
               </span>
             </TabsTrigger>
           ))}
         </TabsList>
+        <div className="w-full bg-[#A1C6EA] p-4 mb-4">
+          <h2 className="text-2xl font-bold text-black uppercase">
+            {selectedDay.day} - {selectedDay.date}
+          </h2>
+        </div>
         {weekDays.map(({ day }) => (
           <TabsContent key={day} value={day}>
             <div className="overflow-x-auto">
               {sections.map((section) => (
                 <div key={section.id} className="mb-8">
                   <div className="flex items-center justify-between mb-2">
-                    <h3 className="text-lg font-semibold">{section.title}</h3>
+                    <EditableSectionTitle section={section} />
                     <Button
                       onClick={() => addRow(section.id)}
                       size="sm"
@@ -66,14 +67,14 @@ export function ScheduleTable() {
                     <thead>
                       <tr>
                         <th className="w-8 p-2"></th>
-                        {timeSlots.map((slot, index) => (
+                        {columns.map((column, index) => (
                           <th
-                            key={slot.value}
+                            key={column.id}
                             className="border p-2 bg-muted text-muted-foreground font-medium"
                           >
-                            <EditableTimeSlot
-                              slot={slot}
-                              onUpdate={(updatedSlot) => updateTimeSlot(index, updatedSlot)}
+                            <EditableColumnHeader
+                              column={column}
+                              onUpdate={(updatedColumn) => updateColumn(index, updatedColumn)}
                             />
                           </th>
                         ))}
@@ -94,14 +95,14 @@ export function ScheduleTable() {
                               </Button>
                             )}
                           </td>
-                          {timeSlots.map((slot) => (
+                          {columns.map((column) => (
                             <td
-                              key={`${slot.value}-${rowIndex}`}
+                              key={`${column.id}-${rowIndex}`}
                               className="border p-2 h-24 align-top hover:bg-muted/50 transition-colors"
                             >
                               <ScheduleCell
                                 day={day}
-                                timeSlot={slot.label}
+                                columnId={column.id}
                                 rowIndex={rowIndex}
                                 section={section.id}
                               />
