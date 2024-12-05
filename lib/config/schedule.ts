@@ -6,7 +6,7 @@ export const DEFAULT_SECTIONS: ScheduleSection[] = [
   { id: "cpu", title: "CPU", rows: 1 },
 ];
 
-export const DEFAULT_COLUMNS: ColumnHeader[] = Array.from({ length: 8 }, (_, i) => ({
+export const DEFAULT_COLUMNS: ColumnHeader[] = Array.from({ length: 14 }, (_, i) => ({
   id: `col-${i + 1}`,
   title: `Header ${i + 1}`,
 }));

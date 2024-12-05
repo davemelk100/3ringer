@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Plus, Minus } from "lucide-react";
@@ -9,10 +9,12 @@ import { EditableColumnHeader } from "./editable-column-header";
 import { EditableSectionTitle } from "./editable-section-title";
 import { getCurrentWeekDates } from "@/lib/utils/date";
 import { useScheduleStore } from "@/lib/store/schedule-store";
+import { useColumns } from "./use-columns";
 
 export function ScheduleTable() {
   const weekDays = getCurrentWeekDates();
-  const { columns, updateColumn, sections, addRow, deleteRow } = useScheduleStore();
+  const { updateColumn, sections, addRow, deleteRow } = useScheduleStore();
+  const columns = useColumns();
   const [selectedDay, setSelectedDay] = useState(weekDays[0]);
 
   return (
