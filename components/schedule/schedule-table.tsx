@@ -9,10 +9,11 @@ import { EditableColumnHeader } from "./editable-column-header";
 import { EditableSectionTitle } from "./editable-section-title";
 import { StatusDropdown } from "./status-dropdown";
 import { YesNoDropdown } from "./yes-no-dropdown";
-import { EditableDropdown } from "./editable-dropdown";
+import { ConfigurableDropdown } from "./configurable-dropdown";
 import { getCurrentWeekDates } from "@/lib/utils/date";
 import { useScheduleStore } from "@/lib/store/schedule-store";
 import { useColumns } from "./use-columns";
+import { scheduleConfig } from "@/lib/config/schedule";
 
 export function ScheduleTable() {
   const weekDays = getCurrentWeekDates();
@@ -24,11 +25,6 @@ export function ScheduleTable() {
     initializeSections,
     updateYesNoValue,
     getYesNoValue,
-    customDropdownOptions,
-    addCustomDropdownOption,
-    deleteCustomDropdownOption,
-    getCustomDropdownValue,
-    updateCustomDropdownValue
   } = useScheduleStore();
   const columns = useColumns();
   const [selectedDay, setSelectedDay] = useState(weekDays[0]);
@@ -36,6 +32,54 @@ export function ScheduleTable() {
   useEffect(() => {
     initializeSections();
   }, [initializeSections]);
+
+  const getColumnContent = (colIndex: number, day: string, section: string, rowIndex: number, columnId: string) => {
+    if (colIndex === 0) {
+      return (
+        <StatusDropdown
+          sectionId={section}
+          rowIndex={rowIndex}
+          day={day}
+        />
+      );
+    }
+
+    const configurableDropdown = scheduleConfig.configurableDropdowns.find(
+      (dropdown) => dropdown.columnIndex === colIndex
+    );
+
+    if (configurableDropdown) {
+      return (
+        <ConfigurableDropdown
+          day={day}
+          sectionId={section}
+          rowIndex={rowIndex}
+          columnId={columnId}
+          dropdownId={configurableDropdown.id}
+        />
+      );
+    }
+
+    if (colIndex === 6 || colIndex === 9 || colIndex === 13) {
+      return (
+        <YesNoDropdown
+          value={getYesNoValue(`${day}-${section}-${rowIndex}-${columnId}`)}
+          onChange={(value) => 
+            updateYesNoValue(`${day}-${section}-${rowIndex}-${columnId}`, value)
+          }
+        />
+      );
+    }
+
+    return (
+      <ScheduleCell
+        day={day}
+        columnId={columnId}
+        rowIndex={rowIndex}
+        section={section}
+      />
+    );
+  };
 
   return (
     <div className="w-full max-w-[95vw] mx-auto p-4">
@@ -122,44 +166,7 @@ export function ScheduleTable() {
                               key={`${column.id}-${rowIndex}`}
                               className="border p-2 h-24 align-top hover:bg-muted/50 transition-colors"
                             >
-                              {colIndex === 0 ? (
-                                <div className="flex items-center gap-2 mb-2">
-                                  <StatusDropdown
-                                    sectionId={section.id}
-                                    rowIndex={rowIndex}
-                                    day={day}
-                                  />
-                                </div>
-                              ) : null}
-                              {(colIndex === 6 || colIndex === 9 || colIndex === 13) ? (
-                                <div className="flex items-center gap-2 mb-2">
-                                  <YesNoDropdown
-                                    value={getYesNoValue(`${day}-${section.id}-${rowIndex}-${column.id}`)}
-                                    onChange={(value) => 
-                                      updateYesNoValue(`${day}-${section.id}-${rowIndex}-${column.id}`, value)
-                                    }
-                                  />
-                                </div>
-                              ) : null}
-                              {(colIndex === 2 || colIndex === 3 || colIndex === 5 || colIndex === 7) ? (
-                                <div className="flex items-center gap-2 mb-2">
-                                  <EditableDropdown
-                                    value={getCustomDropdownValue(`${day}-${section.id}-${rowIndex}-${column.id}`)}
-                                    onChange={(value) => 
-                                      updateCustomDropdownValue(`${day}-${section.id}-${rowIndex}-${column.id}`, value)
-                                    }
-                                    options={customDropdownOptions[column.id] || []}
-                                    onAddOption={(option) => addCustomDropdownOption(column.id, option)}
-                                    onDeleteOption={(option) => deleteCustomDropdownOption(column.id, option)}
-                                  />
-                                </div>
-                              ) : null}
-                              <ScheduleCell
-                                day={day}
-                                columnId={column.id}
-                                rowIndex={rowIndex}
-                                section={section.id}
-                              />
+                              {getColumnContent(colIndex, day, section.id, rowIndex, column.id)}
                             </td>
                           ))}
                         </tr>

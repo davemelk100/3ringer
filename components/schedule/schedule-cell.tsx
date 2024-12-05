@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { cn } from "@/lib/utils";
 import { useScheduleStore } from "@/lib/store/schedule-store";
 
@@ -15,6 +15,8 @@ export function ScheduleCell({ day, columnId, rowIndex, section }: ScheduleCellP
   const { getEventByDayAndTime, updateEvent } = useScheduleStore();
   const [isEditing, setIsEditing] = useState(false);
   const [content, setContent] = useState("");
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const cellRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const event = getEventByDayAndTime(day, columnId, rowIndex, section);
@@ -50,13 +52,29 @@ export function ScheduleCell({ day, columnId, rowIndex, section }: ScheduleCellP
     }
   };
 
+  // Handle focus events
+  const handleFocus = () => {
+    setIsEditing(true);
+  };
+
+  // Focus the textarea when editing starts
+  useEffect(() => {
+    if (isEditing && textareaRef.current) {
+      textareaRef.current.focus();
+    }
+  }, [isEditing]);
+
   return (
     <div
+      ref={cellRef}
       className="min-h-[4rem] w-full h-full"
       onDoubleClick={handleDoubleClick}
+      tabIndex={0}
+      onFocus={handleFocus}
     >
       {isEditing ? (
         <textarea
+          ref={textareaRef}
           className={cn(
             "w-full h-full min-h-[4rem] p-1 resize-none border rounded-md",
             "focus:outline-none focus:ring-2 focus:ring-primary",
@@ -66,7 +84,6 @@ export function ScheduleCell({ day, columnId, rowIndex, section }: ScheduleCellP
           onChange={(e) => setContent(e.target.value)}
           onBlur={handleBlur}
           onKeyDown={handleKeyDown}
-          autoFocus
         />
       ) : (
         <div className="w-full h-full p-1 whitespace-pre-wrap">

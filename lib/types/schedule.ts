@@ -18,6 +18,8 @@ export interface ScheduleState {
   sections: ScheduleSection[];
   rowStatuses: Record<string, RowStatus>;
   yesNoValues: Record<string, string>;
+  dropdownValues: Record<string, string>;
+  dropdownOptions: Record<string, string[]>;
 }
 
 export interface ColumnHeader {
@@ -28,6 +30,13 @@ export interface ColumnHeader {
 export interface ScheduleConfig {
   defaultSections: ScheduleSection[];
   defaultColumns: ColumnHeader[];
+  configurableDropdowns: DropdownConfig[];
+}
+
+export interface DropdownConfig {
+  id: string;
+  columnIndex: number;
+  options: string[];
 }
 
 export type RowStatus = 'Vacant' | 'Occupied' | 'New';

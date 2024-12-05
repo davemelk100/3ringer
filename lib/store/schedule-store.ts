@@ -20,11 +20,10 @@ interface ScheduleStore extends ScheduleState {
   getRowStatus: (key: string) => RowStatus | undefined;
   updateYesNoValue: (key: string, value: string) => void;
   getYesNoValue: (key: string) => string;
-  customDropdownOptions: Record<string, string[]>;
-  addCustomDropdownOption: (columnId: string, option: string) => void;
-  deleteCustomDropdownOption: (columnId: string, option: string) => void;
-  getCustomDropdownValue: (key: string) => string;
-  updateCustomDropdownValue: (key: string, value: string) => void;
+  updateDropdownValue: (key: string, value: string) => void;
+  getDropdownValue: (key: string) => string;
+  addDropdownOption: (dropdownId: string, option: string) => void;
+  getDropdownOptions: (dropdownId: string) => string[];
 }
 
 export const useScheduleStore = create<ScheduleStore>()(
@@ -35,12 +34,8 @@ export const useScheduleStore = create<ScheduleStore>()(
       columns: [],
       rowStatuses: {},
       yesNoValues: {},
-      customDropdownOptions: {
-        'col-3': ['Option 1', 'Option 2'],
-        'col-4': ['Choice 1', 'Choice 2'],
-        'col-6': ['Status A', 'Status B', 'Status C'],
-        'col-8': ['Type 1', 'Type 2', 'Type 3'],
-      },
+      dropdownValues: {},
+      dropdownOptions: {},
       updateEvent: (event) => {
         set((state) => ({
           events: {
@@ -141,34 +136,29 @@ export const useScheduleStore = create<ScheduleStore>()(
         }));
       },
       getYesNoValue: (key: string) => {
-        return get().yesNoValues[key] || 'no';
-      },
-      addCustomDropdownOption: (columnId: string, option: string) => {
-        set((state) => ({
-          customDropdownOptions: {
-            ...state.customDropdownOptions,
-            [columnId]: [...(state.customDropdownOptions[columnId] || []), option],
-          },
-        }));
-      },
-      deleteCustomDropdownOption: (columnId: string, option: string) => {
-        set((state) => ({
-          customDropdownOptions: {
-            ...state.customDropdownOptions,
-            [columnId]: state.customDropdownOptions[columnId].filter(opt => opt !== option),
-          },
-        }));
-      },
-      getCustomDropdownValue: (key: string) => {
         return get().yesNoValues[key] || '';
       },
-      updateCustomDropdownValue: (key: string, value: string) => {
+      updateDropdownValue: (key: string, value: string) => {
         set((state) => ({
-          yesNoValues: {
-            ...state.yesNoValues,
+          dropdownValues: {
+            ...state.dropdownValues,
             [key]: value,
           },
         }));
+      },
+      getDropdownValue: (key: string) => {
+        return get().dropdownValues[key] || '';
+      },
+      addDropdownOption: (dropdownId: string, option: string) => {
+        set((state) => ({
+          dropdownOptions: {
+            ...state.dropdownOptions,
+            [dropdownId]: [...(state.dropdownOptions[dropdownId] || []), option],
+          },
+        }));
+      },
+      getDropdownOptions: (dropdownId: string) => {
+        return get().dropdownOptions[dropdownId] || [];
       },
     }),
     {
@@ -179,7 +169,8 @@ export const useScheduleStore = create<ScheduleStore>()(
         columns: state.columns,
         rowStatuses: state.rowStatuses,
         yesNoValues: state.yesNoValues,
-        customDropdownOptions: state.customDropdownOptions,
+        dropdownValues: state.dropdownValues,
+        dropdownOptions: state.dropdownOptions,
       }),
     }
   )

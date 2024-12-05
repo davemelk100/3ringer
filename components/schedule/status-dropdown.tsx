@@ -1,6 +1,5 @@
 "use client";
 
-import * as React from "react";
 import {
   Select,
   SelectContent,
@@ -8,8 +7,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { RowStatus } from "@/lib/types/schedule";
 import { useScheduleStore } from "@/lib/store/schedule-store";
+import { RowStatus } from "@/lib/types/schedule";
 
 interface StatusDropdownProps {
   sectionId: string;
@@ -20,11 +19,7 @@ interface StatusDropdownProps {
 export function StatusDropdown({ sectionId, rowIndex, day }: StatusDropdownProps) {
   const { getRowStatus, updateRowStatus } = useScheduleStore();
   const statusKey = `${day}-${sectionId}-${rowIndex}`;
-  const currentStatus = getRowStatus(statusKey) || 'Vacant';
-
-  const handleStatusChange = (value: string) => {
-    updateRowStatus(statusKey, value as RowStatus);
-  };
+  const currentStatus = getRowStatus(statusKey);
 
   const getStatusColor = (status: RowStatus) => {
     switch (status) {
@@ -40,15 +35,22 @@ export function StatusDropdown({ sectionId, rowIndex, day }: StatusDropdownProps
   };
 
   return (
-    <Select value={currentStatus} onValueChange={handleStatusChange}>
-      <SelectTrigger className={`w-24 h-8 ${getStatusColor(currentStatus as RowStatus)}`}>
-        <SelectValue />
-      </SelectTrigger>
-      <SelectContent>
-        <SelectItem value="Vacant" className="text-green-600">Vacant</SelectItem>
-        <SelectItem value="Occupied" className="text-red-600">Occupied</SelectItem>
-        <SelectItem value="New" className="text-blue-600">New</SelectItem>
-      </SelectContent>
-    </Select>
+    <div className="flex flex-col gap-2">
+      <Select value={currentStatus} onValueChange={(value) => updateRowStatus(statusKey, value as RowStatus)}>
+        <SelectTrigger className={`w-24 h-8 ${currentStatus ? getStatusColor(currentStatus as RowStatus) : ''}`}>
+          <SelectValue placeholder="Select" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="Vacant" className="text-green-600">Vacant</SelectItem>
+          <SelectItem value="Occupied" className="text-red-600">Occupied</SelectItem>
+          <SelectItem value="New" className="text-blue-600">New</SelectItem>
+        </SelectContent>
+      </Select>
+      {currentStatus && (
+        <div className={`text-sm font-medium ${getStatusColor(currentStatus as RowStatus)}`}>
+          {currentStatus}
+        </div>
+      )}
+    </div>
   );
 }
