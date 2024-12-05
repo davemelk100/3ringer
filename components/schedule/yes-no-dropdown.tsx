@@ -7,6 +7,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useRef } from "react";
 
 interface YesNoDropdownProps {
   value: string;
@@ -14,10 +15,12 @@ interface YesNoDropdownProps {
 }
 
 export function YesNoDropdown({ value, onChange }: YesNoDropdownProps) {
+  const triggerRef = useRef<HTMLButtonElement>(null);
+
   return (
     <div className="flex flex-col gap-2">
-      <Select value={value} onValueChange={onChange}>
-        <SelectTrigger className="w-20 h-8">
+      <Select value="" onValueChange={onChange}>
+        <SelectTrigger ref={triggerRef} className="w-20 h-8">
           <SelectValue placeholder="Select" />
         </SelectTrigger>
         <SelectContent>

@@ -4,10 +4,12 @@ import { ThemeProvider } from '@/components/providers/theme-provider';
 import './globals.css';
 
 const roboto = Roboto({ 
-  weight: ['300', '400', '500', '700'],
   subsets: ['latin'],
+  weight: ['300', '400', '500', '700'],
   display: 'swap',
   variable: '--font-roboto',
+  adjustFontFallback: false, // Disable automatic font fallback adjustment
+  preload: true,
 });
 
 export const metadata: Metadata = {
@@ -22,7 +24,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${roboto.className} font-sans`}>
+      <body className={`${roboto.variable} font-sans antialiased`}>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"

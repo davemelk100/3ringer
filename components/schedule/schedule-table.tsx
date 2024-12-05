@@ -96,7 +96,7 @@ export function ScheduleTable() {
             <TabsTrigger 
               key={day} 
               value={day} 
-              className="min-h-[3.5rem] px-2 py-2 text-black border-[#A1C6EA] border data-[state=active]:border-0 data-[state=active]:bg-[#A1C6EA] flex flex-col items-center justify-center rounded-none"
+              className="min-h-[3.5rem] px-2 py-2 text-black dark:text-white border-[#A1C6EA] border data-[state=active]:border-0 data-[state=active]:bg-[#A1C6EA] data-[state=active]:!text-black flex flex-col items-center justify-center rounded-none"
             >
               <span className="font-medium text-sm truncate w-full text-center">
                 {day}

@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/select";
 import { Plus } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useScheduleStore } from "@/lib/store/schedule-store";
 
 interface ConfigurableDropdownProps {
@@ -29,6 +29,8 @@ export function ConfigurableDropdown({
 }: ConfigurableDropdownProps) {
   const [isAddingOption, setIsAddingOption] = useState(false);
   const [newOption, setNewOption] = useState("");
+  const inputRef = useRef<HTMLInputElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
   
   const {
     getDropdownValue,
@@ -45,19 +47,28 @@ export function ConfigurableDropdown({
       addDropdownOption(dropdownId, newOption.trim());
       setNewOption("");
       setIsAddingOption(false);
+      if (triggerRef.current) {
+        triggerRef.current.focus();
+      }
     }
   };
+
+  useEffect(() => {
+    if (isAddingOption && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [isAddingOption]);
 
   return (
     <div className="flex flex-col gap-2">
       <Select 
-        value={value} 
+        value=""
         onValueChange={(newValue) => 
           updateDropdownValue(`${day}-${sectionId}-${rowIndex}-${columnId}`, newValue)
         }
       >
-        <SelectTrigger className="w-full h-8">
-          <SelectValue placeholder="Select option" />
+        <SelectTrigger ref={triggerRef} className="w-full h-8">
+          <SelectValue placeholder="Select" />
         </SelectTrigger>
         <SelectContent>
           {options.map((option) => (
@@ -69,10 +80,17 @@ export function ConfigurableDropdown({
             {isAddingOption ? (
               <div className="flex gap-2">
                 <Input
+                  ref={inputRef}
                   value={newOption}
                   onChange={(e) => setNewOption(e.target.value)}
                   onKeyDown={(e) => {
                     if (e.key === "Enter") handleAddOption();
+                    if (e.key === "Escape") {
+                      setIsAddingOption(false);
+                      if (triggerRef.current) {
+                        triggerRef.current.focus();
+                      }
+                    }
                   }}
                   className="h-8"
                   placeholder="New option"

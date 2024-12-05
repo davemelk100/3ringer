@@ -45,22 +45,21 @@ export function ScheduleCell({ day, columnId, rowIndex, section }: ScheduleCellP
     }
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+  const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       e.currentTarget.blur();
     }
   };
 
-  // Handle focus events
   const handleFocus = () => {
     setIsEditing(true);
   };
 
-  // Focus the textarea when editing starts
   useEffect(() => {
     if (isEditing && textareaRef.current) {
       textareaRef.current.focus();
+      textareaRef.current.selectionStart = textareaRef.current.value.length;
     }
   }, [isEditing]);
 
