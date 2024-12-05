@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Plus, Minus } from "lucide-react";
@@ -13,9 +13,14 @@ import { useColumns } from "./use-columns";
 
 export function ScheduleTable() {
   const weekDays = getCurrentWeekDates();
-  const { updateColumn, sections, addRow, deleteRow } = useScheduleStore();
+  const { updateColumn, sections, addRow, deleteRow, initializeSections } =
+    useScheduleStore();
   const columns = useColumns();
   const [selectedDay, setSelectedDay] = useState(weekDays[0]);
+
+  useEffect(() => {
+    initializeSections();
+  }, [initializeSections]);
 
   return (
     <div className="w-full max-w-[95vw] mx-auto p-4">

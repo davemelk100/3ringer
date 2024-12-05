@@ -15,13 +15,14 @@ interface ScheduleStore extends ScheduleState {
   deleteRow: (sectionId: string, rowIndex: number) => void;
   updateSection: (section: ScheduleSection) => void;
   initializeColumns: () => void;
+  initializeSections: () => void;
 }
 
 export const useScheduleStore = create<ScheduleStore>()(
   persist(
     (set, get) => ({
       events: {},
-      sections: scheduleConfig.defaultSections,
+      sections: [],
       columns: [],
       updateEvent: (event) => {
         set((state) => ({
@@ -97,6 +98,11 @@ export const useScheduleStore = create<ScheduleStore>()(
       },
       initializeColumns: () => {
         set({ columns: scheduleConfig.defaultColumns });
+      },
+      initializeSections: () => {
+        set((state) => ({
+          sections: state.sections.length === 0 ? scheduleConfig.defaultSections : state.sections
+        }));
       },
     }),
     {
