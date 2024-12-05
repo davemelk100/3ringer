@@ -16,6 +16,8 @@ export interface ScheduleSection {
 export interface ScheduleState {
   events: Record<string, ScheduleEvent>;
   sections: ScheduleSection[];
+  rowStatuses: Record<string, RowStatus>;
+  yesNoValues: Record<string, string>;
 }
 
 export interface ColumnHeader {
@@ -27,3 +29,5 @@ export interface ScheduleConfig {
   defaultSections: ScheduleSection[];
   defaultColumns: ColumnHeader[];
 }
+
+export type RowStatus = 'Vacant' | 'Occupied' | 'New';
