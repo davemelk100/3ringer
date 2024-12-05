@@ -70,11 +70,7 @@ export function ScheduleCell({ day, columnId, rowIndex, section }: ScheduleCellP
         />
       ) : (
         <div className="w-full h-full p-1 whitespace-pre-wrap">
-          {content || (
-            <span className="text-muted-foreground text-sm">
-              Double click to add event
-            </span>
-          )}
+          {content}
         </div>
       )}
     </div>

@@ -9,13 +9,27 @@ import { EditableColumnHeader } from "./editable-column-header";
 import { EditableSectionTitle } from "./editable-section-title";
 import { StatusDropdown } from "./status-dropdown";
 import { YesNoDropdown } from "./yes-no-dropdown";
+import { EditableDropdown } from "./editable-dropdown";
 import { getCurrentWeekDates } from "@/lib/utils/date";
 import { useScheduleStore } from "@/lib/store/schedule-store";
 import { useColumns } from "./use-columns";
 
 export function ScheduleTable() {
   const weekDays = getCurrentWeekDates();
-  const { updateColumn, sections, addRow, deleteRow, initializeSections, updateYesNoValue, getYesNoValue } = useScheduleStore();
+  const { 
+    updateColumn, 
+    sections, 
+    addRow, 
+    deleteRow, 
+    initializeSections,
+    updateYesNoValue,
+    getYesNoValue,
+    customDropdownOptions,
+    addCustomDropdownOption,
+    deleteCustomDropdownOption,
+    getCustomDropdownValue,
+    updateCustomDropdownValue
+  } = useScheduleStore();
   const columns = useColumns();
   const [selectedDay, setSelectedDay] = useState(weekDays[0]);
 
@@ -50,7 +64,7 @@ export function ScheduleTable() {
           ))}
         </TabsList>
         <div className="w-full bg-[#A1C6EA] p-4 mb-4">
-          <h2 className="text-2xl font-bold text-black uppercase">
+          <h2 className="text-2xl font-bold text-black uppercase text-left">
             {selectedDay.day} - {selectedDay.date}
           </h2>
         </div>
@@ -117,13 +131,26 @@ export function ScheduleTable() {
                                   />
                                 </div>
                               ) : null}
-                              {(colIndex === 6 || colIndex === 7 || colIndex === 9 || colIndex === 13) ? (
+                              {(colIndex === 7 || colIndex === 9 || colIndex === 13) ? (
                                 <div className="flex items-center gap-2 mb-2">
                                   <YesNoDropdown
                                     value={getYesNoValue(`${day}-${section.id}-${rowIndex}-${column.id}`)}
                                     onChange={(value) => 
                                       updateYesNoValue(`${day}-${section.id}-${rowIndex}-${column.id}`, value)
                                     }
+                                  />
+                                </div>
+                              ) : null}
+                              {(colIndex === 2 || colIndex === 3 || colIndex === 5 || colIndex === 7) ? (
+                                <div className="flex items-center gap-2 mb-2">
+                                  <EditableDropdown
+                                    value={getCustomDropdownValue(`${day}-${section.id}-${rowIndex}-${column.id}`)}
+                                    onChange={(value) => 
+                                      updateCustomDropdownValue(`${day}-${section.id}-${rowIndex}-${column.id}`, value)
+                                    }
+                                    options={customDropdownOptions[column.id] || []}
+                                    onAddOption={(option) => addCustomDropdownOption(column.id, option)}
+                                    onDeleteOption={(option) => deleteCustomDropdownOption(column.id, option)}
                                   />
                                 </div>
                               ) : null}

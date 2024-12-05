@@ -20,6 +20,11 @@ interface ScheduleStore extends ScheduleState {
   getRowStatus: (key: string) => RowStatus | undefined;
   updateYesNoValue: (key: string, value: string) => void;
   getYesNoValue: (key: string) => string;
+  customDropdownOptions: Record<string, string[]>;
+  addCustomDropdownOption: (columnId: string, option: string) => void;
+  deleteCustomDropdownOption: (columnId: string, option: string) => void;
+  getCustomDropdownValue: (key: string) => string;
+  updateCustomDropdownValue: (key: string, value: string) => void;
 }
 
 export const useScheduleStore = create<ScheduleStore>()(
@@ -30,6 +35,12 @@ export const useScheduleStore = create<ScheduleStore>()(
       columns: [],
       rowStatuses: {},
       yesNoValues: {},
+      customDropdownOptions: {
+        'col-3': ['Option 1', 'Option 2'],
+        'col-4': ['Choice 1', 'Choice 2'],
+        'col-6': ['Status A', 'Status B', 'Status C'],
+        'col-8': ['Type 1', 'Type 2', 'Type 3'],
+      },
       updateEvent: (event) => {
         set((state) => ({
           events: {
@@ -132,6 +143,33 @@ export const useScheduleStore = create<ScheduleStore>()(
       getYesNoValue: (key: string) => {
         return get().yesNoValues[key] || 'no';
       },
+      addCustomDropdownOption: (columnId: string, option: string) => {
+        set((state) => ({
+          customDropdownOptions: {
+            ...state.customDropdownOptions,
+            [columnId]: [...(state.customDropdownOptions[columnId] || []), option],
+          },
+        }));
+      },
+      deleteCustomDropdownOption: (columnId: string, option: string) => {
+        set((state) => ({
+          customDropdownOptions: {
+            ...state.customDropdownOptions,
+            [columnId]: state.customDropdownOptions[columnId].filter(opt => opt !== option),
+          },
+        }));
+      },
+      getCustomDropdownValue: (key: string) => {
+        return get().yesNoValues[key] || '';
+      },
+      updateCustomDropdownValue: (key: string, value: string) => {
+        set((state) => ({
+          yesNoValues: {
+            ...state.yesNoValues,
+            [key]: value,
+          },
+        }));
+      },
     }),
     {
       name: "schedule-storage",
@@ -141,6 +179,7 @@ export const useScheduleStore = create<ScheduleStore>()(
         columns: state.columns,
         rowStatuses: state.rowStatuses,
         yesNoValues: state.yesNoValues,
+        customDropdownOptions: state.customDropdownOptions,
       }),
     }
   )
