@@ -131,7 +131,7 @@ export function ScheduleTable() {
                                   />
                                 </div>
                               ) : null}
-                              {(colIndex === 7 || colIndex === 9 || colIndex === 13) ? (
+                              {(colIndex === 6 || colIndex === 9 || colIndex === 13) ? (
                                 <div className="flex items-center gap-2 mb-2">
                                   <YesNoDropdown
                                     value={getYesNoValue(`${day}-${section.id}-${rowIndex}-${column.id}`)}
