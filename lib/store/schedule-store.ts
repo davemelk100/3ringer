@@ -2,7 +2,7 @@
 
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { ScheduleEvent, ScheduleState, ColumnHeader, ScheduleSection } from "@/lib/types/schedule";
+import { ScheduleEvent, ScheduleState, ColumnHeader, ScheduleSection, RowStatus } from "@/lib/types/schedule";
 import { scheduleConfig } from "@/lib/config/schedule";
 
 interface ScheduleStore extends ScheduleState {
@@ -16,6 +16,10 @@ interface ScheduleStore extends ScheduleState {
   updateSection: (section: ScheduleSection) => void;
   initializeColumns: () => void;
   initializeSections: () => void;
+  updateRowStatus: (key: string, status: RowStatus) => void;
+  getRowStatus: (key: string) => RowStatus | undefined;
+  updateYesNoValue: (key: string, value: string) => void;
+  getYesNoValue: (key: string) => string;
 }
 
 export const useScheduleStore = create<ScheduleStore>()(
@@ -24,6 +28,8 @@ export const useScheduleStore = create<ScheduleStore>()(
       events: {},
       sections: [],
       columns: [],
+      rowStatuses: {},
+      yesNoValues: {},
       updateEvent: (event) => {
         set((state) => ({
           events: {
@@ -104,6 +110,28 @@ export const useScheduleStore = create<ScheduleStore>()(
           sections: state.sections.length === 0 ? scheduleConfig.defaultSections : state.sections
         }));
       },
+      updateRowStatus: (key: string, status: RowStatus) => {
+        set((state) => ({
+          rowStatuses: {
+            ...state.rowStatuses,
+            [key]: status,
+          },
+        }));
+      },
+      getRowStatus: (key: string) => {
+        return get().rowStatuses[key];
+      },
+      updateYesNoValue: (key: string, value: string) => {
+        set((state) => ({
+          yesNoValues: {
+            ...state.yesNoValues,
+            [key]: value,
+          },
+        }));
+      },
+      getYesNoValue: (key: string) => {
+        return get().yesNoValues[key] || 'no';
+      },
     }),
     {
       name: "schedule-storage",
@@ -111,6 +139,8 @@ export const useScheduleStore = create<ScheduleStore>()(
         events: state.events,
         sections: state.sections,
         columns: state.columns,
+        rowStatuses: state.rowStatuses,
+        yesNoValues: state.yesNoValues,
       }),
     }
   )

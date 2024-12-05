@@ -7,6 +7,7 @@ const roboto = Roboto({
   weight: ['300', '400', '500', '700'],
   subsets: ['latin'],
   display: 'swap',
+  variable: '--font-roboto',
 });
 
 export const metadata: Metadata = {
@@ -21,7 +22,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={roboto.className}>
+      <body className={`${roboto.className} font-sans`}>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"

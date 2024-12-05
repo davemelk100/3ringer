@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react';
 import { useScheduleStore } from '@/lib/store/schedule-store';
-// import { scheduleConfig } from '@/lib/config/schedule';
+import { scheduleConfig } from '@/lib/config/schedule';
 
 export function useColumns() {
   const { columns, initializeColumns } = useScheduleStore();

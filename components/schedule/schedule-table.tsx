@@ -7,13 +7,15 @@ import { Plus, Minus } from "lucide-react";
 import { ScheduleCell } from "./schedule-cell";
 import { EditableColumnHeader } from "./editable-column-header";
 import { EditableSectionTitle } from "./editable-section-title";
+import { StatusDropdown } from "./status-dropdown";
+import { YesNoDropdown } from "./yes-no-dropdown";
 import { getCurrentWeekDates } from "@/lib/utils/date";
 import { useScheduleStore } from "@/lib/store/schedule-store";
 import { useColumns } from "./use-columns";
 
 export function ScheduleTable() {
   const weekDays = getCurrentWeekDates();
-  const { updateColumn, sections, addRow, deleteRow, initializeSections } = useScheduleStore();
+  const { updateColumn, sections, addRow, deleteRow, initializeSections, updateYesNoValue, getYesNoValue } = useScheduleStore();
   const columns = useColumns();
   const [selectedDay, setSelectedDay] = useState(weekDays[0]);
 
@@ -101,11 +103,30 @@ export function ScheduleTable() {
                               </Button>
                             )}
                           </td>
-                          {columns.map((column) => (
+                          {columns.map((column, colIndex) => (
                             <td
                               key={`${column.id}-${rowIndex}`}
                               className="border p-2 h-24 align-top hover:bg-muted/50 transition-colors"
                             >
+                              {colIndex === 0 ? (
+                                <div className="flex items-center gap-2 mb-2">
+                                  <StatusDropdown
+                                    sectionId={section.id}
+                                    rowIndex={rowIndex}
+                                    day={day}
+                                  />
+                                </div>
+                              ) : null}
+                              {(colIndex === 6 || colIndex === 7 || colIndex === 9 || colIndex === 13) ? (
+                                <div className="flex items-center gap-2 mb-2">
+                                  <YesNoDropdown
+                                    value={getYesNoValue(`${day}-${section.id}-${rowIndex}-${column.id}`)}
+                                    onChange={(value) => 
+                                      updateYesNoValue(`${day}-${section.id}-${rowIndex}-${column.id}`, value)
+                                    }
+                                  />
+                                </div>
+                              ) : null}
                               <ScheduleCell
                                 day={day}
                                 columnId={column.id}
