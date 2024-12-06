@@ -15,7 +15,7 @@ export function CollapsibleHeader({ selectedWeek, onWeekChange }: CollapsibleHea
   const [isOpen, setIsOpen] = useState(true);
 
   return (
-    <div className="relative print:hidden border-b">
+    <div className="relative print:hidden border-b mx-4 mb-8">
       <div
         className={cn(
           "transition-all duration-300 ease-in-out overflow-hidden",

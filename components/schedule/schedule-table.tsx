@@ -41,16 +41,16 @@ export function ScheduleTable() {
           if (day) setSelectedDay(day);
         }}
       >
-        <div className="px-4 mt-4">
+        <div className="mt-4">
           <ScheduleHeader weekDays={weekDays} />
-          <div className="w-full bg-[#A1C6EA] p-4 mb-0 print:bg-transparent print:border-b">
+          <div className="w-full bg-[#A1C6EA] p-4 mb-4 print:bg-transparent print:border-b">
             <h2 className="text-2xl font-bold text-black uppercase text-left">
               {selectedDay.day} - {selectedDay.date}
             </h2>
           </div>
           {weekDays.map(({ day }) => (
             <TabsContent key={day} value={day} className="mt-0 print:block">
-              <div className="overflow-x-auto p-4 print:p-0">
+              <div className="overflow-x-auto print:p-0">
                 {sections.map((section, index) => (
                   <ScheduleSection
                     key={section.id}
