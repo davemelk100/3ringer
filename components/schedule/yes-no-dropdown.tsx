@@ -21,7 +21,7 @@ export function YesNoDropdown({ value, onChange }: YesNoDropdownProps) {
     <div className="flex flex-col gap-2">
       <Select value="" onValueChange={onChange}>
         <SelectTrigger ref={triggerRef} className="w-20 h-8">
-          <SelectValue placeholder="Select" />
+          <SelectValue placeholder="" />
         </SelectTrigger>
         <SelectContent>
           <SelectItem value="yes">Yes</SelectItem>

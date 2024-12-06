@@ -68,7 +68,7 @@ export function ConfigurableDropdown({
         }
       >
         <SelectTrigger ref={triggerRef} className="w-full h-8">
-          <SelectValue placeholder="Select" />
+          <SelectValue placeholder="" />
         </SelectTrigger>
         <SelectContent>
           {options.map((option) => (

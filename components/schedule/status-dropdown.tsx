@@ -27,7 +27,7 @@ export function StatusDropdown({ sectionId, rowIndex, day }: StatusDropdownProps
     <div className="flex flex-col gap-2">
       <Select value="" onValueChange={(value) => updateRowStatus(statusKey, value as RowStatus)}>
         <SelectTrigger ref={triggerRef} className="w-24 h-8">
-          <SelectValue placeholder="Select" />
+          <SelectValue placeholder="" />
         </SelectTrigger>
         <SelectContent>
           <SelectItem value="Vacant">Vacant</SelectItem>
