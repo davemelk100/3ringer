@@ -42,7 +42,7 @@ export function EditableColumnHeader({ column, onUpdate }: EditableColumnHeaderP
   return (
     <div 
       onDoubleClick={handleDoubleClick} 
-      className="w-full min-h-[24px] cursor-text flex items-center justify-center"
+      className="w-full min-h-[20px] cursor-text flex items-center justify-center"
     >
       {isEditing ? (
         <Input
@@ -52,7 +52,7 @@ export function EditableColumnHeader({ column, onUpdate }: EditableColumnHeaderP
           onChange={(e) => setValue(e.target.value)}
           onBlur={handleBlur}
           onKeyDown={handleKeyDown}
-          className="h-6 min-h-6 px-1 py-0 text-sm text-center"
+          className="h-5 min-h-5 px-1 py-0 text-sm text-center"
           autoFocus
         />
       ) : (

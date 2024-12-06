@@ -7,20 +7,20 @@ export const DEFAULT_SECTIONS: ScheduleSection[] = [
 ];
 
 export const DEFAULT_COLUMNS: ColumnHeader[] = [
-  { id: "col-1", title: "Status" },
-  { id: "col-2", title: "Name" },
-  { id: "col-3", title: "Phone" },
-  { id: "col-4", title: "Type" },
-  { id: "col-5", title: "Size" },
-  { id: "col-6", title: "Price" },
-  { id: "col-7", title: "Paid" },
-  { id: "col-8", title: "Notes" },
-  { id: "col-9", title: "Time" },
-  { id: "col-10", title: "Confirmed" },
-  { id: "col-11", title: "Address" },
-  { id: "col-12", title: "City" },
-  { id: "col-13", title: "Email" },
-  { id: "col-14", title: "Complete" },
+  { id: "status", title: "Status" },
+  { id: "name", title: "Name" },
+  { id: "phone", title: "Phone" },
+  { id: "type", title: "Type" },
+  { id: "size", title: "Size" },
+  { id: "price", title: "Price" },
+  { id: "paid", title: "Paid" },
+  { id: "notes", title: "Notes" },
+  { id: "time", title: "Time" },
+  { id: "confirmed", title: "Confirmed" },
+  { id: "address", title: "Address" },
+  { id: "city", title: "City" },
+  { id: "email", title: "Email" },
+  { id: "complete", title: "Complete" },
 ];
 
 export const CONFIGURABLE_DROPDOWNS: DropdownConfig[] = [

@@ -9,6 +9,7 @@ import { EditableColumnHeader } from "./editable-column-header";
 import { DeleteConfirmation } from "./delete-confirmation";
 import { ScheduleSection as Section, ColumnHeader } from "@/lib/types/schedule";
 import { useScheduleStore } from "@/lib/store/schedule-store";
+import { cn } from "@/lib/utils";
 
 interface ScheduleSectionProps {
   section: Section;
@@ -16,6 +17,7 @@ interface ScheduleSectionProps {
   day: string;
   onAddRow: (sectionId: string) => void;
   onDeleteRow: (sectionId: string, rowIndex: number) => void;
+  className?: string;
 }
 
 export function ScheduleSection({ 
@@ -24,16 +26,17 @@ export function ScheduleSection({
   day,
   onAddRow,
   onDeleteRow,
+  className
 }: ScheduleSectionProps) {
   const { updateColumn, addColumn, deleteColumn } = useScheduleStore();
   const [deleteColumnIndex, setDeleteColumnIndex] = useState<number | null>(null);
 
   const canDeleteColumn = (index: number) => {
-    return index !== 3; // Prevent deletion of column 4 (index 3)
+    return index !== 3;
   };
 
   return (
-    <div className="mb-8">
+    <div className={cn("mb-8", className)}>
       <div className="flex items-center justify-between mb-2">
         <EditableSectionTitle section={section} />
         <Button
@@ -49,26 +52,26 @@ export function ScheduleSection({
       <table className="w-full border-collapse mb-4">
         <thead>
           <tr>
-            <th className="w-8 p-2"></th>
+            <th className="w-8 p-1"></th>
             {columns.map((column, index) => (
               <th
-                key={column.id}
-                className="border p-2 bg-muted text-muted-foreground font-medium text-center relative group"
+                key={`${day}-${section.id}-header-${column.id}-${index}`}
+                className="border p-1 bg-muted text-muted-foreground font-medium text-center relative group h-12"
               >
                 <div className="flex flex-col items-center">
                   <EditableColumnHeader
                     column={column}
                     onUpdate={(updatedColumn) => updateColumn(index, updatedColumn)}
                   />
-                  <div className="flex gap-1 mt-1">
+                  <div className="flex gap-1">
                     {canDeleteColumn(index) && (
                       <Button
                         onClick={() => setDeleteColumnIndex(index)}
                         size="sm"
                         variant="ghost"
-                        className="h-6 w-6 p-0"
+                        className="h-5 w-5 p-0"
                       >
-                        <Minus className="h-4 w-4" />
+                        <Minus className="h-3 w-3" />
                       </Button>
                     )}
                     {index === columns.length - 1 && (
@@ -76,9 +79,9 @@ export function ScheduleSection({
                         onClick={addColumn}
                         size="sm"
                         variant="ghost"
-                        className="h-6 w-6 p-0"
+                        className="h-5 w-5 p-0"
                       >
-                        <Plus className="h-4 w-4" />
+                        <Plus className="h-3 w-3" />
                       </Button>
                     )}
                   </div>
@@ -90,7 +93,7 @@ export function ScheduleSection({
         <tbody>
           {Array.from({ length: section.rows }).map((_, rowIndex) => (
             <ScheduleRow
-              key={rowIndex}
+              key={`${day}-${section.id}-row-${rowIndex}`}
               rowIndex={rowIndex}
               section={section}
               columns={columns}

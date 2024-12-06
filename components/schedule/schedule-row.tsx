@@ -30,7 +30,7 @@ export function ScheduleRow({
   const { getYesNoValue, updateYesNoValue } = useScheduleStore();
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
-  const getColumnContent = (colIndex: number, columnId: string) => {
+  const getColumnContent = (colIndex: number, column: ColumnHeader) => {
     if (colIndex === 0) {
       return (
         <div className="flex items-center justify-center">
@@ -54,7 +54,7 @@ export function ScheduleRow({
             day={day}
             sectionId={section.id}
             rowIndex={rowIndex}
-            columnId={columnId}
+            columnId={column.id}
             dropdownId={configurableDropdown.id}
           />
         </div>
@@ -65,9 +65,9 @@ export function ScheduleRow({
       return (
         <div className="flex items-center justify-center">
           <YesNoDropdown
-            value={getYesNoValue(`${day}-${section.id}-${rowIndex}-${columnId}`)}
+            value={getYesNoValue(`${day}-${section.id}-${rowIndex}-${column.id}`)}
             onChange={(value) => 
-              updateYesNoValue(`${day}-${section.id}-${rowIndex}-${columnId}`, value)
+              updateYesNoValue(`${day}-${section.id}-${rowIndex}-${column.id}`, value)
             }
           />
         </div>
@@ -77,7 +77,7 @@ export function ScheduleRow({
     return (
       <ScheduleCell
         day={day}
-        columnId={columnId}
+        columnId={column.id}
         rowIndex={rowIndex}
         section={section.id}
       />
@@ -101,10 +101,10 @@ export function ScheduleRow({
         </td>
         {columns.map((column, colIndex) => (
           <td
-            key={`${column.id}-${rowIndex}`}
+            key={`${day}-${section.id}-${column.id}-${rowIndex}-${colIndex}`}
             className="border p-1 h-12 align-middle hover:bg-muted/50 transition-colors"
           >
-            {getColumnContent(colIndex, column.id)}
+            {getColumnContent(colIndex, column)}
           </td>
         ))}
       </tr>

@@ -65,7 +65,7 @@ export const useScheduleStore = create<ScheduleStore>()(
       },
       addColumn: () => {
         set((state) => {
-          const newColumnId = `col-${state.columns.length + 1}`;
+          const newColumnId = `column-${state.columns.length + 1}`;
           return {
             columns: [
               ...state.columns,
@@ -76,13 +76,11 @@ export const useScheduleStore = create<ScheduleStore>()(
       },
       deleteColumn: (index) => {
         set((state) => {
-          // Don't allow deleting the Status column
           if (index === 0) return state;
 
           const newColumns = [...state.columns];
           newColumns.splice(index, 1);
 
-          // Clean up related data
           const newEvents = { ...state.events };
           const deletedColumnId = state.columns[index].id;
           
@@ -133,7 +131,6 @@ export const useScheduleStore = create<ScheduleStore>()(
           
           if (!section || section.rows <= 1) return state;
 
-          // Helper function to update keys for a specific store object
           const updateKeys = (obj: Record<string, any>, pattern: RegExp) => {
             const newObj: Record<string, any> = {};
             Object.entries(obj).forEach(([key, value]) => {
@@ -143,28 +140,22 @@ export const useScheduleStore = create<ScheduleStore>()(
                 const currentRow = parseInt(row);
                 if (section === sectionId) {
                   if (currentRow === rowIndex) {
-                    // Skip this key as we're deleting this row
                     return;
                   } else if (currentRow > rowIndex) {
-                    // Shift the row index down by 1
                     newObj[`${day}-${section}-${currentRow - 1}-${rest}`] = value;
                   } else {
-                    // Keep rows below the deleted row as is
                     newObj[key] = value;
                   }
                 } else {
-                  // Keep other sections as is
                   newObj[key] = value;
                 }
               } else {
-                // Keep other keys as is
                 newObj[key] = value;
               }
             });
             return newObj;
           };
 
-          // Update all stores with the correct pattern
           const updatedEvents = updateKeys(newEvents, /^(.+)-(.+)-(\d+)-(.+)$/);
           const updatedRowStatuses = updateKeys(newRowStatuses, /^(.+)-(.+)-(\d+)$/);
           const updatedYesNoValues = updateKeys(newYesNoValues, /^(.+)-(.+)-(\d+)-(.+)$/);
