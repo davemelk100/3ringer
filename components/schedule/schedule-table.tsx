@@ -7,9 +7,12 @@ import { useScheduleStore } from "@/lib/store/schedule-store";
 import { useColumns } from "./use-columns";
 import { ScheduleHeader } from "./schedule-header";
 import { ScheduleSection } from "./schedule-section";
+import { Header } from "@/components/layout/header";
+import { startOfWeek } from "date-fns";
 
 export function ScheduleTable() {
-  const weekDays = getCurrentWeekDates();
+  const [selectedWeek, setSelectedWeek] = useState(() => startOfWeek(new Date(), { weekStartsOn: 1 }));
+  const weekDays = getCurrentWeekDates(selectedWeek);
   const { 
     sections, 
     addRow, 
@@ -23,10 +26,15 @@ export function ScheduleTable() {
     initializeSections();
   }, [initializeSections]);
 
+  useEffect(() => {
+    setSelectedDay(weekDays[0]);
+  }, [selectedWeek]);
+
   return (
-    <div className="w-full max-w-[95vw] mx-auto p-4">
+    <div className="w-full max-w-[95vw] mx-auto">
+      <Header selectedWeek={selectedWeek} onWeekChange={setSelectedWeek} />
       <Tabs 
-        defaultValue={weekDays[0].day} 
+        value={selectedDay.day} 
         className="w-full"
         onValueChange={(value) => {
           const day = weekDays.find(d => d.day === value);
