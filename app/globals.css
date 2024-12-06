@@ -57,3 +57,62 @@
     @apply bg-background text-foreground;
   }
 }
+
+@media print {
+  /* Hide non-printable elements */
+  button[type="button"],
+  [role="tablist"],
+  .no-print {
+    display: none !important;
+  }
+
+  /* Reset background colors and text colors for printing */
+  body {
+    background: white !important;
+    color: black !important;
+  }
+
+  /* Ensure full width and proper margins */
+  main {
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  /* Show all tab content */
+  [role="tabpanel"] {
+    display: block !important;
+    opacity: 1 !important;
+    break-inside: avoid;
+  }
+
+  /* Table styles for printing */
+  table {
+    width: 100% !important;
+    border-collapse: collapse !important;
+    page-break-inside: auto !important;
+  }
+
+  tr {
+    page-break-inside: avoid !important;
+    page-break-after: auto !important;
+  }
+
+  td, th {
+    border: 1px solid #ddd !important;
+    padding: 8px !important;
+  }
+
+  /* Add page breaks between sections */
+  .section-break {
+    page-break-before: always !important;
+  }
+
+  /* Ensure text is readable */
+  * {
+    -webkit-print-color-adjust: exact !important;
+    color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+}
