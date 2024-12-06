@@ -87,7 +87,7 @@ export function ScheduleRow({
   return (
     <>
       <tr>
-        <td className="w-8 p-2">
+        <td className="w-8 p-1">
           {section.rows > 1 && (
             <Button
               onClick={() => setShowDeleteConfirm(true)}
@@ -102,7 +102,7 @@ export function ScheduleRow({
         {columns.map((column, colIndex) => (
           <td
             key={`${column.id}-${rowIndex}`}
-            className="border p-2 h-16 align-middle hover:bg-muted/50 transition-colors"
+            className="border p-1 h-12 align-middle hover:bg-muted/50 transition-colors"
           >
             {getColumnContent(colIndex, column.id)}
           </td>
