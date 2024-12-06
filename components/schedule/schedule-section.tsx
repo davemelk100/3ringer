@@ -28,6 +28,10 @@ export function ScheduleSection({
   const { updateColumn, addColumn, deleteColumn } = useScheduleStore();
   const [deleteColumnIndex, setDeleteColumnIndex] = useState<number | null>(null);
 
+  const canDeleteColumn = (index: number) => {
+    return index !== 3; // Prevent deletion of column 4 (index 3)
+  };
+
   return (
     <div className="mb-8">
       <div className="flex items-center justify-between mb-2">
@@ -56,8 +60,8 @@ export function ScheduleSection({
                     column={column}
                     onUpdate={(updatedColumn) => updateColumn(index, updatedColumn)}
                   />
-                  {index !== 0 && (
-                    <div className="flex gap-1 mt-1">
+                  <div className="flex gap-1 mt-1">
+                    {canDeleteColumn(index) && (
                       <Button
                         onClick={() => setDeleteColumnIndex(index)}
                         size="sm"
@@ -66,18 +70,18 @@ export function ScheduleSection({
                       >
                         <Minus className="h-4 w-4" />
                       </Button>
-                      {index === columns.length - 1 && (
-                        <Button
-                          onClick={addColumn}
-                          size="sm"
-                          variant="ghost"
-                          className="h-6 w-6 p-0"
-                        >
-                          <Plus className="h-4 w-4" />
-                        </Button>
-                      )}
-                    </div>
-                  )}
+                    )}
+                    {index === columns.length - 1 && (
+                      <Button
+                        onClick={addColumn}
+                        size="sm"
+                        variant="ghost"
+                        className="h-6 w-6 p-0"
+                      >
+                        <Plus className="h-4 w-4" />
+                      </Button>
+                    )}
+                  </div>
                 </div>
               </th>
             ))}
@@ -101,7 +105,7 @@ export function ScheduleSection({
         isOpen={deleteColumnIndex !== null}
         onClose={() => setDeleteColumnIndex(null)}
         onConfirm={() => {
-          if (deleteColumnIndex !== null) {
+          if (deleteColumnIndex !== null && canDeleteColumn(deleteColumnIndex)) {
             deleteColumn(deleteColumnIndex);
             setDeleteColumnIndex(null);
           }
