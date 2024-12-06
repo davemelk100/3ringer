@@ -87,18 +87,6 @@ export function ScheduleRow({
   return (
     <>
       <tr>
-        <td className="w-8 p-1">
-          {section.rows > 1 && (
-            <Button
-              onClick={() => setShowDeleteConfirm(true)}
-              size="sm"
-              variant="ghost"
-              className="h-6 w-6 p-0"
-            >
-              <Minus className="h-4 w-4" />
-            </Button>
-          )}
-        </td>
         {columns.map((column, colIndex) => (
           <td
             key={`${day}-${section.id}-${column.id}-${rowIndex}-${colIndex}`}
@@ -109,16 +97,18 @@ export function ScheduleRow({
         ))}
       </tr>
 
-      <DeleteConfirmation
-        isOpen={showDeleteConfirm}
-        onClose={() => setShowDeleteConfirm(false)}
-        onConfirm={() => {
-          onDeleteRow(section.id, rowIndex);
-          setShowDeleteConfirm(false);
-        }}
-        title="Delete Row"
-        description="Are you sure you want to delete this row? This action cannot be undone."
-      />
+      {section.rows > 1 && (
+        <DeleteConfirmation
+          isOpen={showDeleteConfirm}
+          onClose={() => setShowDeleteConfirm(false)}
+          onConfirm={() => {
+            onDeleteRow(section.id, rowIndex);
+            setShowDeleteConfirm(false);
+          }}
+          title="Delete Row"
+          description="Are you sure you want to delete this row? This action cannot be undone."
+        />
+      )}
     </>
   );
 }

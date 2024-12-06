@@ -52,7 +52,6 @@ export function ScheduleSection({
       <table className="w-full border-collapse mb-4">
         <thead>
           <tr>
-            <th className="w-8 p-1"></th>
             {columns.map((column, index) => (
               <th
                 key={`${day}-${section.id}-header-${column.id}-${index}`}
