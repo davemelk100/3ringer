@@ -40,3 +40,9 @@ export interface DropdownConfig {
 }
 
 export type RowStatus = 'Vacant' | 'Occupied' | 'New';
+
+export interface WeekDay {
+  day: string;
+  date: string;
+  fullDate: Date;
+}

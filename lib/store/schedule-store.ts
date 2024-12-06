@@ -11,6 +11,8 @@ interface ScheduleStore extends ScheduleState {
   getEventByDayAndTime: (day: string, columnId: string, rowIndex: number, section: string) => ScheduleEvent | undefined;
   columns: ColumnHeader[];
   updateColumn: (index: number, column: ColumnHeader) => void;
+  addColumn: () => void;
+  deleteColumn: (index: number) => void;
   addRow: (sectionId: string) => void;
   deleteRow: (sectionId: string, rowIndex: number) => void;
   updateSection: (section: ScheduleSection) => void;
@@ -61,6 +63,57 @@ export const useScheduleStore = create<ScheduleStore>()(
           return { columns: newColumns };
         });
       },
+      addColumn: () => {
+        set((state) => {
+          const newColumnId = `col-${state.columns.length + 1}`;
+          return {
+            columns: [
+              ...state.columns,
+              { id: newColumnId, title: `Header ${state.columns.length + 1}` }
+            ]
+          };
+        });
+      },
+      deleteColumn: (index) => {
+        set((state) => {
+          // Don't allow deleting the Status column
+          if (index === 0) return state;
+
+          const newColumns = [...state.columns];
+          newColumns.splice(index, 1);
+
+          // Clean up related data
+          const newEvents = { ...state.events };
+          const deletedColumnId = state.columns[index].id;
+          
+          Object.keys(newEvents).forEach(key => {
+            if (key.includes(deletedColumnId)) {
+              delete newEvents[key];
+            }
+          });
+
+          const newYesNoValues = { ...state.yesNoValues };
+          Object.keys(newYesNoValues).forEach(key => {
+            if (key.includes(deletedColumnId)) {
+              delete newYesNoValues[key];
+            }
+          });
+
+          const newDropdownValues = { ...state.dropdownValues };
+          Object.keys(newDropdownValues).forEach(key => {
+            if (key.includes(deletedColumnId)) {
+              delete newDropdownValues[key];
+            }
+          });
+
+          return {
+            columns: newColumns,
+            events: newEvents,
+            yesNoValues: newYesNoValues,
+            dropdownValues: newDropdownValues
+          };
+        });
+      },
       addRow: (sectionId) => {
         set((state) => ({
           sections: state.sections.map((section) =>
@@ -73,26 +126,55 @@ export const useScheduleStore = create<ScheduleStore>()(
       deleteRow: (sectionId, rowIndex) => {
         set((state) => {
           const newEvents = { ...state.events };
+          const newRowStatuses = { ...state.rowStatuses };
+          const newYesNoValues = { ...state.yesNoValues };
+          const newDropdownValues = { ...state.dropdownValues };
           const section = state.sections.find((s) => s.id === sectionId);
           
           if (!section || section.rows <= 1) return state;
 
-          Object.keys(newEvents).forEach((key) => {
-            const event = newEvents[key];
-            if (event.section === sectionId) {
-              if (event.rowIndex === rowIndex) {
-                delete newEvents[key];
-              } else if (event.rowIndex > rowIndex) {
-                newEvents[key] = {
-                  ...event,
-                  rowIndex: event.rowIndex - 1,
-                };
+          // Helper function to update keys for a specific store object
+          const updateKeys = (obj: Record<string, any>, pattern: RegExp) => {
+            const newObj: Record<string, any> = {};
+            Object.entries(obj).forEach(([key, value]) => {
+              const match = key.match(pattern);
+              if (match) {
+                const [_, day, section, row, rest] = match;
+                const currentRow = parseInt(row);
+                if (section === sectionId) {
+                  if (currentRow === rowIndex) {
+                    // Skip this key as we're deleting this row
+                    return;
+                  } else if (currentRow > rowIndex) {
+                    // Shift the row index down by 1
+                    newObj[`${day}-${section}-${currentRow - 1}-${rest}`] = value;
+                  } else {
+                    // Keep rows below the deleted row as is
+                    newObj[key] = value;
+                  }
+                } else {
+                  // Keep other sections as is
+                  newObj[key] = value;
+                }
+              } else {
+                // Keep other keys as is
+                newObj[key] = value;
               }
-            }
-          });
+            });
+            return newObj;
+          };
+
+          // Update all stores with the correct pattern
+          const updatedEvents = updateKeys(newEvents, /^(.+)-(.+)-(\d+)-(.+)$/);
+          const updatedRowStatuses = updateKeys(newRowStatuses, /^(.+)-(.+)-(\d+)$/);
+          const updatedYesNoValues = updateKeys(newYesNoValues, /^(.+)-(.+)-(\d+)-(.+)$/);
+          const updatedDropdownValues = updateKeys(newDropdownValues, /^(.+)-(.+)-(\d+)-(.+)$/);
 
           return {
-            events: newEvents,
+            events: updatedEvents,
+            rowStatuses: updatedRowStatuses,
+            yesNoValues: updatedYesNoValues,
+            dropdownValues: updatedDropdownValues,
             sections: state.sections.map((s) =>
               s.id === sectionId
                 ? { ...s, rows: Math.max(1, s.rows - 1) }

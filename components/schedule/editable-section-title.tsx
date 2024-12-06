@@ -30,7 +30,7 @@ export function EditableSectionTitle({ section }: EditableSectionTitleProps) {
   };
 
   return (
-    <div onDoubleClick={handleDoubleClick} className="w-full">
+    <div onDoubleClick={handleDoubleClick} className="w-full flex items-center">
       {isEditing ? (
         <Input
           type="text"

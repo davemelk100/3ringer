@@ -1,30 +1,20 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Button } from "@/components/ui/button";
-import { Plus, Minus } from "lucide-react";
-import { ScheduleCell } from "./schedule-cell";
-import { EditableColumnHeader } from "./editable-column-header";
-import { EditableSectionTitle } from "./editable-section-title";
-import { StatusDropdown } from "./status-dropdown";
-import { YesNoDropdown } from "./yes-no-dropdown";
-import { ConfigurableDropdown } from "./configurable-dropdown";
+import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { getCurrentWeekDates } from "@/lib/utils/date";
 import { useScheduleStore } from "@/lib/store/schedule-store";
 import { useColumns } from "./use-columns";
-import { scheduleConfig } from "@/lib/config/schedule";
+import { ScheduleHeader } from "./schedule-header";
+import { ScheduleSection } from "./schedule-section";
 
 export function ScheduleTable() {
   const weekDays = getCurrentWeekDates();
   const { 
-    updateColumn, 
     sections, 
     addRow, 
     deleteRow, 
     initializeSections,
-    updateYesNoValue,
-    getYesNoValue,
   } = useScheduleStore();
   const columns = useColumns();
   const [selectedDay, setSelectedDay] = useState(weekDays[0]);
@@ -32,60 +22,6 @@ export function ScheduleTable() {
   useEffect(() => {
     initializeSections();
   }, [initializeSections]);
-
-  const getColumnContent = (colIndex: number, day: string, section: string, rowIndex: number, columnId: string) => {
-    if (colIndex === 0) {
-      return (
-        <div className="flex items-center justify-center">
-          <StatusDropdown
-            sectionId={section}
-            rowIndex={rowIndex}
-            day={day}
-          />
-        </div>
-      );
-    }
-
-    const configurableDropdown = scheduleConfig.configurableDropdowns.find(
-      (dropdown) => dropdown.columnIndex === colIndex
-    );
-
-    if (configurableDropdown) {
-      return (
-        <div className="flex items-center justify-center">
-          <ConfigurableDropdown
-            day={day}
-            sectionId={section}
-            rowIndex={rowIndex}
-            columnId={columnId}
-            dropdownId={configurableDropdown.id}
-          />
-        </div>
-      );
-    }
-
-    if (colIndex === 6 || colIndex === 9 || colIndex === 13) {
-      return (
-        <div className="flex items-center justify-center">
-          <YesNoDropdown
-            value={getYesNoValue(`${day}-${section}-${rowIndex}-${columnId}`)}
-            onChange={(value) => 
-              updateYesNoValue(`${day}-${section}-${rowIndex}-${columnId}`, value)
-            }
-          />
-        </div>
-      );
-    }
-
-    return (
-      <ScheduleCell
-        day={day}
-        columnId={columnId}
-        rowIndex={rowIndex}
-        section={section}
-      />
-    );
-  };
 
   return (
     <div className="w-full max-w-[95vw] mx-auto p-4">
@@ -97,89 +33,24 @@ export function ScheduleTable() {
           if (day) setSelectedDay(day);
         }}
       >
-        <TabsList className="w-full mb-0 grid grid-cols-7 gap-[5px] h-auto bg-transparent p-0">
-          {weekDays.map(({ day, date }) => (
-            <TabsTrigger 
-              key={day} 
-              value={day} 
-              className="min-h-[3.5rem] px-2 py-2 text-white dark:text-white border-[#A1C6EA] border data-[state=active]:border-0 data-[state=active]:bg-[#A1C6EA] data-[state=active]:!text-black dark:data-[state=active]:!text-black flex flex-col items-center justify-center rounded-none"
-            >
-              <span className="font-medium text-sm truncate w-full text-center">
-                {day}
-              </span>
-              <span className="text-xs opacity-70">
-                {date}
-              </span>
-            </TabsTrigger>
-          ))}
-        </TabsList>
-        <div className="w-full bg-[#A1C6EA] p-4 mb-4">
+        <ScheduleHeader weekDays={weekDays} />
+        <div className="w-full bg-[#A1C6EA] p-4 mb-0">
           <h2 className="text-2xl font-bold text-black uppercase text-left">
             {selectedDay.day} - {selectedDay.date}
           </h2>
         </div>
         {weekDays.map(({ day }) => (
-          <TabsContent key={day} value={day}>
-            <div className="overflow-x-auto">
+          <TabsContent key={day} value={day} className="mt-0">
+            <div className="overflow-x-auto p-4">
               {sections.map((section) => (
-                <div key={section.id} className="mb-8">
-                  <div className="flex items-center justify-between mb-2">
-                    <EditableSectionTitle section={section} />
-                    <Button
-                      onClick={() => addRow(section.id)}
-                      size="sm"
-                      variant="outline"
-                      className="flex items-center gap-1"
-                    >
-                      <Plus className="h-4 w-4" />
-                      Add Row
-                    </Button>
-                  </div>
-                  <table className="w-full border-collapse mb-4">
-                    <thead>
-                      <tr>
-                        <th className="w-8 p-2"></th>
-                        {columns.map((column, index) => (
-                          <th
-                            key={column.id}
-                            className="border p-2 bg-muted text-muted-foreground font-medium text-center"
-                          >
-                            <EditableColumnHeader
-                              column={column}
-                              onUpdate={(updatedColumn) => updateColumn(index, updatedColumn)}
-                            />
-                          </th>
-                        ))}
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {Array.from({ length: section.rows }).map((_, rowIndex) => (
-                        <tr key={rowIndex}>
-                          <td className="w-8 p-2">
-                            {section.rows > 1 && (
-                              <Button
-                                onClick={() => deleteRow(section.id, rowIndex)}
-                                size="sm"
-                                variant="ghost"
-                                className="h-6 w-6 p-0"
-                              >
-                                <Minus className="h-4 w-4" />
-                              </Button>
-                            )}
-                          </td>
-                          {columns.map((column, colIndex) => (
-                            <td
-                              key={`${column.id}-${rowIndex}`}
-                              className="border p-2 h-24 align-middle hover:bg-muted/50 transition-colors"
-                            >
-                              {getColumnContent(colIndex, day, section.id, rowIndex, column.id)}
-                            </td>
-                          ))}
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
+                <ScheduleSection
+                  key={section.id}
+                  section={section}
+                  columns={columns}
+                  day={day}
+                  onAddRow={addRow}
+                  onDeleteRow={deleteRow}
+                />
               ))}
             </div>
           </TabsContent>

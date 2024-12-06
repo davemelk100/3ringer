@@ -20,7 +20,6 @@ export function EditableColumnHeader({ column, onUpdate }: EditableColumnHeaderP
 
   const handleBlur = () => {
     setIsEditing(false);
-    // Always update with current value, even if empty
     onUpdate({ ...column, title: value });
   };
 
@@ -33,21 +32,17 @@ export function EditableColumnHeader({ column, onUpdate }: EditableColumnHeaderP
     }
   };
 
-  // Make the header always clickable, even when empty
-  const displayValue = value || "(Click to edit)";
-
-  // Focus input when entering edit mode
   useEffect(() => {
     if (isEditing && inputRef.current) {
       inputRef.current.focus();
+      inputRef.current.select();
     }
   }, [isEditing]);
 
   return (
     <div 
       onDoubleClick={handleDoubleClick} 
-      className="w-full min-h-[24px] cursor-text"
-      onClick={() => !isEditing && setIsEditing(true)}
+      className="w-full min-h-[24px] cursor-text flex items-center justify-center"
     >
       {isEditing ? (
         <Input
@@ -57,13 +52,12 @@ export function EditableColumnHeader({ column, onUpdate }: EditableColumnHeaderP
           onChange={(e) => setValue(e.target.value)}
           onBlur={handleBlur}
           onKeyDown={handleKeyDown}
-          className="h-6 min-h-6 px-1 py-0 text-sm"
-          placeholder="Enter header text"
+          className="h-6 min-h-6 px-1 py-0 text-sm text-center"
           autoFocus
         />
       ) : (
-        <span className={`text-sm font-medium ${!value ? 'text-muted-foreground italic' : ''}`}>
-          {displayValue}
+        <span className="text-sm font-medium">
+          {value || "(Click to edit)"}
         </span>
       )}
     </div>
