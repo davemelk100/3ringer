@@ -2,7 +2,7 @@
 
 import { WeekSelector } from "@/components/schedule/week-selector";
 import { Button } from "@/components/ui/button";
-import { Printer } from "lucide-react";
+import { Calendar, Printer } from "lucide-react";
 
 interface HeaderProps {
   selectedWeek: Date;
@@ -16,8 +16,11 @@ export function Header({ selectedWeek, onWeekChange }: HeaderProps) {
 
   return (
     <div className="flex items-center justify-between px-4 h-16 bg-background border-b print:hidden">
-      {/* Empty div for left side spacing */}
-      <div className="flex-1" />
+      {/* Left side calendar icon with logo text */}
+      <div className="flex-1 flex items-center gap-2">
+        <Calendar className="h-18 w-18 text-muted-foreground" />
+        <span className="text-xl font-semibold">Logo</span>
+      </div>
       
       {/* Centered week selector */}
       <div className="flex items-center gap-2">
