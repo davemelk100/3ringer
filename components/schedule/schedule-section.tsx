@@ -1,10 +1,12 @@
 "use client";
 
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Plus, Minus } from "lucide-react";
 import { EditableSectionTitle } from "./editable-section-title";
 import { ScheduleRow } from "./schedule-row";
 import { EditableColumnHeader } from "./editable-column-header";
+import { DeleteConfirmation } from "./delete-confirmation";
 import { ScheduleSection as Section, ColumnHeader } from "@/lib/types/schedule";
 import { useScheduleStore } from "@/lib/store/schedule-store";
 
@@ -24,6 +26,7 @@ export function ScheduleSection({
   onDeleteRow,
 }: ScheduleSectionProps) {
   const { updateColumn, addColumn, deleteColumn } = useScheduleStore();
+  const [deleteColumnIndex, setDeleteColumnIndex] = useState<number | null>(null);
 
   return (
     <div className="mb-8">
@@ -56,7 +59,7 @@ export function ScheduleSection({
                   {index !== 0 && (
                     <div className="flex gap-1 mt-1">
                       <Button
-                        onClick={() => deleteColumn(index)}
+                        onClick={() => setDeleteColumnIndex(index)}
                         size="sm"
                         variant="ghost"
                         className="h-6 w-6 p-0"
@@ -93,6 +96,19 @@ export function ScheduleSection({
           ))}
         </tbody>
       </table>
+
+      <DeleteConfirmation
+        isOpen={deleteColumnIndex !== null}
+        onClose={() => setDeleteColumnIndex(null)}
+        onConfirm={() => {
+          if (deleteColumnIndex !== null) {
+            deleteColumn(deleteColumnIndex);
+            setDeleteColumnIndex(null);
+          }
+        }}
+        title="Delete Column"
+        description="Are you sure you want to delete this column? This action cannot be undone."
+      />
     </div>
   );
 }

@@ -1,11 +1,13 @@
 "use client";
 
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Minus } from "lucide-react";
 import { ScheduleCell } from "./schedule-cell";
 import { StatusDropdown } from "./status-dropdown";
 import { YesNoDropdown } from "./yes-no-dropdown";
 import { ConfigurableDropdown } from "./configurable-dropdown";
+import { DeleteConfirmation } from "./delete-confirmation";
 import { scheduleConfig } from "@/lib/config/schedule";
 import { ScheduleSection, ColumnHeader } from "@/lib/types/schedule";
 import { useScheduleStore } from "@/lib/store/schedule-store";
@@ -26,6 +28,7 @@ export function ScheduleRow({
   onDeleteRow,
 }: ScheduleRowProps) {
   const { getYesNoValue, updateYesNoValue } = useScheduleStore();
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   const getColumnContent = (colIndex: number, columnId: string) => {
     if (colIndex === 0) {
@@ -82,27 +85,40 @@ export function ScheduleRow({
   };
 
   return (
-    <tr>
-      <td className="w-8 p-2">
-        {section.rows > 1 && (
-          <Button
-            onClick={() => onDeleteRow(section.id, rowIndex)}
-            size="sm"
-            variant="ghost"
-            className="h-6 w-6 p-0"
-          >
-            <Minus className="h-4 w-4" />
-          </Button>
-        )}
-      </td>
-      {columns.map((column, colIndex) => (
-        <td
-          key={`${column.id}-${rowIndex}`}
-          className="border p-2 h-16 align-middle hover:bg-muted/50 transition-colors"
-        >
-          {getColumnContent(colIndex, column.id)}
+    <>
+      <tr>
+        <td className="w-8 p-2">
+          {section.rows > 1 && (
+            <Button
+              onClick={() => setShowDeleteConfirm(true)}
+              size="sm"
+              variant="ghost"
+              className="h-6 w-6 p-0"
+            >
+              <Minus className="h-4 w-4" />
+            </Button>
+          )}
         </td>
-      ))}
-    </tr>
+        {columns.map((column, colIndex) => (
+          <td
+            key={`${column.id}-${rowIndex}`}
+            className="border p-2 h-16 align-middle hover:bg-muted/50 transition-colors"
+          >
+            {getColumnContent(colIndex, column.id)}
+          </td>
+        ))}
+      </tr>
+
+      <DeleteConfirmation
+        isOpen={showDeleteConfirm}
+        onClose={() => setShowDeleteConfirm(false)}
+        onConfirm={() => {
+          onDeleteRow(section.id, rowIndex);
+          setShowDeleteConfirm(false);
+        }}
+        title="Delete Row"
+        description="Are you sure you want to delete this row? This action cannot be undone."
+      />
+    </>
   );
 }
