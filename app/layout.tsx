@@ -13,8 +13,8 @@ const roboto = Roboto({
 });
 
 export const metadata: Metadata = {
-  title: 'Next.js Application',
-  description: 'Modern Next.js application with best practices',
+  title: 'Binder',
+  description: 'tbd',
 };
 
 export default function RootLayout({

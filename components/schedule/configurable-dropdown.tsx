@@ -11,6 +11,7 @@ import { Plus } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { useState, useRef, useEffect } from "react";
 import { useScheduleStore } from "@/lib/store/schedule-store";
+import { cn } from "@/lib/utils";
 
 interface ConfigurableDropdownProps {
   day: string;
@@ -62,12 +63,21 @@ export function ConfigurableDropdown({
   return (
     <div className="flex flex-col gap-2">
       <Select 
-        value=""
+        value={value || ""} 
         onValueChange={(newValue) => 
           updateDropdownValue(`${day}-${sectionId}-${rowIndex}-${columnId}`, newValue)
         }
       >
-        <SelectTrigger ref={triggerRef} className="w-full h-8">
+        <SelectTrigger 
+          ref={triggerRef} 
+          className={cn(
+            "w-full h-8",
+            value ? "border-0 shadow-none [&>svg]:hidden" : "",
+            value ? "focus:ring-2 ring-offset-background" : "",
+            "[&>span]:flex [&>span]:items-center [&>span]:justify-center",
+            "data-[placeholder]:text-muted-foreground data-[placeholder]:italic"
+          )}
+        >
           <SelectValue placeholder="" />
         </SelectTrigger>
         <SelectContent>
@@ -114,11 +124,6 @@ export function ConfigurableDropdown({
           </div>
         </SelectContent>
       </Select>
-      {value && (
-        <div className="text-sm font-medium text-foreground">
-          {value}
-        </div>
-      )}
     </div>
   );
 }

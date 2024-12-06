@@ -36,11 +36,13 @@ export function ScheduleTable() {
   const getColumnContent = (colIndex: number, day: string, section: string, rowIndex: number, columnId: string) => {
     if (colIndex === 0) {
       return (
-        <StatusDropdown
-          sectionId={section}
-          rowIndex={rowIndex}
-          day={day}
-        />
+        <div className="flex items-center justify-center">
+          <StatusDropdown
+            sectionId={section}
+            rowIndex={rowIndex}
+            day={day}
+          />
+        </div>
       );
     }
 
@@ -50,24 +52,28 @@ export function ScheduleTable() {
 
     if (configurableDropdown) {
       return (
-        <ConfigurableDropdown
-          day={day}
-          sectionId={section}
-          rowIndex={rowIndex}
-          columnId={columnId}
-          dropdownId={configurableDropdown.id}
-        />
+        <div className="flex items-center justify-center">
+          <ConfigurableDropdown
+            day={day}
+            sectionId={section}
+            rowIndex={rowIndex}
+            columnId={columnId}
+            dropdownId={configurableDropdown.id}
+          />
+        </div>
       );
     }
 
     if (colIndex === 6 || colIndex === 9 || colIndex === 13) {
       return (
-        <YesNoDropdown
-          value={getYesNoValue(`${day}-${section}-${rowIndex}-${columnId}`)}
-          onChange={(value) => 
-            updateYesNoValue(`${day}-${section}-${rowIndex}-${columnId}`, value)
-          }
-        />
+        <div className="flex items-center justify-center">
+          <YesNoDropdown
+            value={getYesNoValue(`${day}-${section}-${rowIndex}-${columnId}`)}
+            onChange={(value) => 
+              updateYesNoValue(`${day}-${section}-${rowIndex}-${columnId}`, value)
+            }
+          />
+        </div>
       );
     }
 
@@ -96,7 +102,7 @@ export function ScheduleTable() {
             <TabsTrigger 
               key={day} 
               value={day} 
-              className="min-h-[3.5rem] px-2 py-2 text-black dark:text-white border-[#A1C6EA] border data-[state=active]:border-0 data-[state=active]:bg-[#A1C6EA] data-[state=active]:!text-black flex flex-col items-center justify-center rounded-none"
+              className="min-h-[3.5rem] px-2 py-2 text-white dark:text-white border-[#A1C6EA] border data-[state=active]:border-0 data-[state=active]:bg-[#A1C6EA] data-[state=active]:!text-black dark:data-[state=active]:!text-black flex flex-col items-center justify-center rounded-none"
             >
               <span className="font-medium text-sm truncate w-full text-center">
                 {day}
@@ -136,7 +142,7 @@ export function ScheduleTable() {
                         {columns.map((column, index) => (
                           <th
                             key={column.id}
-                            className="border p-2 bg-muted text-muted-foreground font-medium"
+                            className="border p-2 bg-muted text-muted-foreground font-medium text-center"
                           >
                             <EditableColumnHeader
                               column={column}
@@ -164,7 +170,7 @@ export function ScheduleTable() {
                           {columns.map((column, colIndex) => (
                             <td
                               key={`${column.id}-${rowIndex}`}
-                              className="border p-2 h-24 align-top hover:bg-muted/50 transition-colors"
+                              className="border p-2 h-24 align-middle hover:bg-muted/50 transition-colors"
                             >
                               {getColumnContent(colIndex, day, section.id, rowIndex, column.id)}
                             </td>

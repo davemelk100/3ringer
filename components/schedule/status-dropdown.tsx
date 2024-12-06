@@ -10,6 +10,7 @@ import {
 import { useScheduleStore } from "@/lib/store/schedule-store";
 import { RowStatus } from "@/lib/types/schedule";
 import { useRef } from "react";
+import { cn } from "@/lib/utils";
 
 interface StatusDropdownProps {
   sectionId: string;
@@ -24,22 +25,24 @@ export function StatusDropdown({ sectionId, rowIndex, day }: StatusDropdownProps
   const triggerRef = useRef<HTMLButtonElement>(null);
 
   return (
-    <div className="flex flex-col gap-2">
-      <Select value="" onValueChange={(value) => updateRowStatus(statusKey, value as RowStatus)}>
-        <SelectTrigger ref={triggerRef} className="w-24 h-8">
-          <SelectValue placeholder="" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="Vacant">Vacant</SelectItem>
-          <SelectItem value="Occupied">Occupied</SelectItem>
-          <SelectItem value="New">New</SelectItem>
-        </SelectContent>
-      </Select>
-      {currentStatus && (
-        <div className="text-sm font-medium text-foreground">
-          {currentStatus}
-        </div>
-      )}
-    </div>
+    <Select value={currentStatus || ""} onValueChange={(value) => updateRowStatus(statusKey, value as RowStatus)}>
+      <SelectTrigger 
+        ref={triggerRef} 
+        className={cn(
+          "w-24 h-8",
+          currentStatus ? "border-0 shadow-none [&>svg]:hidden" : "",
+          currentStatus ? "focus:ring-2 ring-offset-background" : "",
+          "[&>span]:flex [&>span]:items-center [&>span]:justify-center",
+          "data-[placeholder]:text-muted-foreground data-[placeholder]:italic"
+        )}
+      >
+        <SelectValue placeholder="" />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectItem value="Vacant">Vacant</SelectItem>
+        <SelectItem value="Occupied">Occupied</SelectItem>
+        <SelectItem value="New">New</SelectItem>
+      </SelectContent>
+    </Select>
   );
 }

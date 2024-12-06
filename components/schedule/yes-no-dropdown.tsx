@@ -8,6 +8,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useRef } from "react";
+import { cn } from "@/lib/utils";
 
 interface YesNoDropdownProps {
   value: string;
@@ -18,21 +19,23 @@ export function YesNoDropdown({ value, onChange }: YesNoDropdownProps) {
   const triggerRef = useRef<HTMLButtonElement>(null);
 
   return (
-    <div className="flex flex-col gap-2">
-      <Select value="" onValueChange={onChange}>
-        <SelectTrigger ref={triggerRef} className="w-20 h-8">
-          <SelectValue placeholder="" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="yes">Yes</SelectItem>
-          <SelectItem value="no">No</SelectItem>
-        </SelectContent>
-      </Select>
-      {value && (
-        <div className="text-sm font-medium text-foreground">
-          {value === 'yes' ? 'Yes' : 'No'}
-        </div>
-      )}
-    </div>
+    <Select value={value || ""} onValueChange={onChange}>
+      <SelectTrigger 
+        ref={triggerRef} 
+        className={cn(
+          "w-20 h-8",
+          value ? "border-0 shadow-none [&>svg]:hidden" : "",
+          value ? "focus:ring-2 ring-offset-background" : "",
+          "[&>span]:flex [&>span]:items-center [&>span]:justify-center",
+          "data-[placeholder]:text-muted-foreground data-[placeholder]:italic"
+        )}
+      >
+        <SelectValue placeholder="" />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectItem value="yes">Yes</SelectItem>
+        <SelectItem value="no">No</SelectItem>
+      </SelectContent>
+    </Select>
   );
 }
