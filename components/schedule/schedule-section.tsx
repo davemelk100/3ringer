@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Plus, Minus } from "lucide-react";
+import { Plus, Table2, Columns } from "lucide-react";
 import { EditableSectionTitle } from "./editable-section-title";
 import { ScheduleRow } from "./schedule-row";
 import { EditableColumnHeader } from "./editable-column-header";
@@ -32,22 +32,33 @@ export function ScheduleSection({
   const [deleteColumnIndex, setDeleteColumnIndex] = useState<number | null>(null);
 
   const canDeleteColumn = (index: number) => {
-    return index !== 3;
+    return index !== 0; // Prevent deletion of the Status column
   };
 
   return (
     <div className={cn("mb-8", className)}>
       <div className="flex items-center justify-between mb-2">
         <EditableSectionTitle section={section} />
-        <Button
-          onClick={() => onAddRow(section.id)}
-          size="sm"
-          variant="outline"
-          className="flex items-center gap-1"
-        >
-          <Plus className="h-4 w-4" />
-          Add Row
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button
+            onClick={addColumn}
+            size="sm"
+            variant="outline"
+            className="flex items-center gap-1"
+          >
+            <Columns className="h-4 w-4" />
+            Add Column
+          </Button>
+          <Button
+            onClick={() => onAddRow(section.id)}
+            size="sm"
+            variant="outline"
+            className="flex items-center gap-1"
+          >
+            <Table2 className="h-4 w-4" />
+            Add Row
+          </Button>
+        </div>
       </div>
       <table className="w-full border-collapse mb-4">
         <thead>
@@ -57,34 +68,12 @@ export function ScheduleSection({
                 key={`${day}-${section.id}-header-${column.id}-${index}`}
                 className="border p-1 bg-muted text-muted-foreground font-medium text-center relative group h-12"
               >
-                <div className="flex flex-col items-center">
-                  <EditableColumnHeader
-                    column={column}
-                    onUpdate={(updatedColumn) => updateColumn(index, updatedColumn)}
-                  />
-                  <div className="flex gap-1">
-                    {canDeleteColumn(index) && (
-                      <Button
-                        onClick={() => setDeleteColumnIndex(index)}
-                        size="sm"
-                        variant="ghost"
-                        className="h-5 w-5 p-0"
-                      >
-                        <Minus className="h-3 w-3" />
-                      </Button>
-                    )}
-                    {index === columns.length - 1 && (
-                      <Button
-                        onClick={addColumn}
-                        size="sm"
-                        variant="ghost"
-                        className="h-5 w-5 p-0"
-                      >
-                        <Plus className="h-3 w-3" />
-                      </Button>
-                    )}
-                  </div>
-                </div>
+                <EditableColumnHeader
+                  column={column}
+                  onUpdate={(updatedColumn) => updateColumn(index, updatedColumn)}
+                  onDelete={canDeleteColumn(index) ? () => setDeleteColumnIndex(index) : undefined}
+                  canDelete={canDeleteColumn(index)}
+                />
               </th>
             ))}
           </tr>

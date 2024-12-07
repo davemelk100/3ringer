@@ -2,14 +2,23 @@
 
 import { useState, useEffect, useRef } from "react";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { X } from "lucide-react";
 import { ColumnHeader } from "@/lib/types/schedule";
 
 interface EditableColumnHeaderProps {
   column: ColumnHeader;
   onUpdate: (column: ColumnHeader) => void;
+  onDelete?: () => void;
+  canDelete?: boolean;
 }
 
-export function EditableColumnHeader({ column, onUpdate }: EditableColumnHeaderProps) {
+export function EditableColumnHeader({ 
+  column, 
+  onUpdate,
+  onDelete,
+  canDelete = true
+}: EditableColumnHeaderProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [value, setValue] = useState(column.title);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -40,25 +49,37 @@ export function EditableColumnHeader({ column, onUpdate }: EditableColumnHeaderP
   }, [isEditing]);
 
   return (
-    <div 
-      onDoubleClick={handleDoubleClick} 
-      className="w-full min-h-[20px] cursor-text flex items-center justify-center"
-    >
-      {isEditing ? (
-        <Input
-          ref={inputRef}
-          type="text"
-          value={value}
-          onChange={(e) => setValue(e.target.value)}
-          onBlur={handleBlur}
-          onKeyDown={handleKeyDown}
-          className="h-5 min-h-5 px-1 py-0 text-sm text-center"
-          autoFocus
-        />
-      ) : (
-        <span className="text-sm font-medium">
-          {value || "(Click to edit)"}
-        </span>
+    <div className="relative group">
+      <div 
+        onDoubleClick={handleDoubleClick} 
+        className="w-full min-h-[20px] cursor-text flex items-center justify-center"
+      >
+        {isEditing ? (
+          <Input
+            ref={inputRef}
+            type="text"
+            value={value}
+            onChange={(e) => setValue(e.target.value)}
+            onBlur={handleBlur}
+            onKeyDown={handleKeyDown}
+            className="h-5 min-h-5 px-1 py-0 text-sm text-center"
+            autoFocus
+          />
+        ) : (
+          <span className="text-sm font-medium">
+            {value || "(Click to edit)"}
+          </span>
+        )}
+      </div>
+      {canDelete && onDelete && (
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={onDelete}
+          className="absolute -top-2 -right-2 h-5 w-5 p-0 opacity-0 group-hover:opacity-100 transition-opacity bg-destructive hover:bg-destructive/90 text-destructive-foreground"
+        >
+          <X className="h-3 w-3" />
+        </Button>
       )}
     </div>
   );

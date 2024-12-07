@@ -43,7 +43,7 @@ export function ScheduleTable() {
       >
         <div className="mt-4">
           <ScheduleHeader weekDays={weekDays} />
-          <div className="w-full bg-[#A1C6EA] p-4 mb-4 print:bg-transparent print:border-b">
+          <div className="w-full bg-[#A1C6EA] p-4 mb-8 print:bg-transparent print:border-b">
             <h2 className="text-2xl font-bold text-black uppercase text-left">
               {selectedDay.day} - {selectedDay.date}
             </h2>
