@@ -4,7 +4,6 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
 import { ScheduleCell } from "./schedule-cell";
-import { StatusDropdown } from "./status-dropdown";
 import { YesNoDropdown } from "./yes-no-dropdown";
 import { ConfigurableDropdown } from "./configurable-dropdown";
 import { DeleteConfirmation } from "./delete-confirmation";
@@ -30,18 +29,6 @@ export function ScheduleRow({
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   const getColumnContent = (colIndex: number, column: ColumnHeader) => {
-    if (colIndex === 0) {
-      return (
-        <div className="flex items-center justify-center">
-          <StatusDropdown
-            sectionId={section.id}
-            rowIndex={rowIndex}
-            day={day}
-          />
-        </div>
-      );
-    }
-
     if (column.type === 'dropdown') {
       return (
         <div className="flex items-center justify-center">
@@ -56,7 +43,7 @@ export function ScheduleRow({
       );
     }
 
-    if (colIndex === 6 || colIndex === 9 || colIndex === 13) {
+    if (colIndex === 5 || colIndex === 8 || colIndex === 12) {
       return (
         <div className="flex items-center justify-center">
           <YesNoDropdown
@@ -87,7 +74,7 @@ export function ScheduleRow({
         {columns.map((column, colIndex) => (
           <td
             key={`${day}-${section.id}-${column.id}-${rowIndex}-${colIndex}`}
-            className="border p-1 h-8 align-middle hover:bg-muted/50 transition-colors"
+            className="border p-1 h-12 align-middle hover:bg-muted/50 transition-colors"
           >
             {getColumnContent(colIndex, column)}
           </td>

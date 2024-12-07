@@ -2,7 +2,7 @@
 
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { ScheduleEvent, ScheduleState, ColumnHeader, ScheduleSection, RowStatus } from "@/lib/types/schedule";
+import { ScheduleEvent, ScheduleState, ColumnHeader, ScheduleSection } from "@/lib/types/schedule";
 import { scheduleConfig } from "@/lib/config/schedule";
 
 interface ScheduleStore extends ScheduleState {
@@ -18,8 +18,6 @@ interface ScheduleStore extends ScheduleState {
   updateSection: (section: ScheduleSection) => void;
   initializeColumns: () => void;
   initializeSections: () => void;
-  updateRowStatus: (key: string, status: RowStatus) => void;
-  getRowStatus: (key: string) => RowStatus | undefined;
   updateYesNoValue: (key: string, value: string) => void;
   getYesNoValue: (key: string) => string;
   updateDropdownValue: (key: string, value: string) => void;
@@ -35,7 +33,6 @@ export const useScheduleStore = create<ScheduleStore>()(
       events: {},
       sections: [],
       columns: [],
-      rowStatuses: {},
       yesNoValues: {},
       dropdownValues: {},
       dropdownOptions: {},
@@ -92,34 +89,29 @@ export const useScheduleStore = create<ScheduleStore>()(
           const deletedColumn = newColumns[index];
           newColumns.splice(index, 1);
 
-          // Clean up all related data
           const newEvents = { ...state.events };
           const newYesNoValues = { ...state.yesNoValues };
           const newDropdownValues = { ...state.dropdownValues };
           const newDropdownOptions = { ...state.dropdownOptions };
 
-          // Remove events for the deleted column
           Object.keys(newEvents).forEach(key => {
             if (key.includes(deletedColumn.id)) {
               delete newEvents[key];
             }
           });
 
-          // Remove yes/no values for the deleted column
           Object.keys(newYesNoValues).forEach(key => {
             if (key.includes(deletedColumn.id)) {
               delete newYesNoValues[key];
             }
           });
 
-          // Remove dropdown values for the deleted column
           Object.keys(newDropdownValues).forEach(key => {
             if (key.includes(deletedColumn.id)) {
               delete newDropdownValues[key];
             }
           });
 
-          // Remove dropdown options if it was a dropdown column
           if (deletedColumn.type === 'dropdown') {
             delete newDropdownOptions[deletedColumn.id];
           }
@@ -150,7 +142,6 @@ export const useScheduleStore = create<ScheduleStore>()(
           const newEvents = {};
           const newYesNoValues = {};
           const newDropdownValues = {};
-          const newRowStatuses = {};
 
           const processStateObject = (obj: Record<string, any>, newObj: Record<string, any>) => {
             Object.entries(obj).forEach(([key, value]) => {
@@ -177,24 +168,8 @@ export const useScheduleStore = create<ScheduleStore>()(
           processStateObject(state.yesNoValues, newYesNoValues);
           processStateObject(state.dropdownValues, newDropdownValues);
 
-          Object.entries(state.rowStatuses).forEach(([key, value]) => {
-            const [day, section, row] = key.split('-');
-            const currentRow = parseInt(row);
-            if (section === sectionId) {
-              if (currentRow === rowIndex) return;
-              if (currentRow > rowIndex) {
-                newRowStatuses[`${day}-${section}-${currentRow - 1}`] = value;
-              } else {
-                newRowStatuses[key] = value;
-              }
-            } else {
-              newRowStatuses[key] = value;
-            }
-          });
-
           return {
             events: newEvents,
-            rowStatuses: newRowStatuses,
             yesNoValues: newYesNoValues,
             dropdownValues: newDropdownValues,
             sections: state.sections.map(s =>
@@ -219,20 +194,6 @@ export const useScheduleStore = create<ScheduleStore>()(
         set((state) => ({
           sections: state.sections.length === 0 ? scheduleConfig.defaultSections : state.sections
         }));
-      },
-      updateRowStatus: (key: string, status: RowStatus | undefined) => {
-        set((state) => {
-          const newRowStatuses = { ...state.rowStatuses };
-          if (status === undefined) {
-            delete newRowStatuses[key];
-          } else {
-            newRowStatuses[key] = status;
-          }
-          return { rowStatuses: newRowStatuses };
-        });
-      },
-      getRowStatus: (key: string) => {
-        return get().rowStatuses[key];
       },
       updateYesNoValue: (key: string, value: string) => {
         set((state) => ({
@@ -280,7 +241,6 @@ export const useScheduleStore = create<ScheduleStore>()(
         events: state.events,
         sections: state.sections,
         columns: state.columns,
-        rowStatuses: state.rowStatuses,
         yesNoValues: state.yesNoValues,
         dropdownValues: state.dropdownValues,
         dropdownOptions: state.dropdownOptions,

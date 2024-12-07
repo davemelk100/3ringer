@@ -16,7 +16,6 @@ export interface ScheduleSection {
 export interface ScheduleState {
   events: Record<string, ScheduleEvent>;
   sections: ScheduleSection[];
-  rowStatuses: Record<string, RowStatus>;
   yesNoValues: Record<string, string>;
   dropdownValues: Record<string, string>;
   dropdownOptions: Record<string, string[]>;
@@ -39,8 +38,6 @@ export interface DropdownConfig {
   columnIndex: number;
   options: string[];
 }
-
-export type RowStatus = 'Vacant' | 'Occupied' | 'New';
 
 export interface WeekDay {
   day: string;

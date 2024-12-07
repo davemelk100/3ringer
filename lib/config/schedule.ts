@@ -7,7 +7,6 @@ export const DEFAULT_SECTIONS: ScheduleSection[] = [
 ];
 
 export const DEFAULT_COLUMNS: ColumnHeader[] = [
-  { id: "status", title: "Status", type: "dropdown" },
   { id: "name", title: "Name", type: "text" },
   { id: "phone", title: "Phone", type: "text" },
   { id: "type", title: "Type", type: "dropdown" },
@@ -26,7 +25,7 @@ export const DEFAULT_COLUMNS: ColumnHeader[] = [
 export const CONFIGURABLE_DROPDOWNS: DropdownConfig[] = [
   {
     id: "custom-dropdown-1",
-    columnIndex: 3,
+    columnIndex: 2,
     options: [],
   },
 ];
