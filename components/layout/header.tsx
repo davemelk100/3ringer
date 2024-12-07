@@ -17,9 +17,11 @@ export function Header({ selectedWeek, onWeekChange }: HeaderProps) {
   return (
     <div className="flex items-center justify-between px-4 h-16 bg-background print:hidden">
       {/* Left side calendar icon with logo text */}
-      <div className="flex-1 flex items-center gap-2">
-        <Calendar className="h-5 w-5 text-muted-foreground" />
-        <span className="text-xl font-semibold">Schedule</span>
+      <div className="flex-1 flex items-center gap-3">
+        <div className="flex items-center justify-center w-10 h-10 rounded-full bg-[#a1c7eb]">
+          <Calendar className="h-7 w-7 text-white" />
+        </div>
+        <span className="text-xl font-semibold uppercase">Schedule</span>
       </div>
       
       {/* Centered week selector */}

@@ -75,12 +75,13 @@ export function ConfigurableDropdown({
             value ? "border-0 shadow-none [&>svg]:hidden" : "",
             value ? "focus:ring-2 ring-offset-background" : "",
             "[&>span]:flex [&>span]:items-center [&>span]:justify-center",
-            "data-[placeholder]:text-muted-foreground data-[placeholder]:italic"
+            "data-[placeholder]:text-muted-foreground data-[placeholder]:italic",
+            "bg-white"
           )}
         >
           <SelectValue placeholder="" />
         </SelectTrigger>
-        <SelectContent>
+        <SelectContent className="bg-white">
           {value && (
             <SelectItem value="none">
               <span className="text-muted-foreground">Clear selection</span>

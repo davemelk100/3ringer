@@ -8,7 +8,7 @@ const roboto = Roboto({
   weight: ['300', '400', '500', '700'],
   display: 'swap',
   variable: '--font-roboto',
-  adjustFontFallback: false, // Disable automatic font fallback adjustment
+  adjustFontFallback: false,
   preload: true,
 });
 
@@ -27,9 +27,10 @@ export default function RootLayout({
       <body className={`${roboto.variable} font-sans antialiased`}>
         <ThemeProvider
           attribute="class"
-          defaultTheme="system"
-          enableSystem
+          defaultTheme="light"
+          enableSystem={false}
           disableTransitionOnChange
+          forcedTheme="light"
         >
           {children}
         </ThemeProvider>

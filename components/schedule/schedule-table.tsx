@@ -42,14 +42,16 @@ export function ScheduleTable() {
         }}
       >
         <div className="mt-4">
-          <ScheduleHeader weekDays={weekDays} />
-          <div className="w-full bg-[#A1C6EA] px-4 py-2 mb-8 print:bg-transparent print:border-b">
-            <h2 className="text-lg font-bold text-black uppercase text-left">
-              {selectedDay.day} - {selectedDay.date}, {format(selectedDay.fullDate, "yyyy")}
-            </h2>
+          <div>
+            <ScheduleHeader weekDays={weekDays} />
+            <div className="w-full bg-[#A1C6EA] px-4 py-2 mb-0 print:bg-transparent print:border-b">
+              <h2 className="text-lg font-bold text-black uppercase text-left">
+                {selectedDay.day} - {selectedDay.date}, {format(selectedDay.fullDate, "yyyy")}
+              </h2>
+            </div>
           </div>
           {weekDays.map(({ day }) => (
-            <TabsContent key={day} value={day} className="mt-0 print:block">
+            <TabsContent key={day} value={day} className="mt-0 print:block bg-white p-4">
               <div className="overflow-x-auto">
                 {sections.map((section, index) => (
                   <ScheduleSection

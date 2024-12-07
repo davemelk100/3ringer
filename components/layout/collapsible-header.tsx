@@ -15,7 +15,7 @@ export function CollapsibleHeader({ selectedWeek, onWeekChange }: CollapsibleHea
   const [isOpen, setIsOpen] = useState(true);
 
   return (
-    <div className="relative print:hidden border-b mb-8">
+    <div className="relative print:hidden border-b mb-8 bg-[#f5f5f5]">
       <div
         className={cn(
           "transition-all duration-300 ease-in-out overflow-hidden",
@@ -24,6 +24,7 @@ export function CollapsibleHeader({ selectedWeek, onWeekChange }: CollapsibleHea
       >
         <Header selectedWeek={selectedWeek} onWeekChange={onWeekChange} />
       </div>
+      <div className="h-4"></div>
       <Button
         variant="ghost"
         size="sm"

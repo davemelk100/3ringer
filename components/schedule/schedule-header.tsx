@@ -9,16 +9,20 @@ interface ScheduleHeaderProps {
 
 export function ScheduleHeader({ weekDays }: ScheduleHeaderProps) {
   return (
-    <TabsList className="w-full mb-0 grid grid-cols-7 gap-[5px] h-auto bg-transparent p-0">
-      {weekDays.map(({ day, date }) => (
+    <TabsList className="w-full mb-0 grid grid-cols-7 gap-0 h-auto bg-transparent p-0">
+      {weekDays.map(({ day, date }, index) => (
         <TabsTrigger 
           key={day} 
           value={day} 
-          className="h-12 px-2 py-1 text-foreground dark:text-foreground border-[#A1C6EA] border 
-            data-[state=active]:border-0 data-[state=active]:bg-[#A1C6EA] data-[state=active]:!text-black 
-            dark:data-[state=active]:!text-black flex flex-col items-center justify-center rounded-none
-            hover:bg-[#A1C6EA]/20 transition-colors duration-200
-            data-[state=active]:hover:bg-[#A1C6EA]"
+          className={`
+            h-12 px-2 py-1 text-foreground dark:text-foreground 
+            border-[#A1C6EA] border-t border-b border-r first:border-l
+            data-[state=active]:border-b-0
+            data-[state=active]:bg-[#A1C6EA] data-[state=active]:!text-black 
+            dark:data-[state=active]:!text-black flex flex-col items-center justify-center 
+            rounded-none hover:bg-[#A1C6EA]/20 transition-colors duration-200
+            data-[state=active]:hover:bg-[#A1C6EA]
+          `}
         >
           <span className="font-medium text-sm truncate w-full text-center">
             {day}
