@@ -61,7 +61,7 @@ export function ConfigurableDropdown({
   }, [isAddingOption]);
 
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col gap-2 w-full">
       <Select 
         value={value || "none"} 
         onValueChange={(newValue) => 
@@ -71,12 +71,12 @@ export function ConfigurableDropdown({
         <SelectTrigger 
           ref={triggerRef} 
           className={cn(
-            "w-full h-8",
+            "w-[95%] h-6",
             value ? "border-0 shadow-none [&>svg]:hidden" : "",
             value ? "focus:ring-2 ring-offset-background" : "",
             "[&>span]:flex [&>span]:items-center [&>span]:justify-center",
             "data-[placeholder]:text-muted-foreground data-[placeholder]:italic",
-            "bg-white"
+            "bg-white text-sm"
           )}
         >
           <SelectValue placeholder="" />
@@ -108,7 +108,7 @@ export function ConfigurableDropdown({
                       }
                     }
                   }}
-                  className="h-8"
+                  className="h-6"
                   placeholder="New option"
                 />
                 <button

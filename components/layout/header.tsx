@@ -18,10 +18,10 @@ export function Header({ selectedWeek, onWeekChange }: HeaderProps) {
     <div className="flex items-center justify-between px-4 h-16 bg-background print:hidden">
       {/* Left side calendar icon with logo text */}
       <div className="flex-1 flex items-center gap-3">
-        <div className="flex items-center justify-center w-10 h-10 rounded-full bg-[#a1c7eb]">
+        <div className="flex items-center justify-center w-10 h-10 rounded-full bg-[#0D324D]">
           <Calendar className="h-7 w-7 text-white" />
         </div>
-        <span className="text-xl font-semibold uppercase">Schedule</span>
+        <span className="text-xl font-semibold uppercase text-[#0D324D]">Schedule</span>
       </div>
       
       {/* Centered week selector */}
@@ -37,7 +37,7 @@ export function Header({ selectedWeek, onWeekChange }: HeaderProps) {
           onClick={handlePrint}
           title="Print Schedule"
         >
-          <Printer className="h-4 w-4" />
+          <Printer className="h-4 w-4 text-[#0D324D]" />
         </Button>
       </div>
     </div>

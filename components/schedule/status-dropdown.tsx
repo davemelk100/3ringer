@@ -32,12 +32,12 @@ export function StatusDropdown({ sectionId, rowIndex, day }: StatusDropdownProps
       <SelectTrigger 
         ref={triggerRef} 
         className={cn(
-          "w-24 h-8",
+          "w-[95%] h-6",
           currentStatus ? "border-0 shadow-none [&>svg]:hidden" : "",
           currentStatus ? "focus:ring-2 ring-offset-background" : "",
           "[&>span]:flex [&>span]:items-center [&>span]:justify-center",
           "data-[placeholder]:text-muted-foreground data-[placeholder]:italic",
-          "bg-white"
+          "bg-white text-sm"
         )}
       >
         <SelectValue placeholder="" />

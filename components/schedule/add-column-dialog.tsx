@@ -41,7 +41,7 @@ export function AddColumnDialog({ onAddColumn }: AddColumnDialogProps) {
           variant="outline"
           className="flex items-center gap-1"
         >
-          <Columns className="h-4 w-4" />
+          <Columns className="h-4 w-4 text-[#0D324D]" />
           Add Column
         </Button>
       </DialogTrigger>

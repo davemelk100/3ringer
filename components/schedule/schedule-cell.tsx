@@ -66,7 +66,7 @@ export function ScheduleCell({ day, columnId, rowIndex, section }: ScheduleCellP
   return (
     <div
       ref={cellRef}
-      className="h-full w-full flex items-center justify-center min-h-[2rem]"
+      className="h-full w-full flex items-center justify-center min-h-[1.5rem]"
       onDoubleClick={handleDoubleClick}
       tabIndex={0}
       onFocus={handleFocus}
@@ -75,9 +75,9 @@ export function ScheduleCell({ day, columnId, rowIndex, section }: ScheduleCellP
         <textarea
           ref={textareaRef}
           className={cn(
-            "w-full h-full min-h-[2rem] p-1 resize-none border rounded-md",
+            "w-full h-full min-h-[1.5rem] p-1 resize-none border rounded-md",
             "focus:outline-none focus:ring-2 focus:ring-primary",
-            "bg-background text-foreground text-center",
+            "bg-background text-foreground text-center text-sm",
             "flex items-center justify-center"
           )}
           value={content}

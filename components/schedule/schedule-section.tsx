@@ -33,7 +33,7 @@ export function ScheduleSection({
   const [deleteColumnIndex, setDeleteColumnIndex] = useState<number | null>(null);
 
   const canDeleteColumn = (index: number) => {
-    return columns.length > 1; // Allow deletion of any column as long as it's not the last one
+    return columns.length > 1;
   };
 
   const handleAddColumn = (title: string, type: 'text' | 'dropdown') => {
@@ -52,7 +52,7 @@ export function ScheduleSection({
             variant="outline"
             className="flex items-center gap-1"
           >
-            <Table2 className="h-4 w-4" />
+            <Table2 className="h-4 w-4 text-[#0D324D]" />
             Add Row
           </Button>
         </div>

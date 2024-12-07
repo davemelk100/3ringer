@@ -26,12 +26,12 @@ export function YesNoDropdown({ value, onChange }: YesNoDropdownProps) {
       <SelectTrigger 
         ref={triggerRef} 
         className={cn(
-          "w-20 h-8",
+          "w-[95%] h-6",
           value ? "border-0 shadow-none [&>svg]:hidden" : "",
           value ? "focus:ring-2 ring-offset-background" : "",
           "[&>span]:flex [&>span]:items-center [&>span]:justify-center",
           "data-[placeholder]:text-muted-foreground data-[placeholder]:italic",
-          "bg-white"
+          "bg-white text-sm"
         )}
       >
         <SelectValue placeholder="" />
