@@ -1,16 +1,14 @@
 "use client";
 
-import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Minus } from "lucide-react";
+import { X } from "lucide-react";
 import { ScheduleCell } from "./schedule-cell";
 import { StatusDropdown } from "./status-dropdown";
 import { YesNoDropdown } from "./yes-no-dropdown";
 import { ConfigurableDropdown } from "./configurable-dropdown";
-import { DeleteConfirmation } from "./delete-confirmation";
-import { scheduleConfig } from "@/lib/config/schedule";
 import { ScheduleSection, ColumnHeader } from "@/lib/types/schedule";
 import { useScheduleStore } from "@/lib/store/schedule-store";
+import { scheduleConfig } from "@/lib/config/schedule";
 
 interface ScheduleRowProps {
   rowIndex: number;
@@ -28,7 +26,6 @@ export function ScheduleRow({
   onDeleteRow,
 }: ScheduleRowProps) {
   const { getYesNoValue, updateYesNoValue } = useScheduleStore();
-  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   const getColumnContent = (colIndex: number, column: ColumnHeader) => {
     if (colIndex === 0) {
@@ -84,31 +81,28 @@ export function ScheduleRow({
     );
   };
 
-  return (
-    <>
-      <tr>
-        {columns.map((column, colIndex) => (
-          <td
-            key={`${day}-${section.id}-${column.id}-${rowIndex}-${colIndex}`}
-            className="border p-1 h-12 align-middle hover:bg-muted/50 transition-colors"
-          >
-            {getColumnContent(colIndex, column)}
-          </td>
-        ))}
-      </tr>
+  const canDeleteRow = section.rows > 1;
 
-      {section.rows > 1 && (
-        <DeleteConfirmation
-          isOpen={showDeleteConfirm}
-          onClose={() => setShowDeleteConfirm(false)}
-          onConfirm={() => {
-            onDeleteRow(section.id, rowIndex);
-            setShowDeleteConfirm(false);
-          }}
-          title="Delete Row"
-          description="Are you sure you want to delete this row? This action cannot be undone."
-        />
-      )}
-    </>
+  return (
+    <tr className="group/row">
+      {columns.map((column, colIndex) => (
+        <td
+          key={`${day}-${section.id}-${column.id}-${rowIndex}-${colIndex}`}
+          className="border p-1 h-12 align-middle hover:bg-muted/50 transition-colors relative"
+        >
+          {getColumnContent(colIndex, column)}
+          {colIndex === 0 && canDeleteRow && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => onDeleteRow(section.id, rowIndex)}
+              className="absolute -left-2 top-1/2 -translate-y-1/2 h-5 w-5 p-0 opacity-0 group-hover/row:opacity-100 transition-opacity bg-destructive hover:bg-destructive/90 text-destructive-foreground"
+            >
+              <X className="h-3 w-3" />
+            </Button>
+          )}
+        </td>
+      ))}
+    </tr>
   );
 }
