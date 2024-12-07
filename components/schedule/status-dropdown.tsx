@@ -25,7 +25,10 @@ export function StatusDropdown({ sectionId, rowIndex, day }: StatusDropdownProps
   const triggerRef = useRef<HTMLButtonElement>(null);
 
   return (
-    <Select value={currentStatus || ""} onValueChange={(value) => updateRowStatus(statusKey, value as RowStatus)}>
+    <Select 
+      value={currentStatus || "none"} 
+      onValueChange={(value) => updateRowStatus(statusKey, value === "none" ? undefined : value as RowStatus)}
+    >
       <SelectTrigger 
         ref={triggerRef} 
         className={cn(
@@ -39,6 +42,11 @@ export function StatusDropdown({ sectionId, rowIndex, day }: StatusDropdownProps
         <SelectValue placeholder="" />
       </SelectTrigger>
       <SelectContent>
+        {currentStatus && (
+          <SelectItem value="none">
+            <span className="text-muted-foreground">Clear</span>
+          </SelectItem>
+        )}
         <SelectItem value="Vacant">Vacant</SelectItem>
         <SelectItem value="Occupied">Occupied</SelectItem>
         <SelectItem value="New">New</SelectItem>

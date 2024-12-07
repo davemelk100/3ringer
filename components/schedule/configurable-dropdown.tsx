@@ -7,7 +7,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Plus } from "lucide-react";
+import { Plus, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { useState, useRef, useEffect } from "react";
 import { useScheduleStore } from "@/lib/store/schedule-store";
@@ -63,9 +63,9 @@ export function ConfigurableDropdown({
   return (
     <div className="flex flex-col gap-2">
       <Select 
-        value={value || ""} 
+        value={value || "none"} 
         onValueChange={(newValue) => 
-          updateDropdownValue(`${day}-${sectionId}-${rowIndex}-${columnId}`, newValue)
+          updateDropdownValue(`${day}-${sectionId}-${rowIndex}-${columnId}`, newValue === "none" ? "" : newValue)
         }
       >
         <SelectTrigger 
@@ -81,6 +81,11 @@ export function ConfigurableDropdown({
           <SelectValue placeholder="" />
         </SelectTrigger>
         <SelectContent>
+          {value && (
+            <SelectItem value="none">
+              <span className="text-muted-foreground">Clear selection</span>
+            </SelectItem>
+          )}
           {options.map((option) => (
             <SelectItem key={option} value={option}>
               {option}

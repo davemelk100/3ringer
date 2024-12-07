@@ -31,7 +31,7 @@ export function ScheduleTable() {
   }, [selectedWeek]);
 
   return (
-    <div className="w-full max-w-[95vw] mx-auto print:max-w-none print:w-full print:mx-0">
+    <div className="w-full">
       <CollapsibleHeader selectedWeek={selectedWeek} onWeekChange={setSelectedWeek} />
       <Tabs 
         value={selectedDay.day}
@@ -50,7 +50,7 @@ export function ScheduleTable() {
           </div>
           {weekDays.map(({ day }) => (
             <TabsContent key={day} value={day} className="mt-0 print:block">
-              <div className="overflow-x-auto px-4 print:p-0">
+              <div className="overflow-x-auto">
                 {sections.map((section, index) => (
                   <ScheduleSection
                     key={section.id}
