@@ -15,7 +15,7 @@ export function CollapsibleHeader({ selectedWeek, onWeekChange }: CollapsibleHea
   const [isOpen, setIsOpen] = useState(true);
 
   return (
-    <div className="relative print:hidden border-b mx-4 mb-8">
+    <div className="relative print:hidden border-b mb-8">
       <div
         className={cn(
           "transition-all duration-300 ease-in-out overflow-hidden",
@@ -28,7 +28,7 @@ export function CollapsibleHeader({ selectedWeek, onWeekChange }: CollapsibleHea
         variant="ghost"
         size="sm"
         onClick={() => setIsOpen(!isOpen)}
-        className="absolute -bottom-2.5 left-1/2 transform -translate-x-1/2 z-10 h-5 w-8 rounded bg-background border shadow-sm p-0 hover:bg-muted/50"
+        className="absolute -bottom-2.5 left-4 z-10 h-5 w-8 rounded-none bg-background border shadow-sm p-0 hover:bg-muted/50"
       >
         <ChevronUp 
           className={cn(
