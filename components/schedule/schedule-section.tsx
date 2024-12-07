@@ -2,11 +2,12 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Plus, Table2, Columns } from "lucide-react";
+import { Table2 } from "lucide-react";
 import { EditableSectionTitle } from "./editable-section-title";
 import { ScheduleRow } from "./schedule-row";
 import { EditableColumnHeader } from "./editable-column-header";
 import { DeleteConfirmation } from "./delete-confirmation";
+import { AddColumnDialog } from "./add-column-dialog";
 import { ScheduleSection as Section, ColumnHeader } from "@/lib/types/schedule";
 import { useScheduleStore } from "@/lib/store/schedule-store";
 import { cn } from "@/lib/utils";
@@ -35,20 +36,16 @@ export function ScheduleSection({
     return index !== 0; // Prevent deletion of the Status column
   };
 
+  const handleAddColumn = (title: string, type: 'text' | 'dropdown') => {
+    addColumn(title, type);
+  };
+
   return (
     <div className={cn("mb-8", className)}>
       <div className="flex items-center justify-between mb-2">
         <EditableSectionTitle section={section} />
         <div className="flex items-center gap-2">
-          <Button
-            onClick={addColumn}
-            size="sm"
-            variant="outline"
-            className="flex items-center gap-1"
-          >
-            <Columns className="h-4 w-4" />
-            Add Column
-          </Button>
+          <AddColumnDialog onAddColumn={handleAddColumn} />
           <Button
             onClick={() => onAddRow(section.id)}
             size="sm"

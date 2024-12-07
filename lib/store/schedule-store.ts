@@ -11,7 +11,7 @@ interface ScheduleStore extends ScheduleState {
   getEventByDayAndTime: (day: string, columnId: string, rowIndex: number, section: string) => ScheduleEvent | undefined;
   columns: ColumnHeader[];
   updateColumn: (index: number, column: ColumnHeader) => void;
-  addColumn: () => void;
+  addColumn: (title: string, type: 'text' | 'dropdown') => void;
   deleteColumn: (index: number) => void;
   addRow: (sectionId: string) => void;
   deleteRow: (sectionId: string, rowIndex: number) => void;
@@ -26,6 +26,7 @@ interface ScheduleStore extends ScheduleState {
   getDropdownValue: (key: string) => string;
   addDropdownOption: (dropdownId: string, option: string) => void;
   getDropdownOptions: (dropdownId: string) => string[];
+  getColumnDropdownId: (columnId: string) => string;
 }
 
 export const useScheduleStore = create<ScheduleStore>()(
@@ -63,14 +64,24 @@ export const useScheduleStore = create<ScheduleStore>()(
           return { columns: newColumns };
         });
       },
-      addColumn: () => {
+      addColumn: (title: string, type: 'text' | 'dropdown') => {
         set((state) => {
           const newColumnId = `column-${state.columns.length + 1}`;
+          const newColumn = { id: newColumnId, title, type };
+          
+          // If it's a dropdown column, initialize its options
+          if (type === 'dropdown') {
+            return {
+              columns: [...state.columns, newColumn],
+              dropdownOptions: {
+                ...state.dropdownOptions,
+                [newColumnId]: []
+              }
+            };
+          }
+          
           return {
-            columns: [
-              ...state.columns,
-              { id: newColumnId, title: `Header ${state.columns.length + 1}` }
-            ]
+            columns: [...state.columns, newColumn]
           };
         });
       },
@@ -79,36 +90,42 @@ export const useScheduleStore = create<ScheduleStore>()(
           if (index === 0) return state;
 
           const newColumns = [...state.columns];
+          const deletedColumn = newColumns[index];
           newColumns.splice(index, 1);
 
           const newEvents = { ...state.events };
-          const deletedColumnId = state.columns[index].id;
-          
           Object.keys(newEvents).forEach(key => {
-            if (key.includes(deletedColumnId)) {
+            if (key.includes(deletedColumn.id)) {
               delete newEvents[key];
             }
           });
 
           const newYesNoValues = { ...state.yesNoValues };
           Object.keys(newYesNoValues).forEach(key => {
-            if (key.includes(deletedColumnId)) {
+            if (key.includes(deletedColumn.id)) {
               delete newYesNoValues[key];
             }
           });
 
           const newDropdownValues = { ...state.dropdownValues };
           Object.keys(newDropdownValues).forEach(key => {
-            if (key.includes(deletedColumnId)) {
+            if (key.includes(deletedColumn.id)) {
               delete newDropdownValues[key];
             }
           });
+
+          // Clean up dropdown options if it was a dropdown column
+          const newDropdownOptions = { ...state.dropdownOptions };
+          if (deletedColumn.type === 'dropdown') {
+            delete newDropdownOptions[deletedColumn.id];
+          }
 
           return {
             columns: newColumns,
             events: newEvents,
             yesNoValues: newYesNoValues,
-            dropdownValues: newDropdownValues
+            dropdownValues: newDropdownValues,
+            dropdownOptions: newDropdownOptions
           };
         });
       },
@@ -126,13 +143,11 @@ export const useScheduleStore = create<ScheduleStore>()(
           const section = state.sections.find(s => s.id === sectionId);
           if (!section || section.rows <= 1) return state;
 
-          // Create new state objects
           const newEvents = {};
           const newYesNoValues = {};
           const newDropdownValues = {};
           const newRowStatuses = {};
 
-          // Helper function to process keys and values
           const processStateObject = (obj: Record<string, any>, newObj: Record<string, any>) => {
             Object.entries(obj).forEach(([key, value]) => {
               const parts = key.split('-');
@@ -141,9 +156,8 @@ export const useScheduleStore = create<ScheduleStore>()(
               const row = parseInt(parts[parts.length - 1]);
               
               if (section === sectionId) {
-                if (row === rowIndex) return; // Skip deleted row
+                if (row === rowIndex) return;
                 if (row > rowIndex) {
-                  // Shift rows up
                   const newKey = parts.slice(0, -1).join('-') + '-' + (row - 1);
                   newObj[newKey] = value;
                 } else {
@@ -155,12 +169,10 @@ export const useScheduleStore = create<ScheduleStore>()(
             });
           };
 
-          // Process each state object
           processStateObject(state.events, newEvents);
           processStateObject(state.yesNoValues, newYesNoValues);
           processStateObject(state.dropdownValues, newDropdownValues);
 
-          // Process row statuses separately (different key structure)
           Object.entries(state.rowStatuses).forEach(([key, value]) => {
             const [day, section, row] = key.split('-');
             const currentRow = parseInt(row);
@@ -204,13 +216,16 @@ export const useScheduleStore = create<ScheduleStore>()(
           sections: state.sections.length === 0 ? scheduleConfig.defaultSections : state.sections
         }));
       },
-      updateRowStatus: (key: string, status: RowStatus) => {
-        set((state) => ({
-          rowStatuses: {
-            ...state.rowStatuses,
-            [key]: status,
-          },
-        }));
+      updateRowStatus: (key: string, status: RowStatus | undefined) => {
+        set((state) => {
+          const newRowStatuses = { ...state.rowStatuses };
+          if (status === undefined) {
+            delete newRowStatuses[key];
+          } else {
+            newRowStatuses[key] = status;
+          }
+          return { rowStatuses: newRowStatuses };
+        });
       },
       getRowStatus: (key: string) => {
         return get().rowStatuses[key];
@@ -227,12 +242,15 @@ export const useScheduleStore = create<ScheduleStore>()(
         return get().yesNoValues[key] || '';
       },
       updateDropdownValue: (key: string, value: string) => {
-        set((state) => ({
-          dropdownValues: {
-            ...state.dropdownValues,
-            [key]: value,
-          },
-        }));
+        set((state) => {
+          const newDropdownValues = { ...state.dropdownValues };
+          if (value === '') {
+            delete newDropdownValues[key];
+          } else {
+            newDropdownValues[key] = value;
+          }
+          return { dropdownValues: newDropdownValues };
+        });
       },
       getDropdownValue: (key: string) => {
         return get().dropdownValues[key] || '';
@@ -247,6 +265,9 @@ export const useScheduleStore = create<ScheduleStore>()(
       },
       getDropdownOptions: (dropdownId: string) => {
         return get().dropdownOptions[dropdownId] || [];
+      },
+      getColumnDropdownId: (columnId: string) => {
+        return columnId;
       },
     }),
     {

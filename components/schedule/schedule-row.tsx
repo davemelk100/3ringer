@@ -10,7 +10,6 @@ import { ConfigurableDropdown } from "./configurable-dropdown";
 import { DeleteConfirmation } from "./delete-confirmation";
 import { ScheduleSection, ColumnHeader } from "@/lib/types/schedule";
 import { useScheduleStore } from "@/lib/store/schedule-store";
-import { scheduleConfig } from "@/lib/config/schedule";
 
 interface ScheduleRowProps {
   rowIndex: number;
@@ -43,11 +42,7 @@ export function ScheduleRow({
       );
     }
 
-    const configurableDropdown = scheduleConfig.configurableDropdowns.find(
-      (dropdown) => dropdown.columnIndex === colIndex
-    );
-
-    if (configurableDropdown) {
+    if (column.type === 'dropdown') {
       return (
         <div className="flex items-center justify-center">
           <ConfigurableDropdown
@@ -55,7 +50,7 @@ export function ScheduleRow({
             sectionId={section.id}
             rowIndex={rowIndex}
             columnId={column.id}
-            dropdownId={configurableDropdown.id}
+            dropdownId={column.id}
           />
         </div>
       );

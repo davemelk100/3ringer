@@ -7,20 +7,20 @@ export const DEFAULT_SECTIONS: ScheduleSection[] = [
 ];
 
 export const DEFAULT_COLUMNS: ColumnHeader[] = [
-  { id: "status", title: "Status" },
-  { id: "name", title: "Name" },
-  { id: "phone", title: "Phone" },
-  { id: "type", title: "Type" },
-  { id: "size", title: "Size" },
-  { id: "price", title: "Price" },
-  { id: "paid", title: "Paid" },
-  { id: "notes", title: "Notes" },
-  { id: "time", title: "Time" },
-  { id: "confirmed", title: "Confirmed" },
-  { id: "address", title: "Address" },
-  { id: "city", title: "City" },
-  { id: "email", title: "Email" },
-  { id: "complete", title: "Complete" },
+  { id: "status", title: "Status", type: "dropdown" },
+  { id: "name", title: "Name", type: "text" },
+  { id: "phone", title: "Phone", type: "text" },
+  { id: "type", title: "Type", type: "dropdown" },
+  { id: "size", title: "Size", type: "text" },
+  { id: "price", title: "Price", type: "text" },
+  { id: "paid", title: "Paid", type: "dropdown" },
+  { id: "notes", title: "Notes", type: "text" },
+  { id: "time", title: "Time", type: "text" },
+  { id: "confirmed", title: "Confirmed", type: "dropdown" },
+  { id: "address", title: "Address", type: "text" },
+  { id: "city", title: "City", type: "text" },
+  { id: "email", title: "Email", type: "text" },
+  { id: "complete", title: "Complete", type: "dropdown" },
 ];
 
 export const CONFIGURABLE_DROPDOWNS: DropdownConfig[] = [
