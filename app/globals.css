@@ -104,7 +104,6 @@
     padding: 8px !important;
   }
 
-  /* Add page breaks between sections */
   .section-break {
     page-break-before: always !important;
   }
@@ -117,7 +116,6 @@
   }
 }
 
-/* Remove border radius from all buttons and dropdowns */
 button,
 [role="combobox"],
 [role="listbox"],
