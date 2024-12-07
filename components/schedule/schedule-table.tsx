@@ -8,7 +8,7 @@ import { useColumns } from "./use-columns";
 import { ScheduleHeader } from "./schedule-header";
 import { ScheduleSection } from "./schedule-section";
 import { CollapsibleHeader } from "@/components/layout/collapsible-header";
-import { startOfWeek } from "date-fns";
+import { startOfWeek, format } from "date-fns";
 
 export function ScheduleTable() {
   const [selectedWeek, setSelectedWeek] = useState(() => startOfWeek(new Date(), { weekStartsOn: 1 }));
@@ -45,7 +45,7 @@ export function ScheduleTable() {
           <ScheduleHeader weekDays={weekDays} />
           <div className="w-full bg-[#A1C6EA] px-4 py-2 mb-8 print:bg-transparent print:border-b">
             <h2 className="text-lg font-bold text-black uppercase text-left">
-              {selectedDay.day} - {selectedDay.date}
+              {selectedDay.day} - {selectedDay.date}, {format(selectedDay.fullDate, "yyyy")}
             </h2>
           </div>
           {weekDays.map(({ day }) => (

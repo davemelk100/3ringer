@@ -15,18 +15,15 @@ export function Header({ selectedWeek, onWeekChange }: HeaderProps) {
   };
 
   return (
-    <div className="flex items-center justify-between px-4 h-16 bg-background border-b print:hidden">
+    <div className="flex items-center justify-between px-4 h-16 bg-background print:hidden">
       {/* Left side calendar icon with logo text */}
       <div className="flex-1 flex items-center gap-2">
-        <Calendar className="h-18 w-18 text-muted-foreground" />
-        <span className="text-xl font-semibold">Logo</span>
+        <Calendar className="h-5 w-5 text-muted-foreground" />
+        <span className="text-xl font-semibold">Schedule</span>
       </div>
       
       {/* Centered week selector */}
       <div className="flex items-center gap-2">
-        <label htmlFor="week-selector" className="text-sm font-medium whitespace-nowrap">
-          Select a week:
-        </label>
         <WeekSelector selectedWeek={selectedWeek} onWeekChange={onWeekChange} />
       </div>
       

@@ -123,29 +123,29 @@ export const useScheduleStore = create<ScheduleStore>()(
       },
       deleteRow: (sectionId, rowIndex) => {
         set((state) => {
-          const newEvents = { ...state.events };
-          const newRowStatuses = { ...state.rowStatuses };
-          const newYesNoValues = { ...state.yesNoValues };
-          const newDropdownValues = { ...state.dropdownValues };
-          const section = state.sections.find((s) => s.id === sectionId);
-          
+          const section = state.sections.find(s => s.id === sectionId);
           if (!section || section.rows <= 1) return state;
 
-          const updateKeys = (obj: Record<string, any>, pattern: RegExp) => {
-            const newObj: Record<string, any> = {};
+          // Create new state objects
+          const newEvents = {};
+          const newYesNoValues = {};
+          const newDropdownValues = {};
+          const newRowStatuses = {};
+
+          // Helper function to process keys and values
+          const processStateObject = (obj: Record<string, any>, newObj: Record<string, any>) => {
             Object.entries(obj).forEach(([key, value]) => {
-              const match = key.match(pattern);
-              if (match) {
-                const [_, day, section, row, rest] = match;
-                const currentRow = parseInt(row);
-                if (section === sectionId) {
-                  if (currentRow === rowIndex) {
-                    return;
-                  } else if (currentRow > rowIndex) {
-                    newObj[`${day}-${section}-${currentRow - 1}-${rest}`] = value;
-                  } else {
-                    newObj[key] = value;
-                  }
+              const parts = key.split('-');
+              const day = parts[0];
+              const section = parts[parts.length - 2];
+              const row = parseInt(parts[parts.length - 1]);
+              
+              if (section === sectionId) {
+                if (row === rowIndex) return; // Skip deleted row
+                if (row > rowIndex) {
+                  // Shift rows up
+                  const newKey = parts.slice(0, -1).join('-') + '-' + (row - 1);
+                  newObj[newKey] = value;
                 } else {
                   newObj[key] = value;
                 }
@@ -153,22 +153,37 @@ export const useScheduleStore = create<ScheduleStore>()(
                 newObj[key] = value;
               }
             });
-            return newObj;
           };
 
-          const updatedEvents = updateKeys(newEvents, /^(.+)-(.+)-(\d+)-(.+)$/);
-          const updatedRowStatuses = updateKeys(newRowStatuses, /^(.+)-(.+)-(\d+)$/);
-          const updatedYesNoValues = updateKeys(newYesNoValues, /^(.+)-(.+)-(\d+)-(.+)$/);
-          const updatedDropdownValues = updateKeys(newDropdownValues, /^(.+)-(.+)-(\d+)-(.+)$/);
+          // Process each state object
+          processStateObject(state.events, newEvents);
+          processStateObject(state.yesNoValues, newYesNoValues);
+          processStateObject(state.dropdownValues, newDropdownValues);
+
+          // Process row statuses separately (different key structure)
+          Object.entries(state.rowStatuses).forEach(([key, value]) => {
+            const [day, section, row] = key.split('-');
+            const currentRow = parseInt(row);
+            if (section === sectionId) {
+              if (currentRow === rowIndex) return;
+              if (currentRow > rowIndex) {
+                newRowStatuses[`${day}-${section}-${currentRow - 1}`] = value;
+              } else {
+                newRowStatuses[key] = value;
+              }
+            } else {
+              newRowStatuses[key] = value;
+            }
+          });
 
           return {
-            events: updatedEvents,
-            rowStatuses: updatedRowStatuses,
-            yesNoValues: updatedYesNoValues,
-            dropdownValues: updatedDropdownValues,
-            sections: state.sections.map((s) =>
+            events: newEvents,
+            rowStatuses: newRowStatuses,
+            yesNoValues: newYesNoValues,
+            dropdownValues: newDropdownValues,
+            sections: state.sections.map(s =>
               s.id === sectionId
-                ? { ...s, rows: Math.max(1, s.rows - 1) }
+                ? { ...s, rows: s.rows - 1 }
                 : s
             ),
           };
