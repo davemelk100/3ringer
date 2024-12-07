@@ -44,7 +44,7 @@ export function StatusDropdown({ sectionId, rowIndex, day }: StatusDropdownProps
       <SelectContent>
         {currentStatus && (
           <SelectItem value="none">
-            <span className="text-muted-foreground">Clear</span>
+            <span className="text-muted-foreground">Clear selection</span>
           </SelectItem>
         )}
         <SelectItem value="Vacant">Vacant</SelectItem>

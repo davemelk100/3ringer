@@ -19,7 +19,10 @@ export function YesNoDropdown({ value, onChange }: YesNoDropdownProps) {
   const triggerRef = useRef<HTMLButtonElement>(null);
 
   return (
-    <Select value={value || "none"} onValueChange={(val) => onChange(val === "none" ? "" : val)}>
+    <Select 
+      value={value || "none"} 
+      onValueChange={(val) => onChange(val === "none" ? "" : val)}
+    >
       <SelectTrigger 
         ref={triggerRef} 
         className={cn(
@@ -35,7 +38,7 @@ export function YesNoDropdown({ value, onChange }: YesNoDropdownProps) {
       <SelectContent>
         {value && (
           <SelectItem value="none">
-            <span className="text-muted-foreground">Clear</span>
+            <span className="text-muted-foreground">Clear selection</span>
           </SelectItem>
         )}
         <SelectItem value="yes">Yes</SelectItem>

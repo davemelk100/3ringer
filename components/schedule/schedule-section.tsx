@@ -33,7 +33,7 @@ export function ScheduleSection({
   const [deleteColumnIndex, setDeleteColumnIndex] = useState<number | null>(null);
 
   const canDeleteColumn = (index: number) => {
-    return index !== 0; // Prevent deletion of the Status column
+    return columns.length > 1; // Allow deletion of any column as long as it's not the last one
   };
 
   const handleAddColumn = (title: string, type: 'text' | 'dropdown') => {

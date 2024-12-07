@@ -69,7 +69,6 @@ export const useScheduleStore = create<ScheduleStore>()(
           const newColumnId = `column-${state.columns.length + 1}`;
           const newColumn = { id: newColumnId, title, type };
           
-          // If it's a dropdown column, initialize its options
           if (type === 'dropdown') {
             return {
               columns: [...state.columns, newColumn],
@@ -87,35 +86,40 @@ export const useScheduleStore = create<ScheduleStore>()(
       },
       deleteColumn: (index) => {
         set((state) => {
-          if (index === 0) return state;
+          if (state.columns.length <= 1) return state;
 
           const newColumns = [...state.columns];
           const deletedColumn = newColumns[index];
           newColumns.splice(index, 1);
 
+          // Clean up all related data
           const newEvents = { ...state.events };
+          const newYesNoValues = { ...state.yesNoValues };
+          const newDropdownValues = { ...state.dropdownValues };
+          const newDropdownOptions = { ...state.dropdownOptions };
+
+          // Remove events for the deleted column
           Object.keys(newEvents).forEach(key => {
             if (key.includes(deletedColumn.id)) {
               delete newEvents[key];
             }
           });
 
-          const newYesNoValues = { ...state.yesNoValues };
+          // Remove yes/no values for the deleted column
           Object.keys(newYesNoValues).forEach(key => {
             if (key.includes(deletedColumn.id)) {
               delete newYesNoValues[key];
             }
           });
 
-          const newDropdownValues = { ...state.dropdownValues };
+          // Remove dropdown values for the deleted column
           Object.keys(newDropdownValues).forEach(key => {
             if (key.includes(deletedColumn.id)) {
               delete newDropdownValues[key];
             }
           });
 
-          // Clean up dropdown options if it was a dropdown column
-          const newDropdownOptions = { ...state.dropdownOptions };
+          // Remove dropdown options if it was a dropdown column
           if (deletedColumn.type === 'dropdown') {
             delete newDropdownOptions[deletedColumn.id];
           }
