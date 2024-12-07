@@ -83,25 +83,27 @@ export function ScheduleRow({
 
   return (
     <>
-      <tr className="group/row">
+      <tr className="group/row relative">
         {columns.map((column, colIndex) => (
           <td
             key={`${day}-${section.id}-${column.id}-${rowIndex}-${colIndex}`}
-            className="border p-1 h-12 align-middle hover:bg-muted/50 transition-colors relative"
+            className="border p-1 h-12 align-middle hover:bg-muted/50 transition-colors"
           >
             {getColumnContent(colIndex, column)}
-            {colIndex === 0 && canDeleteRow && (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setShowDeleteConfirm(true)}
-                className="absolute -left-2 top-1/2 -translate-y-1/2 h-5 w-5 p-0 opacity-0 group-hover/row:opacity-100 transition-opacity bg-destructive hover:bg-destructive/90 text-destructive-foreground"
-              >
-                <X className="h-3 w-3" />
-              </Button>
-            )}
           </td>
         ))}
+        {canDeleteRow && (
+          <td className="w-0 p-0 border-0">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setShowDeleteConfirm(true)}
+              className="h-5 w-5 p-0 opacity-0 group-hover/row:opacity-100 transition-opacity bg-destructive hover:bg-destructive/90 text-destructive-foreground -ml-5"
+            >
+              <X className="h-3 w-3" />
+            </Button>
+          </td>
+        )}
       </tr>
 
       <DeleteConfirmation

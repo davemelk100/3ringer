@@ -72,14 +72,16 @@ export function EditableColumnHeader({
         )}
       </div>
       {canDelete && onDelete && (
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={onDelete}
-          className="absolute -top-2 -right-2 h-5 w-5 p-0 opacity-0 group-hover:opacity-100 transition-opacity bg-destructive hover:bg-destructive/90 text-destructive-foreground"
-        >
-          <X className="h-3 w-3" />
-        </Button>
+        <div className="absolute -top-2 right-0 z-10">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={onDelete}
+            className="h-5 w-5 p-0 opacity-0 group-hover:opacity-100 transition-opacity bg-destructive hover:bg-destructive/90 text-destructive-foreground"
+          >
+            <X className="h-3 w-3" />
+          </Button>
+        </div>
       )}
     </div>
   );
