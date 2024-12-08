@@ -5,12 +5,25 @@ import { Button } from "@/components/ui/button";
 import { Table2, Plus } from "lucide-react";
 import { EditableSectionTitle } from "./editable-section-title";
 import { ScheduleRow } from "./schedule-row";
-import { EditableColumnHeader } from "./editable-column-header";
 import { DeleteConfirmation } from "./delete-confirmation";
 import { AddColumnDialog } from "./add-column-dialog";
 import { ScheduleSection as Section, ColumnHeader } from "@/lib/types/schedule";
 import { useScheduleStore } from "@/lib/store/schedule-store";
 import { cn } from "@/lib/utils";
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent,
+} from "@dnd-kit/core";
+import {
+  SortableContext,
+  horizontalListSortingStrategy,
+} from "@dnd-kit/sortable";
+import { DraggableColumnHeader } from "./draggable-column-header";
 
 interface ScheduleSectionProps {
   section: Section;
@@ -29,8 +42,17 @@ export function ScheduleSection({
   onDeleteRow,
   className
 }: ScheduleSectionProps) {
-  const { updateColumn, addColumn, deleteColumn } = useScheduleStore();
+  const { updateColumn, addColumn, deleteColumn, reorderColumns } = useScheduleStore();
   const [deleteColumnIndex, setDeleteColumnIndex] = useState<number | null>(null);
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
+    }),
+    useSensor(KeyboardSensor)
+  );
 
   const canDeleteColumn = (index: number) => {
     return columns.length > 1;
@@ -38,6 +60,17 @@ export function ScheduleSection({
 
   const handleAddColumn = (title: string, type: 'text' | 'dropdown') => {
     addColumn(title, type);
+  };
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    
+    if (over && active.id !== over.id) {
+      const oldIndex = columns.findIndex((col) => col.id === active.id);
+      const newIndex = columns.findIndex((col) => col.id === over.id);
+      
+      reorderColumns(oldIndex, newIndex);
+    }
   };
 
   return (
@@ -59,37 +92,45 @@ export function ScheduleSection({
         </div>
       </div>
       <div className="relative">
-        <table className="w-full border-collapse mb-4">
-          <thead className="sticky top-0 z-10">
-            <tr>
-              {columns.map((column, index) => (
-                <th
-                  key={`${day}-${section.id}-header-${column.id}-${index}`}
-                  className="border p-1 bg-muted text-muted-foreground font-medium text-center relative group h-10"
+        <DndContext
+          sensors={sensors}
+          collisionDetection={closestCenter}
+          onDragEnd={handleDragEnd}
+        >
+          <table className="w-full border-collapse mb-4">
+            <thead className="sticky top-0 z-10">
+              <tr>
+                <SortableContext
+                  items={columns.map(col => col.id)}
+                  strategy={horizontalListSortingStrategy}
                 >
-                  <EditableColumnHeader
-                    column={column}
-                    onUpdate={(updatedColumn) => updateColumn(index, updatedColumn)}
-                    onDelete={canDeleteColumn(index) ? () => setDeleteColumnIndex(index) : undefined}
-                    canDelete={canDeleteColumn(index)}
-                  />
-                </th>
+                  {columns.map((column, index) => (
+                    <DraggableColumnHeader
+                      key={`${day}-${section.id}-header-${column.id}-${index}`}
+                      column={column}
+                      index={index}
+                      onUpdate={(updatedColumn) => updateColumn(index, updatedColumn)}
+                      onDelete={canDeleteColumn(index) ? () => setDeleteColumnIndex(index) : undefined}
+                      canDelete={canDeleteColumn(index)}
+                    />
+                  ))}
+                </SortableContext>
+              </tr>
+            </thead>
+            <tbody>
+              {Array.from({ length: section.rows }).map((_, rowIndex) => (
+                <ScheduleRow
+                  key={`${day}-${section.id}-row-${rowIndex}`}
+                  rowIndex={rowIndex}
+                  section={section}
+                  columns={columns}
+                  day={day}
+                  onDeleteRow={onDeleteRow}
+                />
               ))}
-            </tr>
-          </thead>
-          <tbody>
-            {Array.from({ length: section.rows }).map((_, rowIndex) => (
-              <ScheduleRow
-                key={`${day}-${section.id}-row-${rowIndex}`}
-                rowIndex={rowIndex}
-                section={section}
-                columns={columns}
-                day={day}
-                onDeleteRow={onDeleteRow}
-              />
-            ))}
-          </tbody>
-        </table>
+            </tbody>
+          </table>
+        </DndContext>
       </div>
 
       <DeleteConfirmation

@@ -13,6 +13,7 @@ interface ScheduleStore extends ScheduleState {
   updateColumn: (index: number, column: ColumnHeader) => void;
   addColumn: (title: string, type: 'text' | 'dropdown') => void;
   deleteColumn: (index: number) => void;
+  reorderColumns: (oldIndex: number, newIndex: number) => void;
   addRow: (sectionId: string) => void;
   deleteRow: (sectionId: string, rowIndex: number) => void;
   updateSection: (section: ScheduleSection) => void;
@@ -123,6 +124,14 @@ export const useScheduleStore = create<ScheduleStore>()(
             dropdownValues: newDropdownValues,
             dropdownOptions: newDropdownOptions
           };
+        });
+      },
+      reorderColumns: (oldIndex: number, newIndex: number) => {
+        set((state) => {
+          const newColumns = [...state.columns];
+          const [movedColumn] = newColumns.splice(oldIndex, 1);
+          newColumns.splice(newIndex, 0, movedColumn);
+          return { columns: newColumns };
         });
       },
       addRow: (sectionId) => {
