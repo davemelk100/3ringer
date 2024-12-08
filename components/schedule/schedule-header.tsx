@@ -20,8 +20,10 @@ export function ScheduleHeader({ weekDays }: ScheduleHeaderProps) {
             data-[state=active]:border-b-0
             data-[state=active]:bg-[#A1C6EA] data-[state=active]:!text-black 
             dark:data-[state=active]:!text-black flex flex-col items-center justify-center 
-            rounded-none hover:bg-[#A1C6EA]/20 transition-colors duration-200
+            rounded-none transition-colors duration-200
+            hover:bg-[#A1C6EA] hover:text-black
             data-[state=active]:hover:bg-[#A1C6EA]
+            bg-[#f1f5f9]
           `}
         >
           <span className="font-medium text-sm truncate w-full text-center">
