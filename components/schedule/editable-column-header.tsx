@@ -49,7 +49,7 @@ export function EditableColumnHeader({
   }, [isEditing]);
 
   return (
-    <div className="relative group">
+    <div className="relative group h-full flex items-center justify-center">
       <div 
         onDoubleClick={handleDoubleClick} 
         className="w-full min-h-[20px] cursor-text flex items-center justify-center"
@@ -72,16 +72,14 @@ export function EditableColumnHeader({
         )}
       </div>
       {canDelete && onDelete && (
-        <div className="absolute -top-2 right-0 z-10">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={onDelete}
-            className="h-5 w-5 p-0 opacity-0 group-hover:opacity-100 transition-opacity bg-destructive hover:bg-destructive/90 text-destructive-foreground"
-          >
-            <X className="h-3 w-3" />
-          </Button>
-        </div>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={onDelete}
+          className="absolute -top-[1px] -right-[1px] h-5 w-5 p-0 opacity-0 group-hover:opacity-100 transition-opacity bg-destructive hover:bg-destructive/90 text-destructive-foreground rounded-none"
+        >
+          <X className="h-3 w-3" />
+        </Button>
       )}
     </div>
   );

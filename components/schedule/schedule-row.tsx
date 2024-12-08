@@ -46,7 +46,7 @@ export function ScheduleRow({
                 section: section.id,
               });
             }}
-            className="min-h-[2.5rem] bg-white"
+            className="min-h-[2rem] bg-white"
             placeholder="Enter address..."
           />
         </div>
@@ -98,7 +98,7 @@ export function ScheduleRow({
         {columns.map((column, colIndex) => (
           <td
             key={`${day}-${section.id}-${column.id}-${rowIndex}-${colIndex}`}
-            className="border p-1 h-12 align-middle hover:bg-muted/50 transition-colors bg-white"
+            className="border p-1 h-10 align-middle hover:bg-muted/50 transition-colors bg-white"
           >
             {getColumnContent(colIndex, column)}
           </td>

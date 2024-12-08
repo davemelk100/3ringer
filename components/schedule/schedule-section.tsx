@@ -36,7 +36,7 @@ export function ScheduleSection({
     return columns.length > 1;
   };
 
-  const handleAddColumn = (title: string, type: 'text' | 'dropdown' | 'address') => {
+  const handleAddColumn = (title: string, type: 'text' | 'dropdown') => {
     addColumn(title, type);
   };
 
@@ -58,37 +58,39 @@ export function ScheduleSection({
           </Button>
         </div>
       </div>
-      <table className="w-full border-collapse mb-4">
-        <thead>
-          <tr>
-            {columns.map((column, index) => (
-              <th
-                key={`${day}-${section.id}-header-${column.id}-${index}`}
-                className="border p-1 bg-muted text-muted-foreground font-medium text-center relative group h-12"
-              >
-                <EditableColumnHeader
-                  column={column}
-                  onUpdate={(updatedColumn) => updateColumn(index, updatedColumn)}
-                  onDelete={canDeleteColumn(index) ? () => setDeleteColumnIndex(index) : undefined}
-                  canDelete={canDeleteColumn(index)}
-                />
-              </th>
+      <div className="relative">
+        <table className="w-full border-collapse mb-4">
+          <thead className="sticky top-0 z-10">
+            <tr>
+              {columns.map((column, index) => (
+                <th
+                  key={`${day}-${section.id}-header-${column.id}-${index}`}
+                  className="border p-1 bg-muted text-muted-foreground font-medium text-center relative group h-10"
+                >
+                  <EditableColumnHeader
+                    column={column}
+                    onUpdate={(updatedColumn) => updateColumn(index, updatedColumn)}
+                    onDelete={canDeleteColumn(index) ? () => setDeleteColumnIndex(index) : undefined}
+                    canDelete={canDeleteColumn(index)}
+                  />
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {Array.from({ length: section.rows }).map((_, rowIndex) => (
+              <ScheduleRow
+                key={`${day}-${section.id}-row-${rowIndex}`}
+                rowIndex={rowIndex}
+                section={section}
+                columns={columns}
+                day={day}
+                onDeleteRow={onDeleteRow}
+              />
             ))}
-          </tr>
-        </thead>
-        <tbody>
-          {Array.from({ length: section.rows }).map((_, rowIndex) => (
-            <ScheduleRow
-              key={`${day}-${section.id}-row-${rowIndex}`}
-              rowIndex={rowIndex}
-              section={section}
-              columns={columns}
-              day={day}
-              onDeleteRow={onDeleteRow}
-            />
-          ))}
-        </tbody>
-      </table>
+          </tbody>
+        </table>
+      </div>
 
       <DeleteConfirmation
         isOpen={deleteColumnIndex !== null}

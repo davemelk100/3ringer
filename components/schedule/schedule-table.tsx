@@ -9,6 +9,8 @@ import { ScheduleHeader } from "./schedule-header";
 import { ScheduleSection } from "./schedule-section";
 import { CollapsibleHeader } from "@/components/layout/collapsible-header";
 import { startOfWeek, format } from "date-fns";
+import { Button } from "@/components/ui/button";
+import { Printer } from "lucide-react";
 
 export function ScheduleTable() {
   const [selectedWeek, setSelectedWeek] = useState(() => startOfWeek(new Date(), { weekStartsOn: 1 }));
@@ -30,6 +32,10 @@ export function ScheduleTable() {
     setSelectedDay(weekDays[0]);
   }, [selectedWeek]);
 
+  const handlePrint = () => {
+    window.print();
+  };
+
   return (
     <div className="w-full">
       <CollapsibleHeader selectedWeek={selectedWeek} onWeekChange={setSelectedWeek} />
@@ -42,12 +48,21 @@ export function ScheduleTable() {
         }}
       >
         <div className="mt-4">
-          <div>
+          <div className="sticky top-0 z-20 bg-white">
             <ScheduleHeader weekDays={weekDays} />
-            <div className="w-full bg-[#A1C6EA] px-4 py-2 mb-0 print:bg-transparent print:border-b">
+            <div className="w-full bg-[#A1C6EA] px-4 py-2 mb-0 print:bg-transparent print:border-b flex items-center justify-between">
               <h2 className="text-lg font-bold text-black uppercase text-left">
                 {selectedDay.day} - {selectedDay.date}, {format(selectedDay.fullDate, "yyyy")}
               </h2>
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={handlePrint}
+                title="Print Schedule"
+                className="border-black group hover:bg-black hover:text-white shadow-none hover:shadow-none focus:shadow-none focus-visible:shadow-none bg-transparent print:hidden"
+              >
+                <Printer className="h-4 w-4 text-black group-hover:text-white transition-colors" />
+              </Button>
             </div>
           </div>
           {weekDays.map(({ day }) => (

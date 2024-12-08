@@ -72,7 +72,7 @@ export function ConfigurableDropdown({
         <SelectTrigger 
           ref={triggerRef} 
           className={cn(
-            "w-full h-full min-h-[2.5rem]",
+            "w-full h-full min-h-[2rem]",
             "flex items-center justify-center",
             value ? "border-0 shadow-none [&>svg]:hidden" : "border-transparent",
             value ? "focus:ring-2 ring-offset-background" : "",

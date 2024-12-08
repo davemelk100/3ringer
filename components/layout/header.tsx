@@ -1,8 +1,8 @@
 "use client";
 
 import { WeekSelector } from "@/components/schedule/week-selector";
-import { Button } from "@/components/ui/button";
-import { Calendar, Printer } from "lucide-react";
+import { Calendar } from "lucide-react";
+import { UserProfile } from "@/components/user/user-profile";
 
 interface HeaderProps {
   selectedWeek: Date;
@@ -10,10 +10,6 @@ interface HeaderProps {
 }
 
 export function Header({ selectedWeek, onWeekChange }: HeaderProps) {
-  const handlePrint = () => {
-    window.print();
-  };
-
   return (
     <div className="flex items-center justify-between px-4 h-16 bg-[#f1f5f9] print:hidden">
       {/* Left side calendar icon with logo text */}
@@ -29,17 +25,9 @@ export function Header({ selectedWeek, onWeekChange }: HeaderProps) {
         <WeekSelector selectedWeek={selectedWeek} onWeekChange={onWeekChange} />
       </div>
       
-      {/* Right-aligned print button */}
+      {/* Right-aligned user profile */}
       <div className="flex-1 flex justify-end bg-transparent">
-        <Button
-          variant="outline"
-          size="icon"
-          onClick={handlePrint}
-          title="Print Schedule"
-          className="border-[#F68E5F] group hover:bg-[#F68E5F] hover:text-white shadow-none hover:shadow-none focus:shadow-none focus-visible:shadow-none bg-transparent"
-        >
-          <Printer className="h-4 w-4 text-[#F68E5F] group-hover:text-white transition-colors" />
-        </Button>
+        <UserProfile />
       </div>
     </div>
   );
