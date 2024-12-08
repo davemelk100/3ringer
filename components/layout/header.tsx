@@ -36,7 +36,7 @@ export function Header({ selectedWeek, onWeekChange }: HeaderProps) {
           size="icon"
           onClick={handlePrint}
           title="Print Schedule"
-          className="border-[#F68E5F] text-[#F68E5F] hover:bg-[#F68E5F] hover:text-white shadow-none hover:shadow-none focus:shadow-none focus-visible:shadow-none bg-transparent"
+          className="border-[#F68E5F] text-[#0D324D] hover:bg-[#F68E5F] hover:text-white shadow-none hover:shadow-none focus:shadow-none focus-visible:shadow-none bg-transparent"
         >
           <Printer className="h-4 w-4" />
         </Button>

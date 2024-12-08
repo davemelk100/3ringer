@@ -87,6 +87,7 @@ export function ScheduleCell({ day, columnId, rowIndex, section }: ScheduleCellP
           style={{
             display: 'flex',
             alignItems: 'center',
+            justifyContent: 'center',
             lineHeight: '1.2',
             paddingTop: '0.25rem'
           }}

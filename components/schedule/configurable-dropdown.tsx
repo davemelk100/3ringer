@@ -1,5 +1,7 @@
 "use client";
 
+import * as React from "react";
+import { useState, useRef, useEffect } from "react";
 import {
   Select,
   SelectContent,
@@ -7,11 +9,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Plus } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { useState, useRef, useEffect } from "react";
-import { useScheduleStore } from "@/lib/store/schedule-store";
+import { Plus } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useScheduleStore } from "@/lib/store/schedule-store";
 
 interface ConfigurableDropdownProps {
   day: string;
@@ -61,7 +62,7 @@ export function ConfigurableDropdown({
   }, [isAddingOption]);
 
   return (
-    <div className="w-full">
+    <div className="w-full h-full">
       <Select 
         value={value || "none"} 
         onValueChange={(newValue) => 
@@ -71,24 +72,25 @@ export function ConfigurableDropdown({
         <SelectTrigger 
           ref={triggerRef} 
           className={cn(
-            "w-full h-10 px-2",
+            "w-full h-full min-h-[2.5rem]",
+            "flex items-center justify-center",
             value ? "border-0 shadow-none [&>svg]:hidden" : "",
             value ? "focus:ring-2 ring-offset-background" : "",
-            "[&>span]:flex [&>span]:items-center [&>span]:justify-center",
+            "[&>span]:flex [&>span]:items-center [&>span]:justify-center [&>span]:w-full",
             "data-[placeholder]:text-muted-foreground data-[placeholder]:italic",
             "bg-white text-sm"
           )}
         >
-          <SelectValue placeholder="" />
+          <SelectValue placeholder="" className="text-center" />
         </SelectTrigger>
         <SelectContent className="bg-white">
           {value && (
-            <SelectItem value="none">
+            <SelectItem value="none" className="text-center">
               <span className="text-muted-foreground">Clear selection</span>
             </SelectItem>
           )}
           {options.map((option) => (
-            <SelectItem key={option} value={option}>
+            <SelectItem key={option} value={option} className="text-center">
               {option}
             </SelectItem>
           ))}
@@ -121,7 +123,7 @@ export function ConfigurableDropdown({
             ) : (
               <button
                 onClick={() => setIsAddingOption(true)}
-                className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground"
+                className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground w-full justify-center"
               >
                 <Plus className="h-4 w-4" />
                 Add option
