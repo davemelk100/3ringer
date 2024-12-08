@@ -25,19 +25,20 @@ export function CollapsibleHeader({ selectedWeek, onWeekChange }: CollapsibleHea
         <Header selectedWeek={selectedWeek} onWeekChange={onWeekChange} />
       </div>
       <div className="h-4 bg-transparent"></div>
-      <Button
-        variant="ghost"
-        size="sm"
-        onClick={() => setIsOpen(!isOpen)}
-        className="absolute -bottom-2.5 left-4 z-10 h-5 w-8 rounded-none bg-background border shadow-sm p-0 hover:bg-muted/50"
-      >
-        <ChevronUp 
-          className={cn(
-            "h-3 w-3 transition-transform duration-200",
-            !isOpen && "rotate-180"
-          )}
-        />
-      </Button>
+      <div className="absolute -bottom-2.5 right-4 z-10">
+        <Button
+          variant="outline"
+          onClick={() => setIsOpen(!isOpen)}
+          className="h-5 w-5 rounded-full bg-background border shadow-sm p-0 hover:bg-muted/50 flex items-center justify-center"
+        >
+          <ChevronUp 
+            className={cn(
+              "h-3 w-3 transition-transform duration-200",
+              !isOpen && "rotate-180"
+            )}
+          />
+        </Button>
+      </div>
     </div>
   );
 }

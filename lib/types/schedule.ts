@@ -24,7 +24,7 @@ export interface ScheduleState {
 export interface ColumnHeader {
   id: string;
   title: string;
-  type: 'text' | 'dropdown';
+  type: 'text' | 'dropdown' | 'address';
 }
 
 export interface ScheduleConfig {

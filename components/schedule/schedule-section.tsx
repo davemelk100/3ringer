@@ -36,7 +36,7 @@ export function ScheduleSection({
     return columns.length > 1;
   };
 
-  const handleAddColumn = (title: string, type: 'text' | 'dropdown') => {
+  const handleAddColumn = (title: string, type: 'text' | 'dropdown' | 'address') => {
     addColumn(title, type);
   };
 

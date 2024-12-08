@@ -15,13 +15,13 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Columns, Plus } from "lucide-react";
 
 interface AddColumnDialogProps {
-  onAddColumn: (title: string, type: 'text' | 'dropdown') => void;
+  onAddColumn: (title: string, type: 'text' | 'dropdown' | 'address') => void;
 }
 
 export function AddColumnDialog({ onAddColumn }: AddColumnDialogProps) {
   const [open, setOpen] = useState(false);
   const [title, setTitle] = useState("");
-  const [type, setType] = useState<'text' | 'dropdown'>('text');
+  const [type, setType] = useState<'text' | 'dropdown' | 'address'>('text');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -64,8 +64,8 @@ export function AddColumnDialog({ onAddColumn }: AddColumnDialogProps) {
             <Label>Column Type</Label>
             <RadioGroup
               value={type}
-              onValueChange={(value) => setType(value as 'text' | 'dropdown')}
-              className="flex gap-4"
+              onValueChange={(value) => setType(value as 'text' | 'dropdown' | 'address')}
+              className="flex flex-col gap-2"
             >
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="text" id="text" />
@@ -74,6 +74,10 @@ export function AddColumnDialog({ onAddColumn }: AddColumnDialogProps) {
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="dropdown" id="dropdown" />
                 <Label htmlFor="dropdown">Dropdown</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="address" id="address" />
+                <Label htmlFor="address">Address Search</Label>
               </div>
             </RadioGroup>
           </div>
