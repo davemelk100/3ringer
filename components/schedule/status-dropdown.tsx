@@ -33,7 +33,7 @@ export function StatusDropdown({ sectionId, rowIndex, day }: StatusDropdownProps
         ref={triggerRef} 
         className={cn(
           "w-full h-10 px-2",
-          currentStatus ? "border-0 shadow-none [&>svg]:hidden" : "",
+          currentStatus ? "border-0 shadow-none [&>svg]:hidden" : "border-transparent",
           currentStatus ? "focus:ring-2 ring-offset-background" : "",
           "[&>span]:flex [&>span]:items-center [&>span]:justify-center",
           "data-[placeholder]:text-muted-foreground data-[placeholder]:italic",

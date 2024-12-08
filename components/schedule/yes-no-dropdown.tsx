@@ -29,7 +29,7 @@ export function YesNoDropdown({ value, onChange }: YesNoDropdownProps) {
           className={cn(
             "w-full h-full min-h-[2.5rem]",
             "flex items-center justify-center",
-            value ? "border-0 shadow-none [&>svg]:hidden" : "",
+            value ? "border-0 shadow-none [&>svg]:hidden" : "border-transparent",
             value ? "focus:ring-2 ring-offset-background" : "",
             "[&>span]:flex [&>span]:items-center [&>span]:justify-center [&>span]:w-full",
             "data-[placeholder]:text-muted-foreground data-[placeholder]:italic",

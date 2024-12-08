@@ -12,7 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Columns } from "lucide-react";
+import { Columns, Plus } from "lucide-react";
 
 interface AddColumnDialogProps {
   onAddColumn: (title: string, type: 'text' | 'dropdown') => void;
@@ -39,10 +39,11 @@ export function AddColumnDialog({ onAddColumn }: AddColumnDialogProps) {
         <Button
           size="sm"
           variant="outline"
-          className="flex items-center gap-1 border-[#F68E5F] text-[#0D324D] hover:bg-[#F68E5F] hover:text-white bg-transparent"
+          className="flex items-center gap-1 border-[#F68E5F] text-[#0D324D] hover:bg-[#F68E5F] hover:text-white bg-transparent group"
         >
-          <Columns className="h-4 w-4" />
-          Add Column
+          <Columns className="h-4 w-4 text-[#F68E5F] group-hover:text-white transition-colors" />
+          <Plus className="h-4 w-4 text-[#F68E5F] group-hover:text-white transition-colors" />
+          <span className="hidden sm:inline">Add Column</span>
         </Button>
       </DialogTrigger>
       <DialogContent>
