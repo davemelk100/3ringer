@@ -62,11 +62,11 @@ export function EditableColumnHeader({
             onChange={(e) => setValue(e.target.value)}
             onBlur={handleBlur}
             onKeyDown={handleKeyDown}
-            className="h-5 min-h-5 px-1 py-0 text-sm text-center"
+            className="h-5 min-h-5 px-1 py-0 text-sm text-center text-[#0D324D]"
             autoFocus
           />
         ) : (
-          <span className="text-sm font-medium">
+          <span className="text-sm font-medium text-[#0D324D]">
             {value || "(Click to edit)"}
           </span>
         )}

@@ -1,9 +1,9 @@
 import { ScheduleSection, ColumnHeader, DropdownConfig } from "@/lib/types/schedule";
 
 export const DEFAULT_SECTIONS: ScheduleSection[] = [
-  { id: "carpet", title: "Carpet", rows: 8 },
-  { id: "hardwood", title: "Hardwood", rows: 8 },
-  { id: "cpu", title: "CPU", rows: 8 },
+  { id: "carpet", title: "Carpet", rows: 1 },
+  { id: "hardwood", title: "Hardwood", rows: 1 },
+  { id: "cpu", title: "CPU", rows: 1 },
 ];
 
 export const DEFAULT_COLUMNS: ColumnHeader[] = [
