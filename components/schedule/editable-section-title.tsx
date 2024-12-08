@@ -40,7 +40,7 @@ export function EditableSectionTitle({ section }: EditableSectionTitleProps) {
   };
 
   return (
-    <div className="flex items-center gap-4">
+    <div className="flex items-center gap-2">
       <div onDoubleClick={handleDoubleClick} className="w-32">
         {isEditing ? (
           <Input
@@ -59,7 +59,7 @@ export function EditableSectionTitle({ section }: EditableSectionTitleProps) {
       {section.id === "carpet" && (
         <div 
           onDoubleClick={handleCrewNoteDoubleClick} 
-          className="w-48 border-b border-dashed border-muted-foreground/50 cursor-text"
+          className="w-32 border-b border-dashed border-muted-foreground/50 cursor-text"
         >
           {isCrewNoteEditing ? (
             <Input

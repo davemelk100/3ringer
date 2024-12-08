@@ -50,10 +50,10 @@ export function ScheduleSection({
             onClick={() => onAddRow(section.id)}
             size="sm"
             variant="outline"
-            className="flex items-center gap-1 border-[#F68E5F] text-[#0D324D] hover:bg-[#F68E5F] hover:text-white bg-transparent group"
+            className="flex items-center gap-1 bg-[#F68E5F] text-white hover:bg-transparent hover:text-[#0D324D] border-[#F68E5F] group"
           >
-            <Table2 className="h-4 w-4 text-[#F68E5F] group-hover:text-white transition-colors" />
-            <Plus className="h-4 w-4 text-[#F68E5F] group-hover:text-white transition-colors" />
+            <Table2 className="h-4 w-4 text-white group-hover:text-[#F68E5F] transition-colors" />
+            <Plus className="h-4 w-4 text-white group-hover:text-[#F68E5F] transition-colors" />
             <span className="hidden sm:inline">Add Row</span>
           </Button>
         </div>

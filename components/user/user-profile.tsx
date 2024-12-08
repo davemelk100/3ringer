@@ -16,8 +16,8 @@ export function UserProfile() {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button 
-          variant="outline" 
-          className="flex items-center gap-2 px-2 hover:bg-transparent border-[#F68E5F] focus:ring-[#F68E5F] focus-visible:ring-[#F68E5F] bg-transparent"
+          variant="ghost" 
+          className="flex items-center gap-2 px-2 hover:bg-transparent"
         >
           <span className="text-[#0D324D] font-medium">John Doe</span>
           <ChevronDown className="h-4 w-4 text-[#0D324D]" />
