@@ -15,7 +15,7 @@ export function Header({ selectedWeek, onWeekChange }: HeaderProps) {
   };
 
   return (
-    <div className="flex items-center justify-between px-4 h-16 bg-background print:hidden">
+    <div className="flex items-center justify-between px-4 h-16 bg-[#f1f5f9] print:hidden">
       {/* Left side calendar icon with logo text */}
       <div className="flex-1 flex items-center gap-3">
         <div className="flex items-center justify-center w-10 h-10 rounded-full bg-[#A1C6EA]">
@@ -30,7 +30,7 @@ export function Header({ selectedWeek, onWeekChange }: HeaderProps) {
       </div>
       
       {/* Right-aligned print button */}
-      <div className="flex-1 flex justify-end">
+      <div className="flex-1 flex justify-end bg-transparent">
         <Button
           variant="outline"
           size="icon"

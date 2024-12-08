@@ -46,7 +46,7 @@ export function WeekSelector({ selectedWeek, onWeekChange }: WeekSelectorProps) 
         }
       }}
     >
-      <SelectTrigger className="w-[300px] border-[#A1C6EA] focus:ring-[#A1C6EA] focus-visible:ring-[#A1C6EA]">
+      <SelectTrigger className="w-[300px] border-[#A1C6EA] focus:ring-[#A1C6EA] focus-visible:ring-[#A1C6EA] bg-transparent">
         <SelectValue>
           {weeks.find(w => w.value === selectedValue)?.label || "Select a week"}
         </SelectValue>

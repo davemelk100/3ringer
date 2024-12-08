@@ -50,9 +50,9 @@ export function ScheduleSection({
             onClick={() => onAddRow(section.id)}
             size="sm"
             variant="outline"
-            className="flex items-center gap-1"
+            className="flex items-center gap-1 border-[#F68E5F] text-[#F68E5F] hover:bg-[#F68E5F] hover:text-white bg-transparent"
           >
-            <Table2 className="h-4 w-4 text-[#0D324D]" />
+            <Table2 className="h-4 w-4" />
             Add Row
           </Button>
         </div>
