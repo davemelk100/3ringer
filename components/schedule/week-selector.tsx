@@ -34,7 +34,6 @@ export function WeekSelector({ selectedWeek, onWeekChange }: WeekSelectorProps) 
     currentDate = addWeeks(currentDate, 1);
   }
 
-  // Format the selected week to match the value format used in the options
   const selectedValue = format(startOfWeek(selectedWeek, { weekStartsOn: 1 }), "yyyy-MM-dd");
 
   const handlePreviousWeek = () => {
@@ -52,8 +51,11 @@ export function WeekSelector({ selectedWeek, onWeekChange }: WeekSelectorProps) 
         size="icon"
         onClick={handlePreviousWeek}
         className="h-8 w-8 text-[#0D324D]"
+        aria-label="Previous week"
+        title="Go to previous week"
       >
         <ChevronLeft className="h-4 w-4" />
+        <span className="sr-only">Previous week</span>
       </Button>
       <Select
         id="week-selector"
@@ -65,7 +67,7 @@ export function WeekSelector({ selectedWeek, onWeekChange }: WeekSelectorProps) 
           }
         }}
       >
-        <SelectTrigger className="w-[280px] border-[#F68E5F] focus:ring-[#F68E5F] focus-visible:ring-[#F68E5F] bg-transparent text-[#0D324D] font-bold whitespace-nowrap">
+        <SelectTrigger className="w-[280px] border-[#F68E5F] focus:ring-[#F68E5F] focus-visible:ring-[#F68E5F] bg-transparent text-[#0D324D] font-bold whitespace-nowrap" aria-label="Select week">
           <SelectValue>
             {weeks.find(w => w.value === selectedValue)?.label || "Select a week"}
           </SelectValue>
@@ -96,8 +98,11 @@ export function WeekSelector({ selectedWeek, onWeekChange }: WeekSelectorProps) 
         size="icon"
         onClick={handleNextWeek}
         className="h-8 w-8 text-[#0D324D]"
+        aria-label="Next week"
+        title="Go to next week"
       >
         <ChevronRight className="h-4 w-4" />
+        <span className="sr-only">Next week</span>
       </Button>
     </div>
   );

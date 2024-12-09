@@ -8,7 +8,12 @@ const nextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
-  swcMinify: false
+  swcMinify: false,
+  // Disable SWC compilation
+  webpack: (config) => {
+    config.optimization.minimize = false;
+    return config;
+  }
 };
 
 module.exports = nextConfig;

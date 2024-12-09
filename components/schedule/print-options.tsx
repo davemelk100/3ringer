@@ -25,10 +25,12 @@ export function PrintOptions() {
         <Button
           variant="ghost"
           size="icon"
-          title="Print Schedule"
+          aria-label="Print options"
+          title="Print schedule"
           className="h-9 w-9 border-none hover:bg-black/10 shadow-none hover:shadow-none focus:shadow-none focus-visible:shadow-none bg-transparent"
         >
           <Printer className="h-5 w-5 text-[#0D324D]" />
+          <span className="sr-only">Print options</span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">

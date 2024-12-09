@@ -41,6 +41,8 @@ export function CollapsibleHeader({ selectedWeek, onWeekChange }: CollapsibleHea
                 variant="outline"
                 onClick={() => setIsOpen(!isOpen)}
                 className="h-5 w-5 rounded-full bg-background border shadow-sm p-0 hover:bg-muted/50 flex items-center justify-center"
+                aria-label={isOpen ? "Collapse header" : "Expand header"}
+                title={isOpen ? "Collapse header" : "Expand header"}
               >
                 <ChevronUp 
                   className={cn(
@@ -48,6 +50,7 @@ export function CollapsibleHeader({ selectedWeek, onWeekChange }: CollapsibleHea
                     !isOpen && "rotate-180"
                   )}
                 />
+                <span className="sr-only">{isOpen ? "Collapse header" : "Expand header"}</span>
               </Button>
             </div>
           </div>
@@ -58,10 +61,11 @@ export function CollapsibleHeader({ selectedWeek, onWeekChange }: CollapsibleHea
               variant="outline"
               onClick={() => setIsOpen(true)}
               className="h-5 w-5 rounded-full bg-background border shadow-sm p-0 hover:bg-muted/50 flex items-center justify-center"
+              aria-label="Expand header"
+              title="Expand header"
             >
-              <ChevronUp 
-                className="h-3 w-3 rotate-180"
-              />
+              <ChevronUp className="h-3 w-3 rotate-180" />
+              <span className="sr-only">Expand header</span>
             </Button>
           </div>
         )}

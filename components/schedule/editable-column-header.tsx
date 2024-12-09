@@ -49,7 +49,7 @@ export function EditableColumnHeader({
   }, [isEditing]);
 
   return (
-    <div className="relative group w-full">
+    <div className="relative group w-full min-h-[20px] flex items-center justify-center px-4">
       <div 
         onDoubleClick={handleDoubleClick} 
         className="w-full cursor-text flex items-center justify-center"
@@ -66,7 +66,7 @@ export function EditableColumnHeader({
             autoFocus
           />
         ) : (
-          <span className="text-sm font-medium text-[#0D324D] text-center w-full">
+          <span className="text-sm font-medium text-[#0D324D] text-center w-full truncate">
             {value || "(Click to edit)"}
           </span>
         )}
@@ -76,7 +76,9 @@ export function EditableColumnHeader({
           variant="ghost"
           size="sm"
           onClick={onDelete}
-          className="absolute -top-[1px] -right-[1px] h-5 w-5 p-0 opacity-0 group-hover:opacity-100 transition-opacity bg-destructive hover:bg-destructive/90 text-destructive-foreground rounded-none print:hidden"
+          className="absolute -top-[1px] right-0 h-5 w-5 p-0 opacity-0 group-hover:opacity-100 transition-opacity bg-destructive hover:bg-destructive/90 text-destructive-foreground rounded-none print:hidden"
+          aria-label={`Delete ${column.title} column`}
+          title={`Delete ${column.title} column`}
         >
           <X className="h-3 w-3" />
         </Button>

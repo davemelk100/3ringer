@@ -39,11 +39,14 @@ export function AddColumnDialog({ onAddColumn }: AddColumnDialogProps) {
         <Button
           size="sm"
           variant="outline"
-          className="flex items-center gap-1 bg-[#F68E5F] text-white hover:bg-transparent hover:text-[#0D324D] border-[#F68E5F] group"
+          className="flex items-center gap-1 bg-[#F68E5F] text-[#0D324D] hover:bg-transparent hover:text-[#0D324D] border-[#F68E5F] group"
+          aria-label="Add new column"
+          title="Add new column"
         >
-          <Columns className="h-4 w-4 text-white group-hover:text-[#F68E5F] transition-colors" />
-          <Plus className="h-4 w-4 text-white group-hover:text-[#F68E5F] transition-colors" />
+          <Columns className="h-4 w-4 text-[#0D324D] transition-colors" />
+          <Plus className="h-4 w-4 text-[#0D324D] transition-colors" />
           <span className="hidden sm:inline">Add Column</span>
+          <span className="sr-only">Open add column dialog</span>
         </Button>
       </DialogTrigger>
       <DialogContent>
