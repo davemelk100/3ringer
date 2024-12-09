@@ -59,7 +59,7 @@ export function CrewsOffToday() {
               }
             }}
           >
-            {crewNote || "Click to add crews"}
+            {crewNote}
           </div>
         )}
       </div>
