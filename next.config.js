@@ -9,11 +9,18 @@ const nextConfig = {
     ignoreBuildErrors: true,
   },
   swcMinify: false,
-  // Disable SWC compilation
-  webpack: (config) => {
+  webpack: (config, { isServer }) => {
+    // Handle punycode deprecation
+    config.resolve.fallback = {
+      ...config.resolve.fallback,
+      punycode: false,
+    };
+
+    // Disable SWC compilation
     config.optimization.minimize = false;
+    
     return config;
-  }
+  },
 };
 
 module.exports = nextConfig;
