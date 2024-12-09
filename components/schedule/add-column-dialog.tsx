@@ -49,18 +49,19 @@ export function AddColumnDialog({ onAddColumn }: AddColumnDialogProps) {
           <span className="sr-only">Open add column dialog</span>
         </Button>
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent className="sm:max-w-[425px] top-[5%] sm:top-[50%] translate-y-0 sm:-translate-y-[50%]">
         <DialogHeader>
           <DialogTitle>Add New Column</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="title">Column Title</Label>
+            <Label htmlFor="column-title">Column Title</Label>
             <Input
-              id="title"
+              id="column-title"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="Enter column title"
+              aria-label="Column title"
             />
           </div>
           <div className="space-y-2">
