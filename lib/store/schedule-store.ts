@@ -19,8 +19,6 @@ interface ScheduleStore extends ScheduleState {
   updateSection: (section: ScheduleSection) => void;
   initializeColumns: () => void;
   initializeSections: () => void;
-  updateYesNoValue: (key: string, value: string) => void;
-  getYesNoValue: (key: string) => string;
   updateDropdownValue: (key: string, value: string) => void;
   getDropdownValue: (key: string) => string;
   addDropdownOption: (dropdownId: string, option: string) => void;
@@ -34,7 +32,6 @@ export const useScheduleStore = create<ScheduleStore>()(
       events: {},
       sections: [],
       columns: [],
-      yesNoValues: {},
       dropdownValues: {},
       dropdownOptions: {},
       updateEvent: (event) => {
@@ -90,9 +87,7 @@ export const useScheduleStore = create<ScheduleStore>()(
           const deletedColumn = newColumns[index];
           newColumns.splice(index, 1);
 
-          // Clean up related data
           const newEvents = { ...state.events };
-          const newYesNoValues = { ...state.yesNoValues };
           const newDropdownValues = { ...state.dropdownValues };
           const newDropdownOptions = { ...state.dropdownOptions };
 
@@ -100,13 +95,6 @@ export const useScheduleStore = create<ScheduleStore>()(
           Object.keys(newEvents).forEach(key => {
             if (key.includes(deletedColumn.id)) {
               delete newEvents[key];
-            }
-          });
-
-          // Remove yes/no values for the deleted column
-          Object.keys(newYesNoValues).forEach(key => {
-            if (key.includes(deletedColumn.id)) {
-              delete newYesNoValues[key];
             }
           });
 
@@ -125,7 +113,6 @@ export const useScheduleStore = create<ScheduleStore>()(
           return {
             columns: newColumns,
             events: newEvents,
-            yesNoValues: newYesNoValues,
             dropdownValues: newDropdownValues,
             dropdownOptions: newDropdownOptions
           };
@@ -155,7 +142,6 @@ export const useScheduleStore = create<ScheduleStore>()(
 
           // Create new objects to store cleaned data
           const newEvents = {};
-          const newYesNoValues = {};
           const newDropdownValues = {};
 
           // Helper function to process state objects
@@ -183,7 +169,6 @@ export const useScheduleStore = create<ScheduleStore>()(
 
           // Process all state objects
           processStateObject(state.events, newEvents);
-          processStateObject(state.yesNoValues, newYesNoValues);
           processStateObject(state.dropdownValues, newDropdownValues);
 
           return {
@@ -193,7 +178,6 @@ export const useScheduleStore = create<ScheduleStore>()(
                 : s
             ),
             events: newEvents,
-            yesNoValues: newYesNoValues,
             dropdownValues: newDropdownValues,
           };
         });
@@ -212,17 +196,6 @@ export const useScheduleStore = create<ScheduleStore>()(
         set((state) => ({
           sections: state.sections.length === 0 ? scheduleConfig.defaultSections : state.sections
         }));
-      },
-      updateYesNoValue: (key: string, value: string) => {
-        set((state) => ({
-          yesNoValues: {
-            ...state.yesNoValues,
-            [key]: value,
-          },
-        }));
-      },
-      getYesNoValue: (key: string) => {
-        return get().yesNoValues[key] || '';
       },
       updateDropdownValue: (key: string, value: string) => {
         set((state) => {
@@ -259,7 +232,6 @@ export const useScheduleStore = create<ScheduleStore>()(
         events: state.events,
         sections: state.sections,
         columns: state.columns,
-        yesNoValues: state.yesNoValues,
         dropdownValues: state.dropdownValues,
         dropdownOptions: state.dropdownOptions,
       }),

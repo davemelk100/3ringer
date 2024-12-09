@@ -4,7 +4,6 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
 import { ScheduleCell } from "./schedule-cell";
-import { YesNoDropdown } from "./yes-no-dropdown";
 import { ConfigurableDropdown } from "./configurable-dropdown";
 import { DeleteConfirmation } from "./delete-confirmation";
 import { ScheduleSection, ColumnHeader } from "@/lib/types/schedule";
@@ -25,7 +24,6 @@ export function ScheduleRow({
   day,
   onDeleteRow,
 }: ScheduleRowProps) {
-  const { getYesNoValue, updateYesNoValue } = useScheduleStore();
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   const getColumnContent = (colIndex: number, column: ColumnHeader) => {
@@ -38,19 +36,6 @@ export function ScheduleRow({
             rowIndex={rowIndex}
             columnId={column.id}
             dropdownId={column.id}
-          />
-        </div>
-      );
-    }
-
-    if (colIndex === 5 || colIndex === 8 || colIndex === 12) {
-      return (
-        <div className="flex items-center justify-center">
-          <YesNoDropdown
-            value={getYesNoValue(`${day}-${section.id}-${rowIndex}-${column.id}`)}
-            onChange={(value) => 
-              updateYesNoValue(`${day}-${section.id}-${rowIndex}-${column.id}`, value)
-            }
           />
         </div>
       );

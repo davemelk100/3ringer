@@ -49,7 +49,7 @@ export function EditableColumnHeader({
   }, [isEditing]);
 
   return (
-    <div className="relative group w-full min-h-[20px] flex items-center justify-center px-4">
+    <div className="relative group w-full min-h-[20px] flex items-center justify-center px-8">
       <div 
         onDoubleClick={handleDoubleClick} 
         className="w-full cursor-text flex items-center justify-center"
@@ -64,10 +64,11 @@ export function EditableColumnHeader({
             onKeyDown={handleKeyDown}
             className="h-5 min-h-5 px-1 py-0 text-sm text-center text-[#0D324D]"
             autoFocus
+            aria-label={`Edit ${column.title} column name`}
           />
         ) : (
           <span className="text-sm font-medium text-[#0D324D] text-center w-full truncate">
-            {value || "(Click to edit)"}
+            {value || "(Double-click to edit)"}
           </span>
         )}
       </div>
