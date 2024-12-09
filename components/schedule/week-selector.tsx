@@ -46,7 +46,7 @@ export function WeekSelector({ selectedWeek, onWeekChange }: WeekSelectorProps) 
   };
 
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex items-center gap-2 w-full sm:w-auto">
       <Button
         variant="ghost"
         size="icon"
@@ -65,7 +65,7 @@ export function WeekSelector({ selectedWeek, onWeekChange }: WeekSelectorProps) 
           }
         }}
       >
-        <SelectTrigger className="w-[200px] border-[#F68E5F] focus:ring-[#F68E5F] focus-visible:ring-[#F68E5F] bg-transparent text-[#0D324D] font-bold">
+        <SelectTrigger className="w-[280px] border-[#F68E5F] focus:ring-[#F68E5F] focus-visible:ring-[#F68E5F] bg-transparent text-[#0D324D] font-bold whitespace-nowrap">
           <SelectValue>
             {weeks.find(w => w.value === selectedValue)?.label || "Select a week"}
           </SelectValue>
@@ -77,7 +77,7 @@ export function WeekSelector({ selectedWeek, onWeekChange }: WeekSelectorProps) 
                 key={week.value} 
                 value={week.value}
                 className={`
-                  text-[#0D324D]
+                  text-[#0D324D] whitespace-nowrap
                   ${week.value === selectedValue ? 'font-bold' : ''}
                   ${week.isPast ? "text-muted-foreground" : ""}
                   ${week.isFuture ? "text-blue-600 dark:text-blue-400" : ""}

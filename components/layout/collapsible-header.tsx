@@ -21,7 +21,7 @@ export function CollapsibleHeader({ selectedWeek, onWeekChange }: CollapsibleHea
       <div
         className={cn(
           "transition-all duration-300 ease-in-out",
-          isOpen ? "h-28" : "h-8"
+          isOpen ? "h-auto sm:h-28" : "h-8"
         )}
       >
         <div className={cn(
@@ -29,14 +29,14 @@ export function CollapsibleHeader({ selectedWeek, onWeekChange }: CollapsibleHea
           isOpen ? "h-full opacity-100" : "h-0 opacity-0"
         )}>
           <Header selectedWeek={selectedWeek} onWeekChange={onWeekChange} />
-          <div className="w-full bg-[#f1f5f9] flex items-center justify-between px-4 h-14">
-            <div className="flex-1">
+          <div className="w-full bg-[#f1f5f9] flex flex-col sm:flex-row items-center justify-between px-4 py-2 sm:h-14 gap-2">
+            <div className="flex-1 w-full sm:w-auto">
               <CrewsOffToday />
             </div>
-            <div className="flex-1 flex justify-center">
+            <div className="flex-1 w-full sm:w-auto">
               <CurrentDate />
             </div>
-            <div className="flex-1 flex justify-end">
+            <div className="flex-1 flex justify-end w-full sm:w-auto">
               <Button
                 variant="outline"
                 onClick={() => setIsOpen(!isOpen)}

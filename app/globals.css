@@ -37,6 +37,26 @@
   }
 }
 
+/* Mobile-first responsive table */
+@media (max-width: 640px) {
+  .overflow-x-auto {
+    -webkit-overflow-scrolling: touch;
+  }
+
+  table {
+    font-size: 0.875rem;
+  }
+
+  td, th {
+    padding: 0.5rem 0.25rem;
+    min-width: 100px;
+  }
+
+  input, select, textarea {
+    font-size: 0.875rem;
+  }
+}
+
 @media print {
   /* Reset page margins and ensure content fits */
   @page {

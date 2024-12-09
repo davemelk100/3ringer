@@ -7,7 +7,6 @@ import { ScheduleCell } from "./schedule-cell";
 import { YesNoDropdown } from "./yes-no-dropdown";
 import { ConfigurableDropdown } from "./configurable-dropdown";
 import { DeleteConfirmation } from "./delete-confirmation";
-import { AddressSearch } from "@/components/address/address-search";
 import { ScheduleSection, ColumnHeader } from "@/lib/types/schedule";
 import { useScheduleStore } from "@/lib/store/schedule-store";
 
@@ -26,33 +25,10 @@ export function ScheduleRow({
   day,
   onDeleteRow,
 }: ScheduleRowProps) {
-  const { getYesNoValue, updateYesNoValue, getEventByDayAndTime, updateEvent } = useScheduleStore();
+  const { getYesNoValue, updateYesNoValue } = useScheduleStore();
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   const getColumnContent = (colIndex: number, column: ColumnHeader) => {
-    if (column.id === 'address') {
-      const event = getEventByDayAndTime(day, column.id, rowIndex, section.id);
-      return (
-        <div className="flex items-center justify-center">
-          <AddressSearch
-            value={event?.content}
-            onSelect={(address) => {
-              updateEvent({
-                id: `${day}-${column.id}-${section.id}-${rowIndex}`,
-                content: address.formattedAddress,
-                day,
-                columnId: column.id,
-                rowIndex,
-                section: section.id,
-              });
-            }}
-            className="min-h-[2rem] bg-white"
-            placeholder="Enter address..."
-          />
-        </div>
-      );
-    }
-
     if (column.type === 'dropdown') {
       return (
         <div className="flex items-center justify-center">

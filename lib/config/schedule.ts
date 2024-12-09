@@ -16,7 +16,6 @@ export const DEFAULT_COLUMNS: ColumnHeader[] = [
   { id: "notes", title: "Notes", type: "text" },
   { id: "time", title: "Time", type: "text" },
   { id: "confirmed", title: "Confirmed", type: "dropdown" },
-  { id: "address", title: "Address", type: "text" },
   { id: "city", title: "City", type: "text" },
   { id: "email", title: "Email", type: "text" },
   { id: "complete", title: "Complete", type: "dropdown" },
