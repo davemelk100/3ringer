@@ -16,7 +16,7 @@ export function ScheduleHeader({ weekDays }: ScheduleHeaderProps) {
           value={day} 
           className={`
             h-12 px-2 py-1 text-foreground dark:text-foreground 
-            border-[#A1C6EA] border-t border-b border-r first:border-l
+            data-[state=active]:border-r data-[state=active]:border-t data-[state=active]:border-[#A1C6EA]
             data-[state=active]:border-b-0
             data-[state=active]:bg-[#A1C6EA] data-[state=active]:!text-black 
             dark:data-[state=active]:!text-black flex flex-col items-center justify-center 

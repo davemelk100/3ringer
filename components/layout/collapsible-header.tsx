@@ -5,6 +5,8 @@ import { Header } from "./header";
 import { Button } from "@/components/ui/button";
 import { ChevronUp } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { CurrentDate } from "@/components/schedule/current-date";
+import { CrewsOffToday } from "@/components/schedule/crews-off-today";
 
 interface CollapsibleHeaderProps {
   selectedWeek: Date;
@@ -15,29 +17,54 @@ export function CollapsibleHeader({ selectedWeek, onWeekChange }: CollapsibleHea
   const [isOpen, setIsOpen] = useState(true);
 
   return (
-    <div className="relative print:hidden mb-12 bg-[#f1f5f9]">
+    <div className="relative print:hidden bg-[#f1f5f9]">
       <div
         className={cn(
-          "transition-all duration-300 ease-in-out overflow-hidden",
-          isOpen ? "h-16" : "h-0"
+          "transition-all duration-300 ease-in-out",
+          isOpen ? "h-28" : "h-8"
         )}
       >
-        <Header selectedWeek={selectedWeek} onWeekChange={onWeekChange} />
-      </div>
-      <div className="h-4 bg-transparent"></div>
-      <div className="absolute -bottom-2.5 right-4 z-10">
-        <Button
-          variant="outline"
-          onClick={() => setIsOpen(!isOpen)}
-          className="h-5 w-5 rounded-full bg-background border shadow-sm p-0 hover:bg-muted/50 flex items-center justify-center"
-        >
-          <ChevronUp 
-            className={cn(
-              "h-3 w-3 transition-transform duration-200",
-              !isOpen && "rotate-180"
-            )}
-          />
-        </Button>
+        <div className={cn(
+          "transition-all duration-300 ease-in-out overflow-hidden",
+          isOpen ? "h-full opacity-100" : "h-0 opacity-0"
+        )}>
+          <Header selectedWeek={selectedWeek} onWeekChange={onWeekChange} />
+          <div className="w-full bg-[#f1f5f9] flex items-center justify-between px-4 h-14">
+            <div className="flex-1">
+              <CrewsOffToday />
+            </div>
+            <div className="flex-1 flex justify-center">
+              <CurrentDate />
+            </div>
+            <div className="flex-1 flex justify-end">
+              <Button
+                variant="outline"
+                onClick={() => setIsOpen(!isOpen)}
+                className="h-5 w-5 rounded-full bg-background border shadow-sm p-0 hover:bg-muted/50 flex items-center justify-center"
+              >
+                <ChevronUp 
+                  className={cn(
+                    "h-3 w-3 transition-transform duration-200",
+                    !isOpen && "rotate-180"
+                  )}
+                />
+              </Button>
+            </div>
+          </div>
+        </div>
+        {!isOpen && (
+          <div className="absolute top-0 right-4 pt-1.5">
+            <Button
+              variant="outline"
+              onClick={() => setIsOpen(true)}
+              className="h-5 w-5 rounded-full bg-background border shadow-sm p-0 hover:bg-muted/50 flex items-center justify-center"
+            >
+              <ChevronUp 
+                className="h-3 w-3 rotate-180"
+              />
+            </Button>
+          </div>
+        )}
       </div>
     </div>
   );

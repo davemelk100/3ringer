@@ -7,7 +7,8 @@ const nextConfig = {
   },
   typescript: {
     ignoreBuildErrors: true,
-  }
+  },
+  swcMinify: false
 };
 
 module.exports = nextConfig;

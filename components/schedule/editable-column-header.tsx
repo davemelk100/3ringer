@@ -49,7 +49,7 @@ export function EditableColumnHeader({
   }, [isEditing]);
 
   return (
-    <div className="relative group h-full flex items-center justify-center">
+    <div className="relative group h-full flex items-center justify-center w-full">
       <div 
         onDoubleClick={handleDoubleClick} 
         className="w-full min-h-[20px] cursor-text flex items-center justify-center"
@@ -66,7 +66,7 @@ export function EditableColumnHeader({
             autoFocus
           />
         ) : (
-          <span className="text-sm font-medium text-[#0D324D]">
+          <span className="text-sm font-medium text-[#0D324D] text-center w-full">
             {value || "(Click to edit)"}
           </span>
         )}

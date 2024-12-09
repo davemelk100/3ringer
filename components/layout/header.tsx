@@ -3,6 +3,7 @@
 import { WeekSelector } from "@/components/schedule/week-selector";
 import { Calendar } from "lucide-react";
 import { UserProfile } from "@/components/user/user-profile";
+import { PrintOptions } from "@/components/schedule/print-options";
 
 interface HeaderProps {
   selectedWeek: Date;
@@ -21,12 +22,13 @@ export function Header({ selectedWeek, onWeekChange }: HeaderProps) {
       </div>
       
       {/* Centered week selector */}
-      <div className="flex items-center gap-2">
+      <div className="flex items-center">
         <WeekSelector selectedWeek={selectedWeek} onWeekChange={onWeekChange} />
       </div>
       
       {/* Right-aligned user profile */}
-      <div className="flex-1 flex justify-end bg-transparent">
+      <div className="flex-1 flex justify-end items-center gap-4 bg-transparent">
+        <PrintOptions />
         <UserProfile />
       </div>
     </div>

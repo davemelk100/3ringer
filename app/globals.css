@@ -24,6 +24,7 @@
     --input: 214.3 31.8% 91.4%;
     --ring: 221.2 83.2% 53.3%;
     --radius: 0;
+    --print-orientation: portrait;
   }
 }
  
@@ -37,17 +38,45 @@
 }
 
 @media print {
+  /* Reset page margins and ensure content fits */
+  @page {
+    margin: 1cm 0.5cm;
+    size: var(--print-orientation);
+  }
+
   /* Hide non-printable elements */
   button[type="button"],
   [role="tablist"],
-  .no-print {
+  .no-print,
+  [role="combobox"] button,
+  [role="listbox"],
+  [data-state="open"],
+  [data-radix-popper-content-wrapper] {
     display: none !important;
   }
 
+  /* Show only selected values for dropdowns */
+  [role="combobox"] {
+    border: none !important;
+    background: none !important;
+    padding: 0 !important;
+    height: auto !important;
+    min-height: 0 !important;
+  }
+
+  [role="combobox"] > span {
+    display: inline !important;
+    opacity: 1 !important;
+  }
+
   /* Reset background colors and text colors for printing */
-  body {
+  html, body {
     background: white !important;
     color: black !important;
+    width: 100% !important;
+    height: auto !important;
+    margin: 0 !important;
+    padding: 0 !important;
   }
 
   /* Ensure full width and proper margins */
@@ -56,13 +85,17 @@
     max-width: none !important;
     margin: 0 !important;
     padding: 0 !important;
+    display: block !important;
   }
 
   /* Show all tab content */
   [role="tabpanel"] {
     display: block !important;
     opacity: 1 !important;
-    break-inside: avoid;
+    break-inside: auto !important;
+    page-break-inside: auto !important;
+    margin: 0 !important;
+    padding: 0 !important;
   }
 
   /* Table styles for printing */
@@ -70,6 +103,8 @@
     width: 100% !important;
     border-collapse: collapse !important;
     page-break-inside: auto !important;
+    font-size: 9pt !important;
+    margin: 0 !important;
   }
 
   tr {
@@ -79,12 +114,14 @@
 
   td, th {
     border: 1px solid #ddd !important;
-    padding: 8px !important;
+    padding: 4px !important;
   }
 
-  /* Add page breaks between sections */
+  /* Remove section breaks */
   .section-break {
-    page-break-before: always !important;
+    page-break-before: auto !important;
+    margin: 0 !important;
+    padding: 0 !important;
   }
 
   /* Ensure text is readable */
@@ -92,6 +129,57 @@
     -webkit-print-color-adjust: exact !important;
     color-adjust: exact !important;
     print-color-adjust: exact !important;
+  }
+
+  /* Compact spacing for print */
+  .mb-8, .mb-4 {
+    margin: 4px 0 !important;
+  }
+
+  /* Hide specific elements in print */
+  .print-hide {
+    display: none !important;
+  }
+
+  /* Ensure all sections are visible */
+  [role="tabpanel"][hidden] {
+    display: block !important;
+    visibility: visible !important;
+  }
+
+  /* Add section titles for print */
+  .print-section-title {
+    display: block !important;
+    font-size: 12pt !important;
+    font-weight: bold !important;
+    margin: 8px 0 4px 0 !important;
+    page-break-after: avoid !important;
+  }
+
+  /* Remove background colors and borders */
+  .bg-\[\#f1f5f9\], .bg-\[\#A1C6EA\], .bg-white {
+    background: none !important;
+  }
+
+  /* Remove padding from containers */
+  .p-4 {
+    padding: 0 !important;
+  }
+
+  /* Adjust spacing for section headers */
+  .flex.items-center.justify-between {
+    margin: 4px 0 !important;
+  }
+
+  /* Adjust font sizes for landscape */
+  @media (orientation: landscape) {
+    table {
+      font-size: 8pt !important;
+    }
+    
+    td, th {
+      padding: 2px !important;
+    }
   }
 }
 

@@ -74,10 +74,10 @@ export function ScheduleSection({
   };
 
   return (
-    <div className={cn("mb-8", className)}>
+    <div className={cn("mb-4", className)}>
       <div className="flex items-center justify-between mb-2">
         <EditableSectionTitle section={section} />
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 print-hide">
           <AddColumnDialog onAddColumn={handleAddColumn} />
           <Button
             onClick={() => onAddRow(section.id)}

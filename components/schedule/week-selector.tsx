@@ -1,7 +1,9 @@
 "use client";
 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { addWeeks, format, startOfWeek, endOfWeek, addMonths } from "date-fns";
+import { Button } from "@/components/ui/button";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { addWeeks, format, startOfWeek, endOfWeek, addMonths, subWeeks } from "date-fns";
 
 interface WeekSelectorProps {
   selectedWeek: Date;
@@ -35,42 +37,68 @@ export function WeekSelector({ selectedWeek, onWeekChange }: WeekSelectorProps) 
   // Format the selected week to match the value format used in the options
   const selectedValue = format(startOfWeek(selectedWeek, { weekStartsOn: 1 }), "yyyy-MM-dd");
 
+  const handlePreviousWeek = () => {
+    onWeekChange(subWeeks(selectedWeek, 1));
+  };
+
+  const handleNextWeek = () => {
+    onWeekChange(addWeeks(selectedWeek, 1));
+  };
+
   return (
-    <Select
-      id="week-selector"
-      value={selectedValue}
-      onValueChange={(value) => {
-        const week = weeks.find((w) => w.value === value);
-        if (week) {
-          onWeekChange(week.date);
-        }
-      }}
-    >
-      <SelectTrigger className="w-[300px] border-[#F68E5F] focus:ring-[#F68E5F] focus-visible:ring-[#F68E5F] bg-transparent text-[#0D324D] font-bold">
-        <SelectValue>
-          {weeks.find(w => w.value === selectedValue)?.label || "Select a week"}
-        </SelectValue>
-      </SelectTrigger>
-      <SelectContent>
-        <div className="max-h-[300px] overflow-y-auto">
-          {weeks.map((week) => (
-            <SelectItem 
-              key={week.value} 
-              value={week.value}
-              className={`
-                text-[#0D324D]
-                ${week.value === selectedValue ? 'font-bold' : ''}
-                ${week.isPast ? "text-muted-foreground" : ""}
-                ${week.isFuture ? "text-blue-600 dark:text-blue-400" : ""}
-                ${week.isCurrent ? "font-bold" : ""}
-              `}
-            >
-              {week.label}
-              {week.isCurrent && " (Current)"}
-            </SelectItem>
-          ))}
-        </div>
-      </SelectContent>
-    </Select>
+    <div className="flex items-center gap-2">
+      <Button
+        variant="ghost"
+        size="icon"
+        onClick={handlePreviousWeek}
+        className="h-8 w-8 text-[#0D324D]"
+      >
+        <ChevronLeft className="h-4 w-4" />
+      </Button>
+      <Select
+        id="week-selector"
+        value={selectedValue}
+        onValueChange={(value) => {
+          const week = weeks.find((w) => w.value === value);
+          if (week) {
+            onWeekChange(week.date);
+          }
+        }}
+      >
+        <SelectTrigger className="w-[200px] border-[#F68E5F] focus:ring-[#F68E5F] focus-visible:ring-[#F68E5F] bg-transparent text-[#0D324D] font-bold">
+          <SelectValue>
+            {weeks.find(w => w.value === selectedValue)?.label || "Select a week"}
+          </SelectValue>
+        </SelectTrigger>
+        <SelectContent>
+          <div className="max-h-[300px] overflow-y-auto">
+            {weeks.map((week) => (
+              <SelectItem 
+                key={week.value} 
+                value={week.value}
+                className={`
+                  text-[#0D324D]
+                  ${week.value === selectedValue ? 'font-bold' : ''}
+                  ${week.isPast ? "text-muted-foreground" : ""}
+                  ${week.isFuture ? "text-blue-600 dark:text-blue-400" : ""}
+                  ${week.isCurrent ? "font-bold" : ""}
+                `}
+              >
+                {week.label}
+                {week.isCurrent && " (Current)"}
+              </SelectItem>
+            ))}
+          </div>
+        </SelectContent>
+      </Select>
+      <Button
+        variant="ghost"
+        size="icon"
+        onClick={handleNextWeek}
+        className="h-8 w-8 text-[#0D324D]"
+      >
+        <ChevronRight className="h-4 w-4" />
+      </Button>
+    </div>
   );
 }
