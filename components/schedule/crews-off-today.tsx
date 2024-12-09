@@ -2,11 +2,11 @@
 
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 
 export function CrewsOffToday() {
   const [isEditing, setIsEditing] = useState(false);
   const [crewNote, setCrewNote] = useState("");
+  const inputId = "crews-off-input";
 
   const handleClick = () => {
     setIsEditing(true);
@@ -24,19 +24,19 @@ export function CrewsOffToday() {
 
   return (
     <div className="flex items-center gap-2">
-      <Label 
-        htmlFor="crews-off" 
+      <span 
         className="text-sm font-medium text-[#0D324D] whitespace-nowrap"
+        id="crews-off-label"
       >
         Crews off today:
-      </Label>
+      </span>
       <div 
         onClick={handleClick} 
         className="w-32 cursor-text"
       >
         {isEditing ? (
           <Input
-            id="crews-off"
+            id={inputId}
             type="text"
             value={crewNote}
             onChange={(e) => setCrewNote(e.target.value)}
@@ -44,10 +44,22 @@ export function CrewsOffToday() {
             onKeyDown={handleKeyDown}
             className="h-8 min-h-8 px-2 py-1"
             autoFocus
+            aria-labelledby="crews-off-label"
           />
         ) : (
-          <div className="text-sm text-muted-foreground h-8 flex items-center border-b border-dashed border-muted-foreground">
-            {crewNote}
+          <div 
+            className="text-sm text-muted-foreground h-8 flex items-center border-b border-dashed border-muted-foreground"
+            role="textbox"
+            aria-labelledby="crews-off-label"
+            tabIndex={0}
+            onClick={handleClick}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                handleClick();
+              }
+            }}
+          >
+            {crewNote || "Click to add crews"}
           </div>
         )}
       </div>
