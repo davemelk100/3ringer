@@ -50,11 +50,11 @@ export function WeekSelector({ selectedWeek, onWeekChange }: WeekSelectorProps) 
         variant="ghost"
         size="icon"
         onClick={handlePreviousWeek}
-        className="h-8 w-8 text-[#0D324D]"
+        className="h-10 w-10 text-[#0D324D]"
         aria-label="Previous week"
         title="Go to previous week"
       >
-        <ChevronLeft className="h-4 w-4" />
+        <ChevronLeft className="h-6 w-6" />
         <span className="sr-only">Previous week</span>
       </Button>
       <Select
@@ -97,11 +97,11 @@ export function WeekSelector({ selectedWeek, onWeekChange }: WeekSelectorProps) 
         variant="ghost"
         size="icon"
         onClick={handleNextWeek}
-        className="h-8 w-8 text-[#0D324D]"
+        className="h-10 w-10 text-[#0D324D]"
         aria-label="Next week"
         title="Go to next week"
       >
-        <ChevronRight className="h-4 w-4" />
+        <ChevronRight className="h-6 w-6" />
         <span className="sr-only">Next week</span>
       </Button>
     </div>
