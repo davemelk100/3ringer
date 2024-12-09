@@ -43,6 +43,7 @@ export function ConfigurableDropdown({
 
   const value = getDropdownValue(`${day}-${sectionId}-${rowIndex}-${columnId}`);
   const options = getDropdownOptions(dropdownId);
+  const selectId = `dropdown-${day}-${sectionId}-${rowIndex}-${columnId}`;
 
   const handleAddOption = () => {
     if (newOption.trim()) {
@@ -70,7 +71,9 @@ export function ConfigurableDropdown({
         }
       >
         <SelectTrigger 
-          ref={triggerRef} 
+          ref={triggerRef}
+          id={selectId}
+          aria-label={`Select option for ${day} row ${rowIndex + 1}`}
           className={cn(
             "w-full h-full min-h-[2rem]",
             "flex items-center justify-center",
@@ -112,10 +115,12 @@ export function ConfigurableDropdown({
                   }}
                   className="h-8"
                   placeholder="New option"
+                  aria-label="Add new option"
                 />
                 <button
                   onClick={handleAddOption}
                   className="px-2 py-1 text-sm bg-primary text-primary-foreground rounded"
+                  aria-label="Add new option"
                 >
                   Add
                 </button>
@@ -124,6 +129,7 @@ export function ConfigurableDropdown({
               <button
                 onClick={() => setIsAddingOption(true)}
                 className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground w-full justify-center"
+                aria-label="Add new option"
               >
                 <Plus className="h-4 w-4" />
                 Add option

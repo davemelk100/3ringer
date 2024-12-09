@@ -86,6 +86,8 @@ export function ScheduleRow({
               size="sm"
               onClick={() => setShowDeleteConfirm(true)}
               className="h-5 w-5 p-0 opacity-0 group-hover/row:opacity-100 transition-opacity bg-destructive hover:bg-destructive/90 text-destructive-foreground -ml-5"
+              aria-label={`Delete row ${rowIndex + 1} from ${section.title} section`}
+              title={`Delete row ${rowIndex + 1}`}
             >
               <X className="h-3 w-3" />
             </Button>
@@ -101,7 +103,7 @@ export function ScheduleRow({
           setShowDeleteConfirm(false);
         }}
         title="Delete Row"
-        description="Are you sure you want to delete this row? This action cannot be undone."
+        description={`Are you sure you want to delete row ${rowIndex + 1} from the ${section.title} section? This action cannot be undone.`}
       />
     </>
   );

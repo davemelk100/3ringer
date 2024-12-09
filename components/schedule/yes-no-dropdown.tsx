@@ -26,6 +26,7 @@ export function YesNoDropdown({ value, onChange }: YesNoDropdownProps) {
       >
         <SelectTrigger 
           ref={triggerRef} 
+          aria-label="Select Yes or No"
           className={cn(
             "w-full h-full min-h-[2rem]",
             "flex items-center justify-center",

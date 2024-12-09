@@ -30,7 +30,8 @@ export function StatusDropdown({ sectionId, rowIndex, day }: StatusDropdownProps
       onValueChange={(value) => updateRowStatus(statusKey, value === "none" ? undefined : value as RowStatus)}
     >
       <SelectTrigger 
-        ref={triggerRef} 
+        ref={triggerRef}
+        aria-label={`Select status for ${day} row ${rowIndex + 1}`}
         className={cn(
           "w-full h-10 px-2",
           currentStatus ? "border-0 shadow-none [&>svg]:hidden" : "border-transparent",
