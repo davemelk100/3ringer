@@ -12,6 +12,16 @@ const roboto = Roboto({
   preload: true,
 });
 
+// Add Open Sans Condensed (now called Open Sans)
+const openSansCondensed = Roboto({ 
+  subsets: ['latin'],
+  weight: ['900'],
+  display: 'swap',
+  variable: '--font-open-sans-condensed',
+  adjustFontFallback: false,
+  preload: true,
+});
+
 export const metadata: Metadata = {
   title: 'Schedule',
   description: 'Weekly schedule management application',
@@ -44,7 +54,7 @@ export default function RootLayout({
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
         <link rel="manifest" href="/site.webmanifest" />
       </head>
-      <body className={`${roboto.variable} font-sans antialiased`}>
+      <body className={`${roboto.variable} ${openSansCondensed.variable} font-sans antialiased`}>
         <a href="#main-content" className="skip-link">
           Skip to main content
         </a>
