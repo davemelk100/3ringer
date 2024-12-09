@@ -49,10 +49,10 @@ export function EditableColumnHeader({
   }, [isEditing]);
 
   return (
-    <div className="relative group h-full flex items-center justify-center w-full">
+    <div className="relative group w-full">
       <div 
         onDoubleClick={handleDoubleClick} 
-        className="w-full min-h-[20px] cursor-text flex items-center justify-center"
+        className="w-full cursor-text flex items-center justify-center"
       >
         {isEditing ? (
           <Input
@@ -76,7 +76,7 @@ export function EditableColumnHeader({
           variant="ghost"
           size="sm"
           onClick={onDelete}
-          className="absolute -top-[1px] -right-[1px] h-5 w-5 p-0 opacity-0 group-hover:opacity-100 transition-opacity bg-destructive hover:bg-destructive/90 text-destructive-foreground rounded-none"
+          className="absolute -top-[1px] -right-[1px] h-5 w-5 p-0 opacity-0 group-hover:opacity-100 transition-opacity bg-destructive hover:bg-destructive/90 text-destructive-foreground rounded-none print:hidden"
         >
           <X className="h-3 w-3" />
         </Button>

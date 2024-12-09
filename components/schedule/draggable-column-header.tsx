@@ -41,17 +41,22 @@ export function DraggableColumnHeader({
     <th
       ref={setNodeRef}
       style={style}
-      className="border p-1 bg-muted text-muted-foreground font-medium text-center relative group h-10 align-middle"
+      className="border p-1 bg-muted text-muted-foreground font-medium relative group h-10 print:!text-center"
     >
-      <div className="flex items-center justify-center h-full">
-        <button
-          className="px-1 opacity-0 group-hover:opacity-100 transition-opacity cursor-grab active:cursor-grabbing"
+      <div className="flex items-center justify-center h-full relative">
+        <div
+          className="absolute left-0 top-1/2 -translate-y-1/2 px-1 opacity-0 group-hover:opacity-100 transition-opacity print:hidden z-10"
           {...attributes}
           {...listeners}
         >
-          <GripVertical className="h-4 w-4 text-gray-400" />
-        </button>
-        <div className="flex-1 flex items-center justify-center">
+          <button
+            type="button"
+            className="cursor-grab active:cursor-grabbing"
+          >
+            <GripVertical className="h-4 w-4 text-gray-400" />
+          </button>
+        </div>
+        <div className="flex-1 flex items-center justify-center px-6">
           <EditableColumnHeader
             column={column}
             onUpdate={onUpdate}
