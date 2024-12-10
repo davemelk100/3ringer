@@ -11,7 +11,6 @@ interface ColumnActionsProps {
 export function ColumnActions({ columnIndex }: ColumnActionsProps) {
   const { addColumn, deleteColumn } = useScheduleStore();
 
-  // Don't show delete button for the Status column
   if (columnIndex === 0) {
     return null;
   }
