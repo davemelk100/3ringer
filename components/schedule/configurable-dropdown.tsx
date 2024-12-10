@@ -75,7 +75,7 @@ export function ConfigurableDropdown({
           id={selectId}
           aria-label={`Select option for ${day} row ${rowIndex + 1}`}
           className={cn(
-            "w-full h-full min-h-[2rem]",
+            "w-full h-full min-h-[1.75rem]",
             "flex items-center justify-center",
             value ? "border-0 shadow-none [&>svg]:hidden" : "border-transparent",
             value ? "focus:ring-2 ring-offset-background" : "",

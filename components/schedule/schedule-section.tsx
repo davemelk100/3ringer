@@ -7,6 +7,7 @@ import { EditableSectionTitle } from "./editable-section-title";
 import { ScheduleRow } from "./schedule-row";
 import { DeleteConfirmation } from "./delete-confirmation";
 import { AddColumnDialog } from "./add-column-dialog";
+import { TableVisibilityToggle } from "./table-visibility-toggle";
 import { ScheduleSection as Section, ColumnHeader } from "@/lib/types/schedule";
 import { useScheduleStore } from "@/lib/store/schedule-store";
 import { cn } from "@/lib/utils";
@@ -44,6 +45,7 @@ export function ScheduleSection({
 }: ScheduleSectionProps) {
   const { updateColumn, addColumn, deleteColumn, reorderColumns } = useScheduleStore();
   const [deleteColumnIndex, setDeleteColumnIndex] = useState<number | null>(null);
+  const [isTableVisible, setIsTableVisible] = useState(true);
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -89,9 +91,15 @@ export function ScheduleSection({
             <Plus className="h-4 w-4 text-[#0D324D] transition-colors" />
             <span className="hidden sm:inline">Add Row</span>
           </Button>
+          <TableVisibilityToggle 
+            isVisible={isTableVisible} 
+            onToggle={setIsTableVisible}
+          />
         </div>
       </div>
-      <div className="relative">
+      <div className={cn("relative transition-all duration-300", 
+        isTableVisible ? "opacity-100" : "opacity-0 h-0 overflow-hidden"
+      )}>
         <DndContext
           sensors={sensors}
           collisionDetection={closestCenter}

@@ -45,12 +45,12 @@ export function WeekSelector({ selectedWeek, onWeekChange }: WeekSelectorProps) 
   };
 
   return (
-    <div className="flex items-center gap-2 w-full sm:w-auto">
+    <div className="flex items-center w-full sm:w-auto">
       <Button
         variant="ghost"
         size="icon"
         onClick={handlePreviousWeek}
-        className="h-10 w-10 text-[#0D324D]"
+        className="hidden sm:flex h-10 w-10 text-[#0D324D]"
         aria-label="Previous week"
         title="Go to previous week"
       >
@@ -67,23 +67,25 @@ export function WeekSelector({ selectedWeek, onWeekChange }: WeekSelectorProps) 
           }
         }}
       >
-        <SelectTrigger className="w-[280px] border-[#F68E5F] focus:ring-[#F68E5F] focus-visible:ring-[#F68E5F] bg-transparent text-[#0D324D] whitespace-nowrap" aria-label="Select week">
-          <SelectValue>
+        <SelectTrigger 
+          className="w-[220px] sm:w-[280px] border-[#F68E5F] focus:ring-[#F68E5F] focus-visible:ring-[#F68E5F] bg-transparent text-[#0D324D] whitespace-nowrap text-sm sm:text-base h-8 sm:h-10" 
+          aria-label="Select week"
+        >
+          <SelectValue className="text-center text-sm sm:text-base">
             {weeks.find(w => w.value === selectedValue)?.label || "Select a week"}
           </SelectValue>
         </SelectTrigger>
-        <SelectContent>
+        <SelectContent align="center">
           <div className="max-h-[300px] overflow-y-auto">
             {weeks.map((week) => (
               <SelectItem 
                 key={week.value} 
                 value={week.value}
                 className={`
-                  text-[#0D324D] whitespace-nowrap
-                  ${week.value === selectedValue ? '' : ''}
+                  text-[#0D324D] whitespace-nowrap text-sm sm:text-base text-center
                   ${week.isPast ? "text-muted-foreground" : ""}
                   ${week.isFuture ? "text-blue-600 dark:text-blue-400" : ""}
-                  ${week.isCurrent ? "" : ""}
+                  ${week.isCurrent ? "italic" : ""}
                 `}
               >
                 {week.label}
@@ -97,7 +99,7 @@ export function WeekSelector({ selectedWeek, onWeekChange }: WeekSelectorProps) 
         variant="ghost"
         size="icon"
         onClick={handleNextWeek}
-        className="h-10 w-10 text-[#0D324D]"
+        className="hidden sm:flex h-10 w-10 text-[#0D324D]"
         aria-label="Next week"
         title="Go to next week"
       >
