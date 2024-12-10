@@ -78,10 +78,10 @@ export function ScheduleSection({
   };
 
   return (
-    <div className={cn("mb-1", className)}>
-      <div className="flex items-center justify-between h-8 mb-0.5">
-        <div className="w-32 flex items-center">
-          <h3 className="text-lg font-[900] text-[#0D324D] font-condensed">
+    <div className={cn("mb-2", className)}>
+      <div className="flex items-center justify-between mb-1">
+        <div className="w-32">
+          <h3 className="text-lg font-[900] text-[#0D324D] font-condensed leading-8">
             {section.title}
           </h3>
         </div>
@@ -105,24 +105,21 @@ export function ScheduleSection({
               {section.isLocked ? "Unlock" : "Lock"}
             </span>
           </Button>
-          <AddColumnDialog 
-            onAddColumn={handleAddColumn} 
-            disabled={section.isLocked}
-          />
-          <Button
-            onClick={() => onAddRow(section.id)}
-            variant="ghost"
-            size="sm"
-            disabled={section.isLocked}
-            className={cn(
-              "flex items-center gap-1 text-[#0D324D] hover:bg-transparent h-8 px-2",
-              "hover:font-bold transition-all duration-200",
-              section.isLocked && "opacity-50 cursor-not-allowed"
-            )}
-          >
-            <Table2 className="h-4 w-4" />
-            <span className="text-sm">Add Row</span>
-          </Button>
+          {!section.isLocked && <AddColumnDialog onAddColumn={handleAddColumn} />}
+          {!section.isLocked && (
+            <Button
+              onClick={() => onAddRow(section.id)}
+              variant="ghost"
+              size="sm"
+              className={cn(
+                "flex items-center gap-1 text-[#0D324D] hover:bg-transparent h-8 px-2",
+                "hover:font-bold transition-all duration-200"
+              )}
+            >
+              <Table2 className="h-4 w-4" />
+              <span className="text-sm">Add Row</span>
+            </Button>
+          )}
           <TableVisibilityToggle 
             isVisible={isTableVisible} 
             onToggle={setIsTableVisible}
@@ -137,7 +134,7 @@ export function ScheduleSection({
           collisionDetection={closestCenter}
           onDragEnd={handleDragEnd}
         >
-          <table className="w-full border-collapse">
+          <table className="w-full border-collapse mb-1">
             <thead className="sticky top-0 z-10">
               <tr>
                 <SortableContext

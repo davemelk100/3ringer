@@ -6,10 +6,12 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "lucide-react";
 import { useAuth } from "@/lib/hooks/use-auth";
+import { cn } from "@/lib/utils";
 
 export function LoginForm() {
   const [code, setCode] = useState("");
   const [error, setError] = useState("");
+  const [isPressed, setIsPressed] = useState(false);
   const [mounted, setMounted] = useState(false);
   const router = useRouter();
   const { login, isAuthenticated } = useAuth();
@@ -83,8 +85,17 @@ export function LoginForm() {
 
           <Button 
             type="submit" 
-            className="w-full bg-[#0D324D] hover:bg-[#0D324D]/90"
+            className={cn(
+              "w-full bg-[#0D324D] hover:bg-[#0D324D]/90 transition-all duration-150",
+              "active:scale-95 active:translate-y-0.5",
+              isPressed && "scale-95 translate-y-0.5"
+            )}
             disabled={code.length !== 6}
+            onMouseDown={() => setIsPressed(true)}
+            onMouseUp={() => setIsPressed(false)}
+            onMouseLeave={() => setIsPressed(false)}
+            onTouchStart={() => setIsPressed(true)}
+            onTouchEnd={() => setIsPressed(false)}
           >
             Login
           </Button>

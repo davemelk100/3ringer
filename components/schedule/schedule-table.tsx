@@ -44,7 +44,7 @@ export function ScheduleTable() {
       <CollapsibleHeader selectedWeek={selectedWeek} onWeekChange={setSelectedWeek} />
       <Tabs 
         value={selectedDay.day}
-        className="w-full mt-6"
+        className="w-full mt-2 sm:mt-4"
         onValueChange={(value) => {
           const day = weekDays.find(d => d.day === value);
           if (day) {
@@ -58,7 +58,7 @@ export function ScheduleTable() {
             <ScheduleHeader weekDays={weekDays} />
           </div>
           {weekDays.map(({ day }) => (
-            <TabsContent key={day} value={day} className="mt-0 print:block bg-[#A1C6EA] px-[10px] py-1">
+            <TabsContent key={day} value={day} className="mt-0 print:block bg-[#A1C6EA] p-2 sm:p-4">
               <div className="overflow-x-auto">
                 {sections.map((section, index) => (
                   <ScheduleSection

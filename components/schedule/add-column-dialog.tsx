@@ -17,10 +17,9 @@ import { cn } from "@/lib/utils";
 
 interface AddColumnDialogProps {
   onAddColumn: (title: string, type: 'text' | 'dropdown') => void;
-  disabled?: boolean;
 }
 
-export function AddColumnDialog({ onAddColumn, disabled }: AddColumnDialogProps) {
+export function AddColumnDialog({ onAddColumn }: AddColumnDialogProps) {
   const [open, setOpen] = useState(false);
   const [title, setTitle] = useState("");
   const [type, setType] = useState<'text' | 'dropdown'>('text');
@@ -41,11 +40,9 @@ export function AddColumnDialog({ onAddColumn, disabled }: AddColumnDialogProps)
         <Button
           variant="ghost"
           size="sm"
-          disabled={disabled}
           className={cn(
-            "flex items-center gap-1 text-[#0D324D] hover:bg-transparent h-8 px-2",
-            "hover:font-bold transition-all duration-200",
-            disabled && "opacity-50 cursor-not-allowed"
+            "flex items-center gap-1 text-[#0D324D] hover:bg-transparent",
+            "hover:font-bold transition-all duration-200"
           )}
           aria-label="Add new column"
           title="Add new column"
