@@ -10,8 +10,18 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { Settings, LogOut, ChevronDown } from "lucide-react";
+import { useAuth } from "@/lib/hooks/use-auth";
+import { useRouter } from "next/navigation";
 
 export function UserProfile() {
+  const { logout } = useAuth();
+  const router = useRouter();
+
+  const handleLogout = () => {
+    logout();
+    router.push("/");
+  };
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -29,7 +39,10 @@ export function UserProfile() {
           Settings
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem className="text-red-600">
+        <DropdownMenuItem 
+          className="text-red-600 cursor-pointer"
+          onClick={handleLogout}
+        >
           <LogOut className="h-4 w-4 mr-2" />
           Logout
         </DropdownMenuItem>

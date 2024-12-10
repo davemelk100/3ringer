@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Table2 } from "lucide-react";
+import { Table2, Lock, Unlock } from "lucide-react";
 import { EditableSectionTitle } from "./editable-section-title";
 import { ScheduleRow } from "./schedule-row";
 import { DeleteConfirmation } from "./delete-confirmation";
@@ -43,7 +43,7 @@ export function ScheduleSection({
   onDeleteRow,
   className
 }: ScheduleSectionProps) {
-  const { updateColumn, addColumn, deleteColumn, reorderColumns } = useScheduleStore();
+  const { updateColumn, addColumn, deleteColumn, reorderColumns, toggleSectionLock } = useScheduleStore();
   const [deleteColumnIndex, setDeleteColumnIndex] = useState<number | null>(null);
   const [isTableVisible, setIsTableVisible] = useState(true);
 
@@ -57,17 +57,19 @@ export function ScheduleSection({
   );
 
   const canDeleteColumn = (index: number) => {
-    return columns.length > 1;
+    return columns.length > 1 && !section.isLocked;
   };
 
   const handleAddColumn = (title: string, type: 'text' | 'dropdown') => {
-    addColumn(title, type);
+    if (!section.isLocked) {
+      addColumn(title, type);
+    }
   };
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
     
-    if (over && active.id !== over.id) {
+    if (over && active.id !== over.id && !section.isLocked) {
       const oldIndex = columns.findIndex((col) => col.id === active.id);
       const newIndex = columns.findIndex((col) => col.id === over.id);
       
@@ -76,16 +78,47 @@ export function ScheduleSection({
   };
 
   return (
-    <div className={cn("mb-4", className)}>
-      <div className="flex items-center justify-between mb-2">
-        <EditableSectionTitle section={section} />
-        <div className="flex items-center gap-2 print-hide">
-          <AddColumnDialog onAddColumn={handleAddColumn} />
+    <div className={cn("mb-1", className)}>
+      <div className="flex items-center justify-between h-8 mb-0.5">
+        <div className="w-32 flex items-center">
+          <h3 className="text-lg font-[900] text-[#0D324D] font-condensed">
+            {section.title}
+          </h3>
+        </div>
+        <div className="flex items-center gap-1 print-hide h-8">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => toggleSectionLock(section.id)}
+            className={cn(
+              "flex items-center gap-1 text-[#0D324D] hover:bg-transparent h-8 px-2",
+              "hover:font-bold transition-all duration-200"
+            )}
+            title={section.isLocked ? "Unlock table" : "Lock table"}
+          >
+            {section.isLocked ? (
+              <Lock className="h-4 w-4" />
+            ) : (
+              <Unlock className="h-4 w-4" />
+            )}
+            <span className="text-sm">
+              {section.isLocked ? "Unlock" : "Lock"}
+            </span>
+          </Button>
+          <AddColumnDialog 
+            onAddColumn={handleAddColumn} 
+            disabled={section.isLocked}
+          />
           <Button
             onClick={() => onAddRow(section.id)}
             variant="ghost"
             size="sm"
-            className="flex items-center gap-1 text-[#0D324D] hover:bg-transparent"
+            disabled={section.isLocked}
+            className={cn(
+              "flex items-center gap-1 text-[#0D324D] hover:bg-transparent h-8 px-2",
+              "hover:font-bold transition-all duration-200",
+              section.isLocked && "opacity-50 cursor-not-allowed"
+            )}
           >
             <Table2 className="h-4 w-4" />
             <span className="text-sm">Add Row</span>
@@ -104,7 +137,7 @@ export function ScheduleSection({
           collisionDetection={closestCenter}
           onDragEnd={handleDragEnd}
         >
-          <table className="w-full border-collapse mb-4">
+          <table className="w-full border-collapse">
             <thead className="sticky top-0 z-10">
               <tr>
                 <SortableContext

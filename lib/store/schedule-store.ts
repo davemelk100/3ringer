@@ -24,8 +24,10 @@ interface ScheduleStore extends ScheduleState {
   updateDropdownValue: (key: string, value: string) => void;
   getDropdownValue: (key: string) => string;
   addDropdownOption: (dropdownId: string, option: string) => void;
+  deleteDropdownOption: (dropdownId: string, option: string) => void;
   getDropdownOptions: (dropdownId: string) => string[];
   getColumnDropdownId: (columnId: string) => string;
+  toggleSectionLock: (sectionId: string) => void;
 }
 
 export const useScheduleStore = create<ScheduleStore>()(
@@ -130,7 +132,7 @@ export const useScheduleStore = create<ScheduleStore>()(
       addRow: (sectionId) => {
         set((state) => ({
           sections: state.sections.map((section) =>
-            section.id === sectionId
+            section.id === sectionId && !section.isLocked
               ? { ...section, rows: section.rows + 1 }
               : section
           ),
@@ -139,7 +141,7 @@ export const useScheduleStore = create<ScheduleStore>()(
       deleteRow: (sectionId, rowIndex) => {
         set((state) => {
           const section = state.sections.find(s => s.id === sectionId);
-          if (!section || section.rows <= 1) return state;
+          if (!section || section.rows <= 1 || section.isLocked) return state;
 
           const newEvents = {};
           const newDropdownValues = {};
@@ -214,11 +216,39 @@ export const useScheduleStore = create<ScheduleStore>()(
           },
         }));
       },
+      deleteDropdownOption: (dropdownId: string, option: string) => {
+        set((state) => {
+          const newDropdownOptions = { ...state.dropdownOptions };
+          const options = newDropdownOptions[dropdownId] || [];
+          newDropdownOptions[dropdownId] = options.filter(o => o !== option);
+
+          const newDropdownValues = { ...state.dropdownValues };
+          Object.entries(newDropdownValues).forEach(([key, value]) => {
+            if (key.includes(dropdownId) && value === option) {
+              delete newDropdownValues[key];
+            }
+          });
+
+          return {
+            dropdownOptions: newDropdownOptions,
+            dropdownValues: newDropdownValues,
+          };
+        });
+      },
       getDropdownOptions: (dropdownId: string) => {
         return get().dropdownOptions[dropdownId] || [];
       },
       getColumnDropdownId: (columnId: string) => {
         return columnId;
+      },
+      toggleSectionLock: (sectionId: string) => {
+        set((state) => ({
+          sections: state.sections.map((section) =>
+            section.id === sectionId
+              ? { ...section, isLocked: !section.isLocked }
+              : section
+          ),
+        }));
       },
     }),
     {

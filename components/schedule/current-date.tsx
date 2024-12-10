@@ -21,7 +21,7 @@ export function CurrentDate({ showIcon = false }: CurrentDateProps) {
   }, [activeDay]);
   
   return (
-    <div className="flex items-center gap-3 text-[20px] sm:text-[24px] text-[#0D324D] w-full whitespace-nowrap overflow-hidden text-ellipsis px-4 py-2 sm:p-0">
+    <div className="flex items-center gap-3 text-[20px] sm:text-[24px] text-[#0D324D] w-full whitespace-nowrap overflow-hidden text-ellipsis px-4 py-2 sm:p-0 justify-center">
       {showIcon && (
         <div className="flex items-center justify-center w-10 h-10 rounded-full bg-[#F68E5F] flex-shrink-0">
           <Calendar className="h-7 w-7 text-white" />

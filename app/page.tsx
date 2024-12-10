@@ -1,11 +1,9 @@
-import { ScheduleTable } from "@/components/schedule/schedule-table";
+import { LoginForm } from "@/components/auth/login-form";
 
 export default function Home() {
   return (
-    <main id="main-content" className="min-h-screen p-2 bg-[#f1f5f9]">
-      <div className="max-w-[1800px] mx-auto">
-        <ScheduleTable />
-      </div>
+    <main className="min-h-screen flex items-center justify-center bg-[#f1f5f9]">
+      <LoginForm />
     </main>
   );
 }

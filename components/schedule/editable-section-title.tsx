@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Lock, Unlock } from "lucide-react";
 import { ScheduleSection } from "@/lib/types/schedule";
 import { useScheduleStore } from "@/lib/store/schedule-store";
 
@@ -12,10 +14,12 @@ interface EditableSectionTitleProps {
 export function EditableSectionTitle({ section }: EditableSectionTitleProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [value, setValue] = useState(section.title);
-  const updateSection = useScheduleStore((state) => state.updateSection);
+  const { updateSection, toggleSectionLock } = useScheduleStore();
 
   const handleDoubleClick = () => {
-    setIsEditing(true);
+    if (!section.isLocked) {
+      setIsEditing(true);
+    }
   };
 
   const handleBlur = () => {
@@ -30,7 +34,7 @@ export function EditableSectionTitle({ section }: EditableSectionTitleProps) {
   };
 
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex items-center h-8 gap-2">
       <div onDoubleClick={handleDoubleClick} className="w-32">
         {isEditing ? (
           <Input
@@ -43,9 +47,27 @@ export function EditableSectionTitle({ section }: EditableSectionTitleProps) {
             autoFocus
           />
         ) : (
-          <h3 className="text-lg font-[900] text-[#0D324D] font-condensed">{value}</h3>
+          <h3 className="text-lg font-[900] text-[#0D324D] font-condensed leading-8">
+            {value}
+          </h3>
         )}
       </div>
+      <Button
+        variant="ghost"
+        size="sm"
+        onClick={() => toggleSectionLock(section.id)}
+        className="h-8 w-8 p-0"
+        title={section.isLocked ? "Unlock table" : "Lock table"}
+      >
+        {section.isLocked ? (
+          <Lock className="h-4 w-4 text-[#0D324D]" />
+        ) : (
+          <Unlock className="h-4 w-4 text-[#0D324D]" />
+        )}
+        <span className="sr-only">
+          {section.isLocked ? "Unlock table" : "Lock table"}
+        </span>
+      </Button>
     </div>
   );
 }

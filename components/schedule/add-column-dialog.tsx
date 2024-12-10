@@ -13,12 +13,14 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Columns } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface AddColumnDialogProps {
   onAddColumn: (title: string, type: 'text' | 'dropdown') => void;
+  disabled?: boolean;
 }
 
-export function AddColumnDialog({ onAddColumn }: AddColumnDialogProps) {
+export function AddColumnDialog({ onAddColumn, disabled }: AddColumnDialogProps) {
   const [open, setOpen] = useState(false);
   const [title, setTitle] = useState("");
   const [type, setType] = useState<'text' | 'dropdown'>('text');
@@ -39,7 +41,12 @@ export function AddColumnDialog({ onAddColumn }: AddColumnDialogProps) {
         <Button
           variant="ghost"
           size="sm"
-          className="flex items-center gap-1 text-[#0D324D] hover:bg-transparent"
+          disabled={disabled}
+          className={cn(
+            "flex items-center gap-1 text-[#0D324D] hover:bg-transparent h-8 px-2",
+            "hover:font-bold transition-all duration-200",
+            disabled && "opacity-50 cursor-not-allowed"
+          )}
           aria-label="Add new column"
           title="Add new column"
         >
@@ -48,7 +55,7 @@ export function AddColumnDialog({ onAddColumn }: AddColumnDialogProps) {
           <span className="sr-only">Open add column dialog</span>
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px] top-[5%] sm:top-[50%] translate-y-0 sm:-translate-y-[50%]">
+      <DialogContent className="sm:max-w-[425px] top-[10%] translate-y-0">
         <DialogHeader>
           <DialogTitle>Add New Column</DialogTitle>
         </DialogHeader>

@@ -68,10 +68,10 @@ export function WeekSelector({ selectedWeek, onWeekChange }: WeekSelectorProps) 
         }}
       >
         <SelectTrigger 
-          className="w-[220px] sm:w-[280px] border-[#F68E5F] focus:ring-[#F68E5F] focus-visible:ring-[#F68E5F] bg-transparent text-[#0D324D] whitespace-nowrap text-sm sm:text-base h-8 sm:h-10" 
+          className="w-[220px] sm:w-[280px] border-[#F68E5F] focus:ring-[#F68E5F] focus-visible:ring-[#F68E5F] bg-transparent text-[#0D324D] whitespace-nowrap text-sm h-8 sm:h-10" 
           aria-label="Select week"
         >
-          <SelectValue className="text-center text-sm sm:text-base">
+          <SelectValue className="text-center text-sm">
             {weeks.find(w => w.value === selectedValue)?.label || "Select a week"}
           </SelectValue>
         </SelectTrigger>
@@ -82,10 +82,10 @@ export function WeekSelector({ selectedWeek, onWeekChange }: WeekSelectorProps) 
                 key={week.value} 
                 value={week.value}
                 className={`
-                  text-[#0D324D] whitespace-nowrap text-sm sm:text-base text-center
+                  text-[#0D324D] whitespace-nowrap text-sm text-center
                   ${week.isPast ? "text-muted-foreground" : ""}
                   ${week.isFuture ? "text-blue-600 dark:text-blue-400" : ""}
-                  ${week.isCurrent ? "italic" : ""}
+                  ${week.isCurrent ? "font-bold" : ""}
                 `}
               >
                 {week.label}

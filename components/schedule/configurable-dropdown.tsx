@@ -13,6 +13,7 @@ import { Input } from "@/components/ui/input";
 import { Plus } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useScheduleStore } from "@/lib/store/schedule-store";
+import { ManageOptionsDialog } from "./manage-options-dialog";
 
 interface ConfigurableDropdownProps {
   day: string;
@@ -31,6 +32,7 @@ export function ConfigurableDropdown({
 }: ConfigurableDropdownProps) {
   const [isAddingOption, setIsAddingOption] = useState(false);
   const [newOption, setNewOption] = useState("");
+  const [isActive, setIsActive] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
   
@@ -39,6 +41,7 @@ export function ConfigurableDropdown({
     updateDropdownValue,
     getDropdownOptions,
     addDropdownOption,
+    deleteDropdownOption,
   } = useScheduleStore();
 
   const value = getDropdownValue(`${day}-${sectionId}-${rowIndex}-${columnId}`);
@@ -50,9 +53,18 @@ export function ConfigurableDropdown({
       addDropdownOption(dropdownId, newOption.trim());
       setNewOption("");
       setIsAddingOption(false);
+      setIsActive(true);
       if (triggerRef.current) {
         triggerRef.current.focus();
       }
+    }
+  };
+
+  const handleDeleteOption = (option: string) => {
+    deleteDropdownOption(dropdownId, option);
+    setIsActive(true);
+    if (triggerRef.current) {
+      triggerRef.current.focus();
     }
   };
 
@@ -63,26 +75,47 @@ export function ConfigurableDropdown({
   }, [isAddingOption]);
 
   return (
-    <div className="w-full h-full">
+    <div className="w-full h-full relative group">
+      <div className="absolute right-6 top-0 opacity-0 group-hover:opacity-100 transition-opacity">
+        <ManageOptionsDialog
+          options={options}
+          onAddOption={(option) => {
+            addDropdownOption(dropdownId, option);
+            setIsActive(true);
+            if (triggerRef.current) {
+              triggerRef.current.focus();
+            }
+          }}
+          onDeleteOption={handleDeleteOption}
+        />
+      </div>
       <Select 
         value={value || "none"} 
-        onValueChange={(newValue) => 
-          updateDropdownValue(`${day}-${sectionId}-${rowIndex}-${columnId}`, newValue === "none" ? "" : newValue)
-        }
+        onValueChange={(newValue) => {
+          updateDropdownValue(`${day}-${sectionId}-${rowIndex}-${columnId}`, newValue === "none" ? "" : newValue);
+          setIsActive(false);
+        }}
+        onOpenChange={(open) => {
+          if (!open) {
+            setIsActive(false);
+          }
+        }}
       >
         <SelectTrigger 
           ref={triggerRef}
           id={selectId}
           aria-label={`Select option for ${day} row ${rowIndex + 1}`}
           className={cn(
-            "w-full h-full min-h-[1.75rem]",
+            "w-full h-6 min-h-[1.5rem] px-1",
             "flex items-center justify-center",
             value ? "border-0 shadow-none [&>svg]:hidden" : "border-transparent",
             value ? "focus:ring-2 ring-offset-background" : "",
             "[&>span]:flex [&>span]:items-center [&>span]:justify-center [&>span]:w-full",
             "data-[placeholder]:text-muted-foreground data-[placeholder]:italic",
-            "bg-white text-sm"
+            "bg-white text-sm",
+            isActive && "ring-2 ring-primary ring-offset-background"
           )}
+          onBlur={() => setIsActive(false)}
         >
           <SelectValue placeholder="" className="text-center" />
         </SelectTrigger>
@@ -113,7 +146,7 @@ export function ConfigurableDropdown({
                       }
                     }
                   }}
-                  className="h-8"
+                  className="h-6"
                   placeholder="New option"
                   aria-label="Add new option"
                 />

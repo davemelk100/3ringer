@@ -11,6 +11,7 @@ export interface ScheduleSection {
   id: string;
   title: string;
   rows: number;
+  isLocked?: boolean;
 }
 
 export interface ScheduleState {

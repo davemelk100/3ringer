@@ -59,7 +59,7 @@ export function ScheduleRow({
         {columns.map((column, colIndex) => (
           <td
             key={`${day}-${section.id}-${column.id}-${rowIndex}-${colIndex}`}
-            className="border p-1 h-8 align-middle hover:bg-muted/50 transition-colors bg-white"
+            className="border p-0.5 h-6 align-middle hover:bg-muted/50 transition-colors bg-white"
           >
             {getColumnContent(colIndex, column)}
           </td>
