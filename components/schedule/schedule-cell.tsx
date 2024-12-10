@@ -17,6 +17,7 @@ export function ScheduleCell({ day, columnId, rowIndex, section }: ScheduleCellP
   const [content, setContent] = useState("");
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const cellRef = useRef<HTMLDivElement>(null);
+  const [cellHeight, setCellHeight] = useState<number>();
 
   useEffect(() => {
     const event = getEventByDayAndTime(day, columnId, rowIndex, section);
@@ -28,6 +29,9 @@ export function ScheduleCell({ day, columnId, rowIndex, section }: ScheduleCellP
   }, [day, columnId, rowIndex, section, getEventByDayAndTime]);
 
   const handleDoubleClick = () => {
+    if (cellRef.current) {
+      setCellHeight(cellRef.current.offsetHeight);
+    }
     setIsEditing(true);
   };
 
@@ -53,6 +57,9 @@ export function ScheduleCell({ day, columnId, rowIndex, section }: ScheduleCellP
   };
 
   const handleFocus = () => {
+    if (cellRef.current) {
+      setCellHeight(cellRef.current.offsetHeight);
+    }
     setIsEditing(true);
   };
 
@@ -70,6 +77,7 @@ export function ScheduleCell({ day, columnId, rowIndex, section }: ScheduleCellP
       onDoubleClick={handleDoubleClick}
       tabIndex={0}
       onFocus={handleFocus}
+      style={cellHeight ? { height: `${cellHeight}px` } : undefined}
     >
       {isEditing ? (
         <textarea
@@ -85,6 +93,7 @@ export function ScheduleCell({ day, columnId, rowIndex, section }: ScheduleCellP
           onBlur={handleBlur}
           onKeyDown={handleKeyDown}
           style={{
+            height: cellHeight ? `${cellHeight}px` : undefined,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',

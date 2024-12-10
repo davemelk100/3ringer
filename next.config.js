@@ -8,16 +8,18 @@ const nextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
-  swcMinify: false,
-  webpack: (config, { isServer }) => {
-    // Handle punycode deprecation
+  webpack: (config) => {
+    // Disable punycode usage
+    config.resolve.alias = {
+      ...config.resolve.alias,
+      punycode: false,
+    };
+    
+    // Ensure fallbacks are properly handled
     config.resolve.fallback = {
       ...config.resolve.fallback,
       punycode: false,
     };
-
-    // Disable SWC compilation
-    config.optimization.minimize = false;
     
     return config;
   },
