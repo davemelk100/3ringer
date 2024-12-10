@@ -6,6 +6,8 @@ import { ScheduleEvent, ScheduleState, ColumnHeader, ScheduleSection } from "@/l
 import { scheduleConfig } from "@/lib/config/schedule";
 
 interface ScheduleStore extends ScheduleState {
+  activeDay: Date | null;
+  setActiveDay: (date: Date) => void;
   updateEvent: (event: ScheduleEvent) => void;
   deleteEvent: (eventId: string) => void;
   getEventByDayAndTime: (day: string, columnId: string, rowIndex: number, section: string) => ScheduleEvent | undefined;
@@ -34,6 +36,8 @@ export const useScheduleStore = create<ScheduleStore>()(
       columns: [],
       dropdownValues: {},
       dropdownOptions: {},
+      activeDay: null,
+      setActiveDay: (date) => set({ activeDay: date }),
       updateEvent: (event) => {
         set((state) => ({
           events: {
@@ -91,21 +95,18 @@ export const useScheduleStore = create<ScheduleStore>()(
           const newDropdownValues = { ...state.dropdownValues };
           const newDropdownOptions = { ...state.dropdownOptions };
 
-          // Remove events for the deleted column
           Object.keys(newEvents).forEach(key => {
             if (key.includes(deletedColumn.id)) {
               delete newEvents[key];
             }
           });
 
-          // Remove dropdown values for the deleted column
           Object.keys(newDropdownValues).forEach(key => {
             if (key.includes(deletedColumn.id)) {
               delete newDropdownValues[key];
             }
           });
 
-          // Remove dropdown options if it was a dropdown column
           if (deletedColumn.type === 'dropdown') {
             delete newDropdownOptions[deletedColumn.id];
           }
@@ -140,34 +141,28 @@ export const useScheduleStore = create<ScheduleStore>()(
           const section = state.sections.find(s => s.id === sectionId);
           if (!section || section.rows <= 1) return state;
 
-          // Create new objects to store cleaned data
           const newEvents = {};
           const newDropdownValues = {};
 
-          // Helper function to process state objects
           const processStateObject = (obj: Record<string, any>, newObj: Record<string, any>) => {
             Object.entries(obj).forEach(([key, value]) => {
               const [day, columnId, section, row] = key.split('-');
               const currentRow = parseInt(row);
               
               if (section === sectionId) {
-                if (currentRow === rowIndex) return; // Skip the deleted row
+                if (currentRow === rowIndex) return;
                 if (currentRow > rowIndex) {
-                  // Shift rows up
                   const newKey = `${day}-${columnId}-${section}-${currentRow - 1}`;
                   newObj[newKey] = value;
                 } else {
-                  // Keep rows before the deleted row as is
                   newObj[key] = value;
                 }
               } else {
-                // Keep other sections as is
                 newObj[key] = value;
               }
             });
           };
 
-          // Process all state objects
           processStateObject(state.events, newEvents);
           processStateObject(state.dropdownValues, newDropdownValues);
 

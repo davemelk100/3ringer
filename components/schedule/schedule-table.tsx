@@ -18,6 +18,7 @@ export function ScheduleTable() {
     addRow, 
     deleteRow, 
     initializeSections,
+    setActiveDay
   } = useScheduleStore();
   const columns = useColumns();
   const [selectedDay, setSelectedDay] = useState(() => {
@@ -34,6 +35,10 @@ export function ScheduleTable() {
     setSelectedDay(today || weekDays[0]);
   }, [selectedWeek]);
 
+  useEffect(() => {
+    setActiveDay(selectedDay.fullDate);
+  }, [selectedDay, setActiveDay]);
+
   return (
     <div className="w-full">
       <CollapsibleHeader selectedWeek={selectedWeek} onWeekChange={setSelectedWeek} />
@@ -42,7 +47,10 @@ export function ScheduleTable() {
         className="w-full mt-4 sm:mt-8"
         onValueChange={(value) => {
           const day = weekDays.find(d => d.day === value);
-          if (day) setSelectedDay(day);
+          if (day) {
+            setSelectedDay(day);
+            setActiveDay(day.fullDate);
+          }
         }}
       >
         <div className="mt-0">

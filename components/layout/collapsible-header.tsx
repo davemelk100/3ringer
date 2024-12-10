@@ -18,6 +18,9 @@ export function CollapsibleHeader({ selectedWeek, onWeekChange }: CollapsibleHea
 
   return (
     <div className="relative print:hidden bg-[#f1f5f9]">
+      <div className="sm:hidden">
+        <CurrentDate showIcon={true} />
+      </div>
       <div
         className={cn(
           "transition-all duration-300 ease-in-out",
@@ -33,8 +36,8 @@ export function CollapsibleHeader({ selectedWeek, onWeekChange }: CollapsibleHea
             <div className="flex-1 w-full sm:w-auto">
               <CrewsOffToday />
             </div>
-            <div className="flex-1 w-full sm:w-auto">
-              <CurrentDate />
+            <div className="flex-1 w-full sm:w-auto hidden sm:block">
+              <CurrentDate showIcon={false} />
             </div>
             <div className="flex-1 flex justify-end w-full sm:w-auto">
               <Button

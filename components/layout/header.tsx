@@ -13,12 +13,13 @@ interface HeaderProps {
 export function Header({ selectedWeek, onWeekChange }: HeaderProps) {
   return (
     <div className="flex flex-row items-center gap-4 px-4 py-4 sm:h-16 bg-[#f1f5f9] print:hidden">
-      {/* Left side calendar icon with logo text - hidden on mobile */}
-      <div className="hidden sm:flex sm:w-[280px] items-center gap-3 justify-start">
+      <div className="hidden sm:flex items-center gap-3">
         <div className="flex items-center justify-center w-10 h-10 rounded-full bg-[#F68E5F]">
           <Calendar className="h-7 w-7 text-white" />
         </div>
-        <span className="text-2xl sm:text-3xl font-[900] uppercase text-[#0D324D] font-condensed">SCHEDULE</span>
+        <span className="text-2xl sm:text-3xl font-[900] uppercase text-[#0D324D] font-condensed">
+          SCHEDULE
+        </span>
       </div>
       
       {/* Week selector - centered on desktop/tablet, left on mobile */}
@@ -26,8 +27,8 @@ export function Header({ selectedWeek, onWeekChange }: HeaderProps) {
         <WeekSelector selectedWeek={selectedWeek} onWeekChange={onWeekChange} />
       </div>
       
-      {/* Right-aligned actions with fixed width to match left side */}
-      <div className="flex items-center gap-2 sm:gap-4 sm:w-[280px] justify-end">
+      {/* Right-aligned actions */}
+      <div className="flex items-center gap-2 sm:gap-4 justify-end">
         <PrintOptions />
         <UserProfile />
       </div>

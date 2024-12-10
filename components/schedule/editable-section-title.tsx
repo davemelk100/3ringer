@@ -39,11 +39,11 @@ export function EditableSectionTitle({ section }: EditableSectionTitleProps) {
             onChange={(e) => setValue(e.target.value)}
             onBlur={handleBlur}
             onKeyDown={handleKeyDown}
-            className="h-8 min-h-8 px-2 py-1 text-lg font-semibold text-[#0D324D]"
+            className="h-8 min-h-8 px-2 py-1 text-lg font-[900] text-[#0D324D] font-condensed"
             autoFocus
           />
         ) : (
-          <h3 className="text-lg font-semibold text-[#0D324D]">{value}</h3>
+          <h3 className="text-lg font-[900] text-[#0D324D] font-condensed">{value}</h3>
         )}
       </div>
     </div>
