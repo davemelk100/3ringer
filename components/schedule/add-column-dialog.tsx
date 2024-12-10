@@ -12,7 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Columns, Plus } from "lucide-react";
+import { Columns } from "lucide-react";
 
 interface AddColumnDialogProps {
   onAddColumn: (title: string, type: 'text' | 'dropdown') => void;
@@ -37,15 +37,14 @@ export function AddColumnDialog({ onAddColumn }: AddColumnDialogProps) {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button
+          variant="ghost"
           size="sm"
-          variant="outline"
-          className="flex items-center gap-1 bg-[#F68E5F] text-[#0D324D] hover:bg-transparent hover:text-[#0D324D] border-[#F68E5F] group"
+          className="flex items-center gap-1 text-[#0D324D] hover:bg-transparent"
           aria-label="Add new column"
           title="Add new column"
         >
-          <Columns className="h-4 w-4 text-[#0D324D] transition-colors" />
-          <Plus className="h-4 w-4 text-[#0D324D] transition-colors" />
-          <span className="hidden sm:inline">Add Column</span>
+          <Columns className="h-4 w-4" />
+          <span className="text-sm">Add Column</span>
           <span className="sr-only">Open add column dialog</span>
         </Button>
       </DialogTrigger>

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Table2, Plus } from "lucide-react";
+import { Table2 } from "lucide-react";
 import { EditableSectionTitle } from "./editable-section-title";
 import { ScheduleRow } from "./schedule-row";
 import { DeleteConfirmation } from "./delete-confirmation";
@@ -83,13 +83,12 @@ export function ScheduleSection({
           <AddColumnDialog onAddColumn={handleAddColumn} />
           <Button
             onClick={() => onAddRow(section.id)}
+            variant="ghost"
             size="sm"
-            variant="outline"
-            className="flex items-center gap-1 bg-[#F68E5F] text-[#0D324D] hover:bg-transparent hover:text-[#0D324D] border-[#F68E5F] group"
+            className="flex items-center gap-1 text-[#0D324D] hover:bg-transparent"
           >
-            <Table2 className="h-4 w-4 text-[#0D324D] transition-colors" />
-            <Plus className="h-4 w-4 text-[#0D324D] transition-colors" />
-            <span className="hidden sm:inline">Add Row</span>
+            <Table2 className="h-4 w-4" />
+            <span className="text-sm">Add Row</span>
           </Button>
           <TableVisibilityToggle 
             isVisible={isTableVisible} 
