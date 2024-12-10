@@ -2,7 +2,6 @@
 
 import { Button } from "@/components/ui/button";
 import { Eye, EyeOff } from "lucide-react";
-import { cn } from "@/lib/utils";
 
 interface TableVisibilityToggleProps {
   isVisible: boolean;
@@ -15,20 +14,18 @@ export function TableVisibilityToggle({ isVisible, onToggle }: TableVisibilityTo
       variant="ghost"
       size="sm"
       onClick={() => onToggle(!isVisible)}
-      className={cn(
-        "flex items-center gap-1 text-[#0D324D] hover:bg-transparent",
-        "hover:font-bold transition-all duration-200"
-      )}
+      className="h-8 flex items-center gap-1 text-[#0D324D] hover:bg-transparent px-2"
+      title={isVisible ? "Hide table" : "Show table"}
     >
       {isVisible ? (
         <>
           <EyeOff className="h-4 w-4" />
-          <span className="text-sm">Hide</span>
+          <span className="hidden sm:inline text-sm">Hide</span>
         </>
       ) : (
         <>
           <Eye className="h-4 w-4" />
-          <span className="text-sm">Show</span>
+          <span className="hidden sm:inline text-sm">Show</span>
         </>
       )}
     </Button>

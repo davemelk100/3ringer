@@ -85,15 +85,12 @@ export function ScheduleSection({
             {section.title}
           </h3>
         </div>
-        <div className="flex items-center gap-1 print-hide h-8">
+        <div className="flex items-center gap-1 print-hide">
           <Button
             variant="ghost"
             size="sm"
             onClick={() => toggleSectionLock(section.id)}
-            className={cn(
-              "flex items-center gap-1 text-[#0D324D] hover:bg-transparent h-8 px-2",
-              "hover:font-bold transition-all duration-200"
-            )}
+            className="h-8 flex items-center gap-1 text-[#0D324D] hover:bg-transparent px-2"
             title={section.isLocked ? "Unlock table" : "Lock table"}
           >
             {section.isLocked ? (
@@ -101,25 +98,28 @@ export function ScheduleSection({
             ) : (
               <Unlock className="h-4 w-4" />
             )}
-            <span className="text-sm">
+            <span className="hidden sm:inline text-sm">
               {section.isLocked ? "Unlock" : "Lock"}
             </span>
           </Button>
-          {!section.isLocked && <AddColumnDialog onAddColumn={handleAddColumn} />}
-          {!section.isLocked && (
-            <Button
-              onClick={() => onAddRow(section.id)}
-              variant="ghost"
-              size="sm"
-              className={cn(
-                "flex items-center gap-1 text-[#0D324D] hover:bg-transparent h-8 px-2",
-                "hover:font-bold transition-all duration-200"
-              )}
-            >
-              <Table2 className="h-4 w-4" />
-              <span className="text-sm">Add Row</span>
-            </Button>
-          )}
+          <AddColumnDialog 
+            onAddColumn={handleAddColumn} 
+            disabled={section.isLocked}
+          />
+          <Button
+            onClick={() => onAddRow(section.id)}
+            variant="ghost"
+            size="sm"
+            disabled={section.isLocked}
+            className={cn(
+              "h-8 flex items-center gap-1 text-[#0D324D] hover:bg-transparent px-2",
+              section.isLocked && "opacity-50 cursor-not-allowed"
+            )}
+            title="Add row"
+          >
+            <Table2 className="h-4 w-4" />
+            <span className="hidden sm:inline text-sm">Add Row</span>
+          </Button>
           <TableVisibilityToggle 
             isVisible={isTableVisible} 
             onToggle={setIsTableVisible}
