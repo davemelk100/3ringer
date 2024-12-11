@@ -67,7 +67,7 @@ export function ManageOptionsDialog({
             <Button
               onClick={handleAddOption}
               size="sm"
-              className="h-8"
+              className="h-8 bg-[#0081A7] hover:bg-[#0081A7]/90"
               disabled={!newOption.trim()}
             >
               <Plus className="h-4 w-4 mr-1" />
@@ -107,7 +107,7 @@ export function ManageOptionsDialog({
           <Button 
             onClick={() => setIsOpen(false)}
             size="sm"
-            className="w-full mt-4 h-8"
+            className="w-full mt-4 h-8 bg-[#0081A7] hover:bg-[#0081A7]/90"
           >
             Done
           </Button>

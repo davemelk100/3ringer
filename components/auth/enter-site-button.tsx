@@ -24,7 +24,7 @@ export function EnterSiteButton() {
       </h1>
       <Button 
         onClick={handleClick}
-        className="bg-[#0D324D] hover:bg-[#0D324D]/90 transition-all duration-150 px-8 py-6 text-lg"
+        className="bg-[#0081A7] hover:bg-[#0081A7]/90 transition-all duration-150 px-8 py-6 text-lg"
       >
         Enter Site
       </Button>
