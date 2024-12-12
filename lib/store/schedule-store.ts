@@ -2,8 +2,9 @@
 
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { ScheduleEvent, ScheduleState, ColumnHeader, ScheduleSection } from "@/lib/types/schedule";
+import { ScheduleState, ScheduleEvent, ColumnHeader, ScheduleSection } from "@/lib/types/schedule";
 import { scheduleConfig } from "@/lib/config/schedule";
+import { scheduleReducer } from "./schedule-reducer";
 
 interface ScheduleStore extends ScheduleState {
   activeDay: Date | null;
@@ -40,216 +41,66 @@ export const useScheduleStore = create<ScheduleStore>()(
       dropdownOptions: {},
       activeDay: null,
       setActiveDay: (date) => set({ activeDay: date }),
-      updateEvent: (event) => {
-        set((state) => ({
-          events: {
-            ...state.events,
-            [`${event.day}-${event.columnId}-${event.section}-${event.rowIndex}`]: event,
-          },
-        }));
-      },
-      deleteEvent: (eventId) => {
-        set((state) => {
-          const newEvents = { ...state.events };
-          delete newEvents[eventId];
-          return { events: newEvents };
-        });
-      },
+      updateEvent: (event) => set((state) => scheduleReducer(state, { type: 'UPDATE_EVENT', payload: event })),
+      deleteEvent: (eventId) => set((state) => scheduleReducer(state, { type: 'DELETE_EVENT', payload: eventId })),
       getEventByDayAndTime: (day, columnId, rowIndex, section) => {
         return get().events[`${day}-${columnId}-${section}-${rowIndex}`];
       },
-      updateColumn: (index, column) => {
-        set((state) => {
-          const newColumns = [...state.columns];
-          newColumns[index] = column;
-          return { columns: newColumns };
-        });
-      },
-      addColumn: (title: string, type: 'text' | 'dropdown') => {
-        set((state) => {
-          const newColumnId = `column-${state.columns.length + 1}`;
-          const newColumn = { id: newColumnId, title, type };
-          
-          if (type === 'dropdown') {
-            return {
-              columns: [...state.columns, newColumn],
-              dropdownOptions: {
-                ...state.dropdownOptions,
-                [newColumnId]: []
-              }
-            };
-          }
-          
-          return {
-            columns: [...state.columns, newColumn]
-          };
-        });
-      },
-      deleteColumn: (index) => {
-        set((state) => {
-          if (state.columns.length <= 1) return state;
-
-          const newColumns = [...state.columns];
-          const deletedColumn = newColumns[index];
-          newColumns.splice(index, 1);
-
-          const newEvents = { ...state.events };
-          const newDropdownValues = { ...state.dropdownValues };
-          const newDropdownOptions = { ...state.dropdownOptions };
-
-          Object.keys(newEvents).forEach(key => {
-            if (key.includes(deletedColumn.id)) {
-              delete newEvents[key];
-            }
-          });
-
-          Object.keys(newDropdownValues).forEach(key => {
-            if (key.includes(deletedColumn.id)) {
-              delete newDropdownValues[key];
-            }
-          });
-
-          if (deletedColumn.type === 'dropdown') {
-            delete newDropdownOptions[deletedColumn.id];
-          }
-
-          return {
-            columns: newColumns,
-            events: newEvents,
-            dropdownValues: newDropdownValues,
-            dropdownOptions: newDropdownOptions
-          };
-        });
-      },
-      reorderColumns: (oldIndex: number, newIndex: number) => {
-        set((state) => {
-          const newColumns = [...state.columns];
-          const [movedColumn] = newColumns.splice(oldIndex, 1);
-          newColumns.splice(newIndex, 0, movedColumn);
-          return { columns: newColumns };
-        });
-      },
-      addRow: (sectionId) => {
-        set((state) => ({
-          sections: state.sections.map((section) =>
-            section.id === sectionId && !section.isLocked
-              ? { ...section, rows: section.rows + 1 }
-              : section
-          ),
-        }));
-      },
-      deleteRow: (sectionId, rowIndex) => {
-        set((state) => {
-          const section = state.sections.find(s => s.id === sectionId);
-          if (!section || section.rows <= 1 || section.isLocked) return state;
-
-          const newEvents = {};
-          const newDropdownValues = {};
-
-          const processStateObject = (obj: Record<string, any>, newObj: Record<string, any>) => {
-            Object.entries(obj).forEach(([key, value]) => {
-              const [day, columnId, section, row] = key.split('-');
-              const currentRow = parseInt(row);
-              
-              if (section === sectionId) {
-                if (currentRow === rowIndex) return;
-                if (currentRow > rowIndex) {
-                  const newKey = `${day}-${columnId}-${section}-${currentRow - 1}`;
-                  newObj[newKey] = value;
-                } else {
-                  newObj[key] = value;
-                }
-              } else {
-                newObj[key] = value;
-              }
-            });
-          };
-
-          processStateObject(state.events, newEvents);
-          processStateObject(state.dropdownValues, newDropdownValues);
-
-          return {
-            sections: state.sections.map(s =>
-              s.id === sectionId
-                ? { ...s, rows: s.rows - 1 }
-                : s
-            ),
-            events: newEvents,
-            dropdownValues: newDropdownValues,
-          };
-        });
-      },
-      updateSection: (section) => {
-        set((state) => ({
-          sections: state.sections.map((s) =>
-            s.id === section.id ? section : s
-          ),
-        }));
-      },
-      initializeColumns: () => {
-        set({ columns: scheduleConfig.defaultColumns });
-      },
-      initializeSections: () => {
-        set((state) => ({
-          sections: state.sections.length === 0 ? scheduleConfig.defaultSections : state.sections
-        }));
-      },
-      updateDropdownValue: (key: string, value: string) => {
-        set((state) => {
-          const newDropdownValues = { ...state.dropdownValues };
-          if (value === '') {
-            delete newDropdownValues[key];
-          } else {
-            newDropdownValues[key] = value;
-          }
-          return { dropdownValues: newDropdownValues };
-        });
-      },
-      getDropdownValue: (key: string) => {
-        return get().dropdownValues[key] || '';
-      },
-      addDropdownOption: (dropdownId: string, option: string) => {
-        set((state) => ({
-          dropdownOptions: {
-            ...state.dropdownOptions,
-            [dropdownId]: [...(state.dropdownOptions[dropdownId] || []), option],
-          },
-        }));
-      },
-      deleteDropdownOption: (dropdownId: string, option: string) => {
-        set((state) => {
-          const newDropdownOptions = { ...state.dropdownOptions };
-          const options = newDropdownOptions[dropdownId] || [];
-          newDropdownOptions[dropdownId] = options.filter(o => o !== option);
-
-          const newDropdownValues = { ...state.dropdownValues };
-          Object.entries(newDropdownValues).forEach(([key, value]) => {
-            if (key.includes(dropdownId) && value === option) {
-              delete newDropdownValues[key];
-            }
-          });
-
-          return {
-            dropdownOptions: newDropdownOptions,
-            dropdownValues: newDropdownValues,
-          };
-        });
-      },
-      getDropdownOptions: (dropdownId: string) => {
-        return get().dropdownOptions[dropdownId] || [];
-      },
-      getColumnDropdownId: (columnId: string) => {
-        return columnId;
-      },
-      toggleSectionLock: (sectionId: string) => {
-        set((state) => ({
-          sections: state.sections.map((section) =>
-            section.id === sectionId
-              ? { ...section, isLocked: !section.isLocked }
-              : section
-          ),
-        }));
-      },
+      updateColumn: (index, column) => set((state) => scheduleReducer(state, { 
+        type: 'UPDATE_COLUMN', 
+        payload: { index, column } 
+      })),
+      addColumn: (title, type) => set((state) => scheduleReducer(state, { 
+        type: 'ADD_COLUMN', 
+        payload: { title, type } 
+      })),
+      deleteColumn: (index) => set((state) => scheduleReducer(state, { 
+        type: 'DELETE_COLUMN', 
+        payload: index 
+      })),
+      reorderColumns: (oldIndex, newIndex) => set((state) => scheduleReducer(state, { 
+        type: 'REORDER_COLUMNS', 
+        payload: { oldIndex, newIndex } 
+      })),
+      addRow: (sectionId) => set((state) => scheduleReducer(state, { 
+        type: 'ADD_ROW', 
+        payload: sectionId 
+      })),
+      deleteRow: (sectionId, rowIndex) => set((state) => scheduleReducer(state, { 
+        type: 'DELETE_ROW', 
+        payload: { sectionId, rowIndex } 
+      })),
+      updateSection: (section) => set((state) => scheduleReducer(state, { 
+        type: 'UPDATE_SECTION', 
+        payload: section 
+      })),
+      initializeColumns: () => set((state) => scheduleReducer(state, { 
+        type: 'INITIALIZE_COLUMNS', 
+        payload: scheduleConfig.defaultColumns 
+      })),
+      initializeSections: () => set((state) => scheduleReducer(state, { 
+        type: 'INITIALIZE_SECTIONS', 
+        payload: scheduleConfig.defaultSections 
+      })),
+      updateDropdownValue: (key, value) => set((state) => scheduleReducer(state, { 
+        type: 'UPDATE_DROPDOWN_VALUE', 
+        payload: { key, value } 
+      })),
+      getDropdownValue: (key) => get().dropdownValues[key] || '',
+      addDropdownOption: (dropdownId, option) => set((state) => scheduleReducer(state, { 
+        type: 'ADD_DROPDOWN_OPTION', 
+        payload: { dropdownId, option } 
+      })),
+      deleteDropdownOption: (dropdownId, option) => set((state) => scheduleReducer(state, { 
+        type: 'DELETE_DROPDOWN_OPTION', 
+        payload: { dropdownId, option } 
+      })),
+      getDropdownOptions: (dropdownId) => get().dropdownOptions[dropdownId] || [],
+      getColumnDropdownId: (columnId) => columnId,
+      toggleSectionLock: (sectionId) => set((state) => scheduleReducer(state, { 
+        type: 'TOGGLE_SECTION_LOCK', 
+        payload: sectionId 
+      })),
     }),
     {
       name: "schedule-storage",
