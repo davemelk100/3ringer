@@ -9,16 +9,36 @@ const nextConfig = {
     ignoreBuildErrors: true,
   },
   webpack: (config) => {
-    // Disable punycode usage
+    // Handle punycode deprecation
     config.resolve.alias = {
       ...config.resolve.alias,
       punycode: false,
     };
     
-    // Ensure fallbacks are properly handled
     config.resolve.fallback = {
       ...config.resolve.fallback,
       punycode: false,
+    };
+
+    // Optimize bundle size
+    config.optimization = {
+      ...config.optimization,
+      moduleIds: 'deterministic',
+      splitChunks: {
+        chunks: 'all',
+        cacheGroups: {
+          vendors: {
+            test: /[\\/]node_modules[\\/]/,
+            priority: -10,
+            reuseExistingChunk: true,
+          },
+          default: {
+            minChunks: 2,
+            priority: -20,
+            reuseExistingChunk: true,
+          },
+        },
+      },
     };
     
     return config;
