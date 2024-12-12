@@ -1,0 +1,84 @@
+"use client";
+
+import { Select, SelectContent, SelectItem, SelectValue } from "@/components/ui/select";
+import { addWeeks, format, startOfWeek, endOfWeek, addMonths, subWeeks } from "date-fns";
+import { WeekSelectorArrow } from "./week-selector-arrow";
+import { WeekSelectorTrigger } from "./week-selector-trigger";
+
+interface WeekSelectorProps {
+  selectedWeek: Date;
+  onWeekChange: (date: Date) => void;
+}
+
+export function WeekSelector({ selectedWeek, onWeekChange }: WeekSelectorProps) {
+  // Generate weeks from 6 months ago to 6 months in the future
+  const startDate = addMonths(new Date(), -6);
+  const endDate = addMonths(new Date(), 6);
+  
+  const weeks = [];
+  let currentDate = startDate;
+  
+  while (currentDate <= endDate) {
+    const start = startOfWeek(currentDate, { weekStartsOn: 1 });
+    const end = endOfWeek(currentDate, { weekStartsOn: 1 });
+    
+    weeks.push({
+      value: format(start, "yyyy-MM-dd"),
+      label: `${format(start, "MMM d")} - ${format(end, "MMM d, yyyy")}`,
+      date: start,
+      isPast: start < new Date(),
+      isFuture: start > new Date(),
+      isCurrent: format(start, "yyyy-MM-dd") === format(startOfWeek(new Date(), { weekStartsOn: 1 }), "yyyy-MM-dd")
+    });
+    
+    currentDate = addWeeks(currentDate, 1);
+  }
+
+  const selectedValue = format(startOfWeek(selectedWeek, { weekStartsOn: 1 }), "yyyy-MM-dd");
+  const selectedLabel = weeks.find(w => w.value === selectedValue)?.label || "Select a week";
+
+  return (
+    <div className="flex items-center w-full sm:w-auto">
+      <WeekSelectorArrow 
+        direction="left" 
+        onClick={() => onWeekChange(subWeeks(selectedWeek, 1))} 
+      />
+      
+      <Select
+        value={selectedValue}
+        onValueChange={(value) => {
+          const week = weeks.find((w) => w.value === value);
+          if (week) {
+            onWeekChange(week.date);
+          }
+        }}
+      >
+        <WeekSelectorTrigger label={selectedLabel} />
+        <SelectContent align="center">
+          <div className="max-h-[300px] overflow-y-auto">
+            {weeks.map((week) => (
+              <SelectItem 
+                key={week.value} 
+                value={week.value}
+                className={`
+                  text-[#0072A3] whitespace-nowrap text-sm text-center
+                  ${week.isPast ? "text-muted-foreground" : ""}
+                  ${week.isFuture ? "text-blue-600 dark:text-blue-400" : ""}
+                  ${week.isCurrent ? "font-bold" : ""}
+                `}
+              >
+                {week.label}
+                {week.isCurrent && " (Current)"}
+              </SelectItem>
+            ))}
+          </div>
+        </SelectContent>
+      </Select>
+
+      <WeekSelectorArrow 
+        direction="right" 
+        onClick={() => onWeekChange(addWeeks(selectedWeek, 1))} 
+      />
+    </div>
+  );
+}
