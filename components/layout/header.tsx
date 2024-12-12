@@ -17,8 +17,8 @@ export function Header({ selectedWeek, onWeekChange }: HeaderProps) {
         <div className="flex items-center justify-center w-10 h-10 rounded-full bg-[#F68E5F]">
           <Calendar className="h-7 w-7 text-white" />
         </div>
-        <span className="text-2xl sm:text-3xl font-[900] uppercase text-[#0D324D] font-condensed">
-          SCHEDULE
+        <span className="text-2xl sm:text-3xl font-[900] text-[#0D324D] font-condensed lowercase">
+          schedule
         </span>
       </div>
       
