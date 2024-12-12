@@ -1,12 +1,11 @@
-import { Suspense, lazy, useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 
-// Lazy load components
-const ScheduleSection = lazy(() => import('./ScheduleSection'));
-const ScheduleColumn = lazy(() => import('./ScheduleColumn'));
+// Direct imports instead of lazy loading
+import ScheduleSection from './ScheduleSection';
 
 // Implement virtual scrolling for large schedules
-export function OptimizedSchedule({ sections, columns }) {
+export function OptimizedSchedule({ sections, columns }: { sections: { id: string }[], columns: any[] }) {
   const [visibleSections, setVisibleSections] = useState<string[]>([]);
   const { ref, inView } = useInView({
     threshold: 0.1,

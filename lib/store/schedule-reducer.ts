@@ -18,8 +18,8 @@ export type ScheduleAction =
   | { type: 'INITIALIZE_COLUMNS'; payload: ColumnHeader[] }
   | { type: 'INITIALIZE_SECTIONS'; payload: ScheduleSection[] };
 
-// Add WeakMap for caching computed states
-const stateCache = new WeakMap();
+// Change from const to let
+let stateCache = new WeakMap();
 
 // Optimize the reducer with better data structures and memoization
 export function scheduleReducer(state: ScheduleState, action: ScheduleAction): ScheduleState {
@@ -259,5 +259,5 @@ export function scheduleReducer(state: ScheduleState, action: ScheduleAction): S
 
 // Add cleanup function to prevent memory leaks
 export function clearStateCache() {
-  stateCache.clear();
+  stateCache = new WeakMap();
 }

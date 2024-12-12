@@ -10,10 +10,13 @@ type ScheduleAction = {
 
 // Add state type definition
 type ScheduleState = {
-  // Add your state properties here
-  sections?: any[];
-  columns?: any[];
-  // ... other state properties
+  sections: { id: string; }[];
+  columns: { id: string; }[];
+};
+
+const initialState: ScheduleState = {
+  sections: [],
+  columns: []
 };
 
 const scheduleReducer = (
