@@ -15,6 +15,7 @@ export interface ScheduleSection {
 }
 
 export interface ScheduleState {
+  columns: ColumnHeader[];
   events: Record<string, ScheduleEvent>;
   sections: ScheduleSection[];
   dropdownValues: Record<string, string>;
