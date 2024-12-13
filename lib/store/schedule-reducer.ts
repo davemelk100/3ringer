@@ -248,7 +248,7 @@ export function scheduleReducer(state: ScheduleState, action: ScheduleAction): S
       newState = state;
   }
 
-  // Cache the result
+  // Cache the resulttt
   if (!stateCache.has(state)) {
     stateCache.set(state, {});
   }
