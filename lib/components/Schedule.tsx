@@ -1,4 +1,4 @@
-import { useEffect, useReducer } from "react";
+import { useEffect, useReducer, useState } from "react";
 import { ScheduleCacheManager } from "../utils/cacheManager";
 import { OptimizedSchedule } from "./OptimizedSchedule";
 
@@ -36,6 +36,8 @@ export function Schedule() {
     React.Reducer<ScheduleState, ScheduleAction>
   >(scheduleReducer, initialState);
 
+  const [dataUrl] = useState("your-api-url-here");
+
   useEffect(() => {
     // Handle back/forward cache
     window.addEventListener("pageshow", (event) => {
@@ -53,5 +55,5 @@ export function Schedule() {
     };
   }, [state]);
 
-  return <OptimizedSchedule sections={state.sections} columns={state.columns} />;
+  return <OptimizedSchedule dataUrl={dataUrl} />;
 }
