@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from 'react';
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Printer } from "lucide-react";
 import {
@@ -11,11 +11,16 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 export function PrintOptions() {
-  const [orientation, setOrientation] = useState<'portrait' | 'landscape'>('portrait');
+  const [orientation, setOrientation] = useState<"portrait" | "landscape">(
+    "portrait"
+  );
 
-  const handlePrint = (newOrientation: 'portrait' | 'landscape') => {
+  const handlePrint = (newOrientation: "portrait" | "landscape") => {
     setOrientation(newOrientation);
-    document.documentElement.style.setProperty('--print-orientation', newOrientation);
+    document.documentElement.style.setProperty(
+      "--print-orientation",
+      newOrientation
+    );
     window.print();
   };
 
@@ -29,15 +34,15 @@ export function PrintOptions() {
           title="Print schedule"
           className="h-9 w-9 border-none hover:bg-black/10 shadow-none hover:shadow-none focus:shadow-none focus-visible:shadow-none bg-transparent"
         >
-          <Printer className="h-5 w-5 text-[#0D324D]" />
+          <Printer className="h-5 w-5 text-[#2778a5]" />
           <span className="sr-only">Print options</span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuItem onClick={() => handlePrint('portrait')}>
+        <DropdownMenuItem onClick={() => handlePrint("portrait")}>
           Print Portrait
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => handlePrint('landscape')}>
+        <DropdownMenuItem onClick={() => handlePrint("landscape")}>
           Print Landscape
         </DropdownMenuItem>
       </DropdownMenuContent>
