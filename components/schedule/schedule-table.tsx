@@ -11,18 +11,15 @@ import { CollapsibleHeader } from "@/components/layout/collapsible-header";
 import { startOfWeek, isToday } from "date-fns";
 
 export function ScheduleTable() {
-  const [selectedWeek, setSelectedWeek] = useState(() => startOfWeek(new Date(), { weekStartsOn: 1 }));
+  const [selectedWeek, setSelectedWeek] = useState(() =>
+    startOfWeek(new Date(), { weekStartsOn: 1 })
+  );
   const weekDays = getCurrentWeekDates(selectedWeek);
-  const { 
-    sections, 
-    addRow, 
-    deleteRow, 
-    initializeSections,
-    setActiveDay
-  } = useScheduleStore();
+  const { sections, addRow, deleteRow, initializeSections, setActiveDay } =
+    useScheduleStore();
   const columns = useColumns();
   const [selectedDay, setSelectedDay] = useState(() => {
-    const today = weekDays.find(day => isToday(day.fullDate));
+    const today = weekDays.find((day) => isToday(day.fullDate));
     return today || weekDays[0];
   });
 
@@ -31,7 +28,7 @@ export function ScheduleTable() {
   }, [initializeSections]);
 
   useEffect(() => {
-    const today = weekDays.find(day => isToday(day.fullDate));
+    const today = weekDays.find((day) => isToday(day.fullDate));
     setSelectedDay(today || weekDays[0]);
   }, [selectedWeek]);
 
@@ -41,12 +38,15 @@ export function ScheduleTable() {
 
   return (
     <div className="w-full">
-      <CollapsibleHeader selectedWeek={selectedWeek} onWeekChange={setSelectedWeek} />
-      <Tabs 
+      <CollapsibleHeader
+        selectedWeek={selectedWeek}
+        onWeekChange={setSelectedWeek}
+      />
+      <Tabs
         value={selectedDay.day}
         className="w-full mt-2 sm:mt-4"
         onValueChange={(value) => {
-          const day = weekDays.find(d => d.day === value);
+          const day = weekDays.find((d) => d.day === value);
           if (day) {
             setSelectedDay(day);
             setActiveDay(day.fullDate);
@@ -58,7 +58,11 @@ export function ScheduleTable() {
             <ScheduleHeader weekDays={weekDays} />
           </div>
           {weekDays.map(({ day }) => (
-            <TabsContent key={day} value={day} className="mt-0 print:block bg-[#A1C6EA] p-2 sm:p-4">
+            <TabsContent
+              key={day}
+              value={day}
+              className="mt-0 print:block bg-[#c6e0f9] p-2 sm:p-4"
+            >
               <div className="overflow-x-auto">
                 {sections.map((section, index) => (
                   <ScheduleSection
@@ -68,7 +72,7 @@ export function ScheduleTable() {
                     day={day}
                     onAddRow={addRow}
                     onDeleteRow={deleteRow}
-                    className={index > 0 ? 'section-break' : ''}
+                    className={index > 0 ? "section-break" : ""}
                   />
                 ))}
               </div>
