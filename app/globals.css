@@ -218,7 +218,6 @@
   }
 }
 
-/* Remove border radius from all buttons and dropdowns */
 button,
 [role="combobox"],
 [role="listbox"],
