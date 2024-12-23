@@ -7,6 +7,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  DialogDescription,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -16,21 +17,24 @@ import { Columns } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface AddColumnDialogProps {
-  onAddColumn: (title: string, type: 'text' | 'dropdown') => void;
+  onAddColumn: (title: string, type: "text" | "dropdown") => void;
   disabled?: boolean;
 }
 
-export function AddColumnDialog({ onAddColumn, disabled }: AddColumnDialogProps) {
+export function AddColumnDialog({
+  onAddColumn,
+  disabled,
+}: AddColumnDialogProps) {
   const [open, setOpen] = useState(false);
   const [title, setTitle] = useState("");
-  const [type, setType] = useState<'text' | 'dropdown'>('text');
+  const [type, setType] = useState<"text" | "dropdown">("text");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (title.trim()) {
       onAddColumn(title.trim(), type);
       setTitle("");
-      setType('text');
+      setType("text");
       setOpen(false);
     }
   };
@@ -57,6 +61,9 @@ export function AddColumnDialog({ onAddColumn, disabled }: AddColumnDialogProps)
         <DialogHeader>
           <DialogTitle>Add New Column</DialogTitle>
         </DialogHeader>
+        <DialogDescription className="sr-only">
+          Add a new column to the schedule
+        </DialogDescription>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="column-title">Column Title</Label>
@@ -72,7 +79,7 @@ export function AddColumnDialog({ onAddColumn, disabled }: AddColumnDialogProps)
             <Label>Column Type</Label>
             <RadioGroup
               value={type}
-              onValueChange={(value) => setType(value as 'text' | 'dropdown')}
+              onValueChange={(value) => setType(value as "text" | "dropdown")}
               className="flex gap-4"
             >
               <div className="flex items-center space-x-2">
