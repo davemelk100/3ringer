@@ -11,7 +11,12 @@ interface ScheduleCellProps {
   section: string;
 }
 
-export function ScheduleCell({ day, columnId, rowIndex, section }: ScheduleCellProps) {
+export function ScheduleCell({
+  day,
+  columnId,
+  rowIndex,
+  section,
+}: ScheduleCellProps) {
   const { getEventByDayAndTime, updateEvent } = useScheduleStore();
   const [isEditing, setIsEditing] = useState(false);
   const [content, setContent] = useState("");
@@ -52,7 +57,7 @@ export function ScheduleCell({ day, columnId, rowIndex, section }: ScheduleCellP
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
-      e.currentTarget.blur();
+      (e.currentTarget as HTMLElement).blur();
     }
   };
 
@@ -94,11 +99,11 @@ export function ScheduleCell({ day, columnId, rowIndex, section }: ScheduleCellP
           onKeyDown={handleKeyDown}
           style={{
             height: cellHeight ? `${cellHeight}px` : undefined,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            lineHeight: '1.2',
-            paddingTop: '0.125rem'
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            lineHeight: "1.2",
+            paddingTop: "0.125rem",
           }}
         />
       ) : (

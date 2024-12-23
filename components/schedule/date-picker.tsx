@@ -1,6 +1,12 @@
 "use client";
 
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useState, useEffect } from "react";
 import { getDaysInMonth, format, isFuture } from "date-fns";
 
@@ -16,15 +22,14 @@ export function DatePicker({ selectedDate, onDateChange }: DatePickerProps) {
   const [day, setDay] = useState(selectedDate.getDate());
 
   const maxYear = currentDate.getFullYear();
-  const years = Array.from(
-    { length: 10 }, 
-    (_, i) => maxYear - 9 + i
-  ).filter(y => y <= maxYear);
+  const years = Array.from({ length: 10 }, (_, i) => maxYear - 9 + i).filter(
+    (y) => y <= maxYear
+  );
 
   const months = Array.from({ length: 12 }, (_, i) => ({
     value: i,
     label: format(new Date(2000, i), "MMMM"),
-  })).filter(m => {
+  })).filter((m) => {
     if (year < maxYear) return true;
     return m.value <= currentDate.getMonth();
   });
@@ -32,7 +37,7 @@ export function DatePicker({ selectedDate, onDateChange }: DatePickerProps) {
   const days = Array.from(
     { length: getDaysInMonth(new Date(year, month)) },
     (_, i) => i + 1
-  ).filter(d => {
+  ).filter((d) => {
     const date = new Date(year, month, d);
     return !isFuture(date);
   });
@@ -50,7 +55,6 @@ export function DatePicker({ selectedDate, onDateChange }: DatePickerProps) {
         Select a day:
       </label>
       <Select
-        id="month-selector"
         value={month.toString()}
         onValueChange={(value) => setMonth(parseInt(value))}
       >

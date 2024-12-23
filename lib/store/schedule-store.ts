@@ -2,7 +2,13 @@
 
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { ScheduleState, ScheduleEvent, ColumnHeader, ScheduleSection } from "@/lib/types/schedule";
+import {
+  ScheduleState,
+  ScheduleEvent,
+  ColumnHeader,
+  ScheduleSection,
+  RowStatus,
+} from "@/lib/types/schedule";
 import { scheduleConfig } from "@/lib/config/schedule";
 import { scheduleReducer } from "./schedule-reducer";
 
@@ -11,10 +17,15 @@ interface ScheduleStore extends ScheduleState {
   setActiveDay: (date: Date) => void;
   updateEvent: (event: ScheduleEvent) => void;
   deleteEvent: (eventId: string) => void;
-  getEventByDayAndTime: (day: string, columnId: string, rowIndex: number, section: string) => ScheduleEvent | undefined;
+  getEventByDayAndTime: (
+    day: string,
+    columnId: string,
+    rowIndex: number,
+    section: string
+  ) => ScheduleEvent | undefined;
   columns: ColumnHeader[];
   updateColumn: (index: number, column: ColumnHeader) => void;
-  addColumn: (title: string, type: 'text' | 'dropdown') => void;
+  addColumn: (title: string, type: "text" | "dropdown") => void;
   deleteColumn: (index: number) => void;
   reorderColumns: (oldIndex: number, newIndex: number) => void;
   addRow: (sectionId: string) => void;
@@ -29,6 +40,9 @@ interface ScheduleStore extends ScheduleState {
   getDropdownOptions: (dropdownId: string) => string[];
   getColumnDropdownId: (columnId: string) => string;
   toggleSectionLock: (sectionId: string) => void;
+  getRowStatus: (key: string) => RowStatus | undefined;
+  updateRowStatus: (key: string, status: RowStatus | undefined) => void;
+  rowStatuses: Record<string, RowStatus | undefined>;
 }
 
 export const useScheduleStore = create<ScheduleStore>()(
@@ -41,66 +55,121 @@ export const useScheduleStore = create<ScheduleStore>()(
       dropdownOptions: {},
       activeDay: null,
       setActiveDay: (date) => set({ activeDay: date }),
-      updateEvent: (event) => set((state) => scheduleReducer(state, { type: 'UPDATE_EVENT', payload: event })),
-      deleteEvent: (eventId) => set((state) => scheduleReducer(state, { type: 'DELETE_EVENT', payload: eventId })),
+      updateEvent: (event) =>
+        set((state) =>
+          scheduleReducer(state, { type: "UPDATE_EVENT", payload: event })
+        ),
+      deleteEvent: (eventId) =>
+        set((state) =>
+          scheduleReducer(state, { type: "DELETE_EVENT", payload: eventId })
+        ),
       getEventByDayAndTime: (day, columnId, rowIndex, section) => {
         return get().events[`${day}-${columnId}-${section}-${rowIndex}`];
       },
-      updateColumn: (index, column) => set((state) => scheduleReducer(state, { 
-        type: 'UPDATE_COLUMN', 
-        payload: { index, column } 
-      })),
-      addColumn: (title, type) => set((state) => scheduleReducer(state, { 
-        type: 'ADD_COLUMN', 
-        payload: { title, type } 
-      })),
-      deleteColumn: (index) => set((state) => scheduleReducer(state, { 
-        type: 'DELETE_COLUMN', 
-        payload: index 
-      })),
-      reorderColumns: (oldIndex, newIndex) => set((state) => scheduleReducer(state, { 
-        type: 'REORDER_COLUMNS', 
-        payload: { oldIndex, newIndex } 
-      })),
-      addRow: (sectionId) => set((state) => scheduleReducer(state, { 
-        type: 'ADD_ROW', 
-        payload: sectionId 
-      })),
-      deleteRow: (sectionId, rowIndex) => set((state) => scheduleReducer(state, { 
-        type: 'DELETE_ROW', 
-        payload: { sectionId, rowIndex } 
-      })),
-      updateSection: (section) => set((state) => scheduleReducer(state, { 
-        type: 'UPDATE_SECTION', 
-        payload: section 
-      })),
-      initializeColumns: () => set((state) => scheduleReducer(state, { 
-        type: 'INITIALIZE_COLUMNS', 
-        payload: scheduleConfig.defaultColumns 
-      })),
-      initializeSections: () => set((state) => scheduleReducer(state, { 
-        type: 'INITIALIZE_SECTIONS', 
-        payload: scheduleConfig.defaultSections 
-      })),
-      updateDropdownValue: (key, value) => set((state) => scheduleReducer(state, { 
-        type: 'UPDATE_DROPDOWN_VALUE', 
-        payload: { key, value } 
-      })),
-      getDropdownValue: (key) => get().dropdownValues[key] || '',
-      addDropdownOption: (dropdownId, option) => set((state) => scheduleReducer(state, { 
-        type: 'ADD_DROPDOWN_OPTION', 
-        payload: { dropdownId, option } 
-      })),
-      deleteDropdownOption: (dropdownId, option) => set((state) => scheduleReducer(state, { 
-        type: 'DELETE_DROPDOWN_OPTION', 
-        payload: { dropdownId, option } 
-      })),
-      getDropdownOptions: (dropdownId) => get().dropdownOptions[dropdownId] || [],
+      updateColumn: (index, column) =>
+        set((state) =>
+          scheduleReducer(state, {
+            type: "UPDATE_COLUMN",
+            payload: { index, column },
+          })
+        ),
+      addColumn: (title, type) =>
+        set((state) =>
+          scheduleReducer(state, {
+            type: "ADD_COLUMN",
+            payload: { title, type },
+          })
+        ),
+      deleteColumn: (index) =>
+        set((state) =>
+          scheduleReducer(state, {
+            type: "DELETE_COLUMN",
+            payload: index,
+          })
+        ),
+      reorderColumns: (oldIndex, newIndex) =>
+        set((state) =>
+          scheduleReducer(state, {
+            type: "REORDER_COLUMNS",
+            payload: { oldIndex, newIndex },
+          })
+        ),
+      addRow: (sectionId) =>
+        set((state) =>
+          scheduleReducer(state, {
+            type: "ADD_ROW",
+            payload: sectionId,
+          })
+        ),
+      deleteRow: (sectionId, rowIndex) =>
+        set((state) =>
+          scheduleReducer(state, {
+            type: "DELETE_ROW",
+            payload: { sectionId, rowIndex },
+          })
+        ),
+      updateSection: (section) =>
+        set((state) =>
+          scheduleReducer(state, {
+            type: "UPDATE_SECTION",
+            payload: section,
+          })
+        ),
+      initializeColumns: () =>
+        set((state) =>
+          scheduleReducer(state, {
+            type: "INITIALIZE_COLUMNS",
+            payload: scheduleConfig.defaultColumns,
+          })
+        ),
+      initializeSections: () =>
+        set((state) =>
+          scheduleReducer(state, {
+            type: "INITIALIZE_SECTIONS",
+            payload: scheduleConfig.defaultSections,
+          })
+        ),
+      updateDropdownValue: (key, value) =>
+        set((state) =>
+          scheduleReducer(state, {
+            type: "UPDATE_DROPDOWN_VALUE",
+            payload: { key, value },
+          })
+        ),
+      getDropdownValue: (key) => get().dropdownValues[key] || "",
+      addDropdownOption: (dropdownId, option) =>
+        set((state) =>
+          scheduleReducer(state, {
+            type: "ADD_DROPDOWN_OPTION",
+            payload: { dropdownId, option },
+          })
+        ),
+      deleteDropdownOption: (dropdownId, option) =>
+        set((state) =>
+          scheduleReducer(state, {
+            type: "DELETE_DROPDOWN_OPTION",
+            payload: { dropdownId, option },
+          })
+        ),
+      getDropdownOptions: (dropdownId) =>
+        get().dropdownOptions[dropdownId] || [],
       getColumnDropdownId: (columnId) => columnId,
-      toggleSectionLock: (sectionId) => set((state) => scheduleReducer(state, { 
-        type: 'TOGGLE_SECTION_LOCK', 
-        payload: sectionId 
-      })),
+      toggleSectionLock: (sectionId) =>
+        set((state) =>
+          scheduleReducer(state, {
+            type: "TOGGLE_SECTION_LOCK",
+            payload: sectionId,
+          })
+        ),
+      getRowStatus: (key) => get().rowStatuses[key],
+      updateRowStatus: (key, status) =>
+        set((state) => ({
+          rowStatuses: {
+            ...state.rowStatuses,
+            [key]: status,
+          },
+        })),
+      rowStatuses: {},
     }),
     {
       name: "schedule-storage",

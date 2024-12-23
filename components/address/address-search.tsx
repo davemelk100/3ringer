@@ -1,6 +1,8 @@
 "use client";
 
-import { useState, useEffect, useRef } from 'react';
+/// <reference types="@types/google.maps" />
+
+import { useState, useEffect, useRef } from "react";
 import usePlacesAutocomplete, {
   getGeocode,
   getLatLng,
@@ -19,11 +21,11 @@ interface AddressSearchProps {
   value?: string;
 }
 
-export function AddressSearch({ 
-  onSelect, 
+export function AddressSearch({
+  onSelect,
   className,
   placeholder = "Search address...",
-  value: initialValue
+  value: initialValue,
 }: AddressSearchProps) {
   const [isLoaded, setIsLoaded] = useState(false);
   const [showSuggestions, setShowSuggestions] = useState(false);
@@ -45,7 +47,7 @@ export function AddressSearch({
 
   useEffect(() => {
     // Load the Google Places script
-    const script = document.createElement('script');
+    const script = document.createElement("script");
     script.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&libraries=places`;
     script.async = true;
     script.onload = () => setIsLoaded(true);
@@ -58,7 +60,10 @@ export function AddressSearch({
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
-      if (wrapperRef.current && !wrapperRef.current.contains(event.target as Node)) {
+      if (
+        wrapperRef.current &&
+        !wrapperRef.current.contains(event.target as Node)
+      ) {
         setShowSuggestions(false);
       }
     }
@@ -67,7 +72,9 @@ export function AddressSearch({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const handleSelect = async (suggestion: google.maps.places.AutocompletePrediction) => {
+  const handleSelect = async (
+    suggestion: google.maps.places.AutocompletePrediction
+  ) => {
     setValue(suggestion.description, false);
     clearSuggestions();
     setShowSuggestions(false);
@@ -75,7 +82,7 @@ export function AddressSearch({
     try {
       const results = await getGeocode({ address: suggestion.description });
       const { lat, lng } = await getLatLng(results[0]);
-      
+
       onSelect?.({
         formattedAddress: suggestion.description,
         lat,
@@ -98,10 +105,7 @@ export function AddressSearch({
         onFocus={() => setShowSuggestions(true)}
         disabled={!ready || !isLoaded}
         placeholder={placeholder}
-        className={cn(
-          "w-full transition-all duration-200",
-          className
-        )}
+        className={cn("w-full transition-all duration-200", className)}
       />
 
       {status === "OK" && showSuggestions && (

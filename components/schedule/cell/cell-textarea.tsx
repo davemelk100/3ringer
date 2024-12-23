@@ -11,7 +11,12 @@ interface CellTextareaProps {
   height?: number;
 }
 
-export function CellTextarea({ content, onChange, onBlur, height }: CellTextareaProps) {
+export function CellTextarea({
+  content,
+  onChange,
+  onBlur,
+  height,
+}: CellTextareaProps) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
@@ -21,10 +26,10 @@ export function CellTextarea({ content, onChange, onBlur, height }: CellTextarea
     }
   }, []);
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (isEnterKey(e) && !e.shiftKey) {
       e.preventDefault();
-      e.currentTarget.blur();
+      (e.currentTarget as HTMLTextAreaElement).blur();
     }
   };
 
@@ -43,11 +48,11 @@ export function CellTextarea({ content, onChange, onBlur, height }: CellTextarea
       onKeyDown={handleKeyDown}
       style={{
         height: height ? `${height}px` : undefined,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        lineHeight: '1.2',
-        paddingTop: '0.125rem'
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        lineHeight: "1.2",
+        paddingTop: "0.125rem",
       }}
     />
   );
