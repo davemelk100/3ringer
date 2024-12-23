@@ -35,16 +35,24 @@ interface ScheduleSectionProps {
   className?: string;
 }
 
-export function ScheduleSection({ 
-  section, 
-  columns, 
+export function ScheduleSection({
+  section,
+  columns,
   day,
   onAddRow,
   onDeleteRow,
-  className
+  className,
 }: ScheduleSectionProps) {
-  const { updateColumn, addColumn, deleteColumn, reorderColumns, toggleSectionLock } = useScheduleStore();
-  const [deleteColumnIndex, setDeleteColumnIndex] = useState<number | null>(null);
+  const {
+    updateColumn,
+    addColumn,
+    deleteColumn,
+    reorderColumns,
+    toggleSectionLock,
+  } = useScheduleStore();
+  const [deleteColumnIndex, setDeleteColumnIndex] = useState<number | null>(
+    null
+  );
   const [isTableVisible, setIsTableVisible] = useState(true);
 
   const sensors = useSensors(
@@ -60,7 +68,7 @@ export function ScheduleSection({
     return columns.length > 1 && !section.isLocked;
   };
 
-  const handleAddColumn = (title: string, type: 'text' | 'dropdown') => {
+  const handleAddColumn = (title: string, type: "text" | "dropdown") => {
     if (!section.isLocked) {
       addColumn(title, type);
     }
@@ -68,11 +76,11 @@ export function ScheduleSection({
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
-    
+
     if (over && active.id !== over.id && !section.isLocked) {
       const oldIndex = columns.findIndex((col) => col.id === active.id);
       const newIndex = columns.findIndex((col) => col.id === over.id);
-      
+
       reorderColumns(oldIndex, newIndex);
     }
   };
@@ -81,7 +89,7 @@ export function ScheduleSection({
     <div className={cn("mb-2", className)}>
       <div className="flex items-center justify-between mb-1">
         <div className="w-32">
-          <h3 className="text-lg font-[900] text-[#0D324D] font-condensed leading-8">
+          <h3 className="text-lg font-[700] text-[#0D324D] font-condensed leading-8">
             {section.title}
           </h3>
         </div>
@@ -102,8 +110,8 @@ export function ScheduleSection({
               {section.isLocked ? "Unlock" : "Lock"}
             </span>
           </Button>
-          <AddColumnDialog 
-            onAddColumn={handleAddColumn} 
+          <AddColumnDialog
+            onAddColumn={handleAddColumn}
             disabled={section.isLocked}
           />
           <Button
@@ -120,15 +128,18 @@ export function ScheduleSection({
             <Table2 className="h-4 w-4" />
             <span className="hidden sm:inline text-sm">Add Row</span>
           </Button>
-          <TableVisibilityToggle 
-            isVisible={isTableVisible} 
+          <TableVisibilityToggle
+            isVisible={isTableVisible}
             onToggle={setIsTableVisible}
           />
         </div>
       </div>
-      <div className={cn("relative transition-all duration-300", 
-        isTableVisible ? "opacity-100" : "opacity-0 h-0 overflow-hidden"
-      )}>
+      <div
+        className={cn(
+          "relative transition-all duration-300",
+          isTableVisible ? "opacity-100" : "opacity-0 h-0 overflow-hidden"
+        )}
+      >
         <DndContext
           sensors={sensors}
           collisionDetection={closestCenter}
@@ -138,7 +149,7 @@ export function ScheduleSection({
             <thead className="sticky top-0 z-10">
               <tr>
                 <SortableContext
-                  items={columns.map(col => col.id)}
+                  items={columns.map((col) => col.id)}
                   strategy={horizontalListSortingStrategy}
                 >
                   {columns.map((column, index) => (
@@ -146,8 +157,14 @@ export function ScheduleSection({
                       key={`${day}-${section.id}-header-${column.id}-${index}`}
                       column={column}
                       index={index}
-                      onUpdate={(updatedColumn) => updateColumn(index, updatedColumn)}
-                      onDelete={canDeleteColumn(index) ? () => setDeleteColumnIndex(index) : undefined}
+                      onUpdate={(updatedColumn) =>
+                        updateColumn(index, updatedColumn)
+                      }
+                      onDelete={
+                        canDeleteColumn(index)
+                          ? () => setDeleteColumnIndex(index)
+                          : undefined
+                      }
                       canDelete={canDeleteColumn(index)}
                     />
                   ))}
@@ -174,7 +191,10 @@ export function ScheduleSection({
         isOpen={deleteColumnIndex !== null}
         onClose={() => setDeleteColumnIndex(null)}
         onConfirm={() => {
-          if (deleteColumnIndex !== null && canDeleteColumn(deleteColumnIndex)) {
+          if (
+            deleteColumnIndex !== null &&
+            canDeleteColumn(deleteColumnIndex)
+          ) {
             deleteColumn(deleteColumnIndex);
             setDeleteColumnIndex(null);
           }

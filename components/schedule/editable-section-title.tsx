@@ -47,7 +47,7 @@ export function EditableSectionTitle({ section }: EditableSectionTitleProps) {
             autoFocus
           />
         ) : (
-          <h3 className="text-lg font-[900] text-[#0D324D] font-condensed leading-8">
+          <h3 className="text-lg font-[700] text-[#0D324D] font-condensed leading-8">
             {value}
           </h3>
         )}
