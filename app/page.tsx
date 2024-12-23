@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 import { useRouter } from "next/navigation";
 
@@ -7,13 +7,12 @@ export default function LandingPage() {
   const { loginWithRedirect, isAuthenticated, isLoading } = useAuth0();
   const router = useRouter();
 
-  // Immediately redirect if authenticated
-  if (isAuthenticated) {
-    router.push("/schedule");
-    return null; // Return null instead of rendering login screen
-  }
+  useEffect(() => {
+    if (isAuthenticated && !isLoading) {
+      router.push("/schedule");
+    }
+  }, [isAuthenticated, isLoading, router]);
 
-  // Show loading state
   if (isLoading) {
     return (
       <main className="min-h-screen flex items-center justify-center bg-[#F5F5F5]">
@@ -22,7 +21,10 @@ export default function LandingPage() {
     );
   }
 
-  // Only show login screen if not authenticated and not loading
+  if (isAuthenticated) {
+    return null;
+  }
+
   return (
     <main className="min-h-screen flex items-center justify-center bg-[#F5F5F5]">
       <div className="text-center">

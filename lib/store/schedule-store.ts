@@ -8,9 +8,11 @@ import {
   ColumnHeader,
   ScheduleSection,
   RowStatus,
+  WeekDay,
 } from "@/lib/types/schedule";
 import { scheduleConfig } from "@/lib/config/schedule";
 import { scheduleReducer } from "./schedule-reducer";
+import { startOfWeek, getCurrentWeekDates } from "@/lib/utils/date-utils";
 
 interface ScheduleStore extends ScheduleState {
   activeDay: Date | null;
@@ -43,6 +45,8 @@ interface ScheduleStore extends ScheduleState {
   getRowStatus: (key: string) => RowStatus | undefined;
   updateRowStatus: (key: string, status: RowStatus | undefined) => void;
   rowStatuses: Record<string, RowStatus | undefined>;
+  selectedWeek: Date;
+  weekDays: WeekDay[];
 }
 
 export const useScheduleStore = create<ScheduleStore>()(
@@ -170,6 +174,8 @@ export const useScheduleStore = create<ScheduleStore>()(
           },
         })),
       rowStatuses: {},
+      selectedWeek: startOfWeek(new Date()),
+      weekDays: getCurrentWeekDates(new Date()),
     }),
     {
       name: "schedule-storage",

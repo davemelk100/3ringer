@@ -1,5 +1,6 @@
 "use client";
 
+import { WeekDay } from "@/lib/types/schedule";
 import { useState, useEffect } from "react";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { getCurrentWeekDates } from "@/lib/utils/date";
@@ -8,82 +9,64 @@ import { useColumns } from "./use-columns";
 import { ScheduleHeader } from "./schedule-header";
 import { ScheduleSection } from "./schedule-section";
 import { CollapsibleHeader } from "@/components/layout/collapsible-header";
-import { startOfWeek, isToday } from "date-fns";
+import { startOfWeek, isToday, format } from "date-fns";
+import { TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export function ScheduleTable() {
-  const [selectedWeek, setSelectedWeek] = useState(() =>
-    startOfWeek(new Date(), { weekStartsOn: 1 })
-  );
-  const weekDays = getCurrentWeekDates(selectedWeek);
-  const { sections, addRow, deleteRow, initializeSections, setActiveDay } =
-    useScheduleStore();
+  const { weekDays, selectedWeek, sections } = useScheduleStore();
+  const [selectedDay, setSelectedDay] = useState(weekDays[0]);
+  const { setActiveDay } = useScheduleStore();
   const columns = useColumns();
-  const [selectedDay, setSelectedDay] = useState(() => {
-    const today = weekDays.find((day) => isToday(day.fullDate));
-    return today || weekDays[0];
-  });
-
-  useEffect(() => {
-    initializeSections();
-  }, [initializeSections]);
 
   useEffect(() => {
     const today = weekDays.find((day) => isToday(day.fullDate));
     setSelectedDay(today || weekDays[0]);
-  }, [selectedWeek, weekDays]);
-
-  useEffect(() => {
-    setActiveDay(selectedDay.fullDate);
-  }, [selectedDay, setActiveDay]);
-
-  useEffect(() => {
-    // Your effect code here
-  }, [weekDays]);
+  }, [weekDays, selectedWeek]);
 
   return (
-    <div className="w-full">
+    <div className="space-y-4">
       <CollapsibleHeader
         selectedWeek={selectedWeek}
-        onWeekChange={setSelectedWeek}
-      />
-      <Tabs
-        value={selectedDay.day}
-        className="w-full mt-2 sm:mt-4"
-        onValueChange={(value) => {
-          const day = weekDays.find((d) => d.day === value);
-          if (day) {
-            setSelectedDay(day);
-            setActiveDay(day.fullDate);
-          }
+        onWeekChange={(week) => {
+          // Your implementation here
         }}
-      >
-        <div className="mt-0">
-          <div className="sticky top-0 z-20 bg-white">
-            <ScheduleHeader weekDays={weekDays} />
-          </div>
-          {weekDays.map(({ day }) => (
-            <TabsContent
-              key={day}
-              value={day}
-              className="mt-0 print:block bg-[#A1C6EA] p-2 sm:p-4"
-            >
-              <div className="overflow-x-auto">
-                {sections.map((section, index) => (
+      />
+      <div className="rounded-lg overflow-hidden">
+        <Tabs defaultValue={selectedDay?.fullDate.toISOString()}>
+          <TabsList className="grid grid-cols-7 h-14 border-b-2 border-[#c6e0f9]">
+            {weekDays.map((day) => (
+              <TabsTrigger
+                key={day.fullDate.toISOString()}
+                value={day.fullDate.toISOString()}
+                onClick={() => setSelectedDay(day)}
+                className="flex flex-col items-center justify-center border-none data-[state=active]:bg-[#c6e0f9] data-[state=active]:text-black"
+              >
+                <span className="text-sm font-medium">
+                  {format(day.fullDate, "EEE")}
+                </span>
+                <span className="text-xs">{format(day.fullDate, "MMM d")}</span>
+              </TabsTrigger>
+            ))}
+          </TabsList>
+          <div className="p-4">
+            {weekDays.map((day) => (
+              <TabsContent
+                key={day.fullDate.toISOString()}
+                value={day.fullDate.toISOString()}
+              >
+                {sections.map((section) => (
                   <ScheduleSection
                     key={section.id}
                     section={section}
                     columns={columns}
-                    day={day}
-                    onAddRow={addRow}
-                    onDeleteRow={deleteRow}
-                    className={index > 0 ? "section-break" : ""}
+                    selectedDay={day}
                   />
                 ))}
-              </div>
-            </TabsContent>
-          ))}
-        </div>
-      </Tabs>
+              </TabsContent>
+            ))}
+          </div>
+        </Tabs>
+      </div>
     </div>
   );
 }

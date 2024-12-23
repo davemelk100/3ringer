@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Table2, Lock, Unlock } from "lucide-react";
 import { EditableSectionTitle } from "./editable-section-title";
@@ -8,7 +8,11 @@ import { ScheduleRow } from "./schedule-row";
 import { DeleteConfirmation } from "./delete-confirmation";
 import { AddColumnDialog } from "./add-column-dialog";
 import { TableVisibilityToggle } from "./table-visibility-toggle";
-import { ScheduleSection as Section, ColumnHeader } from "@/lib/types/schedule";
+import {
+  ScheduleSection as Section,
+  ColumnHeader,
+  WeekDay,
+} from "@/lib/types/schedule";
 import { useScheduleStore } from "@/lib/store/schedule-store";
 import { cn } from "@/lib/utils";
 import {
@@ -29,19 +33,13 @@ import { DraggableColumnHeader } from "./draggable-column-header";
 interface ScheduleSectionProps {
   section: Section;
   columns: ColumnHeader[];
-  day: string;
-  onAddRow: (sectionId: string) => void;
-  onDeleteRow: (sectionId: string, rowIndex: number) => void;
-  className?: string;
+  selectedDay: WeekDay;
 }
 
 export function ScheduleSection({
   section,
   columns,
-  day,
-  onAddRow,
-  onDeleteRow,
-  className,
+  selectedDay,
 }: ScheduleSectionProps) {
   const {
     updateColumn,
@@ -49,11 +47,22 @@ export function ScheduleSection({
     deleteColumn,
     reorderColumns,
     toggleSectionLock,
+    addRow,
+    deleteRow,
+    updateSection,
   } = useScheduleStore();
   const [deleteColumnIndex, setDeleteColumnIndex] = useState<number | null>(
     null
   );
   const [isTableVisible, setIsTableVisible] = useState(true);
+
+  useEffect(() => {
+    console.log("ScheduleSection render:", {
+      section,
+      columns,
+      selectedDay,
+    });
+  }, [section, columns, selectedDay]);
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -86,13 +95,17 @@ export function ScheduleSection({
   };
 
   return (
-    <div className={cn("mb-2", className)}>
+    <div className="mb-2">
       <div className="flex items-center justify-between mb-1">
-        <div className="w-32">
-          <h3 className="text-lg font-[700] text-[#0D324D] font-condensed leading-8">
-            {section.title}
-          </h3>
-        </div>
+        <EditableSectionTitle
+          section={section}
+          onUpdate={(newTitle) => {
+            updateSection({
+              ...section,
+              title: newTitle,
+            });
+          }}
+        />
         <div className="flex items-center gap-1 print-hide">
           <Button
             variant="ghost"
@@ -115,7 +128,7 @@ export function ScheduleSection({
             disabled={section.isLocked}
           />
           <Button
-            onClick={() => onAddRow(section.id)}
+            onClick={() => addRow(section.id)}
             variant="ghost"
             size="sm"
             disabled={section.isLocked}
@@ -154,7 +167,9 @@ export function ScheduleSection({
                 >
                   {columns.map((column, index) => (
                     <DraggableColumnHeader
-                      key={`${day}-${section.id}-header-${column.id}-${index}`}
+                      key={`${String(selectedDay)}-${section.id}-header-${
+                        column.id
+                      }-${index}`}
                       column={column}
                       index={index}
                       onUpdate={(updatedColumn) =>
@@ -174,12 +189,12 @@ export function ScheduleSection({
             <tbody>
               {Array.from({ length: section.rows }).map((_, rowIndex) => (
                 <ScheduleRow
-                  key={`${day}-${section.id}-row-${rowIndex}`}
+                  key={`${String(selectedDay)}-${section.id}-row-${rowIndex}`}
                   rowIndex={rowIndex}
                   section={section}
                   columns={columns}
-                  day={day}
-                  onDeleteRow={onDeleteRow}
+                  day={String(selectedDay)}
+                  onDeleteRow={() => deleteRow(section.id, rowIndex)}
                 />
               ))}
             </tbody>
