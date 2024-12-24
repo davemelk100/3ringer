@@ -5,30 +5,32 @@ import { Plus, Minus } from "lucide-react";
 import { useScheduleStore } from "@/lib/store/schedule-store";
 
 interface ColumnActionsProps {
-  columnIndex: number;
+  columnId: string;
 }
 
-export function ColumnActions({ columnIndex }: ColumnActionsProps) {
-  const { addColumn, deleteColumn } = useScheduleStore();
+export function ColumnActions({ columnId }: ColumnActionsProps) {
+  const scheduleStore = useScheduleStore();
+  const columnsLength = useScheduleStore((state) => state.columns.length);
 
-  // Don't show delete button for the Status column
-  if (columnIndex === 0) {
-    return null;
-  }
+  const handleDelete = () => {
+    if (scheduleStore) {
+      scheduleStore.deleteColumn(parseInt(columnId, 10));
+    }
+  };
 
   return (
     <div className="flex gap-1 justify-center mt-1">
       <Button
-        onClick={() => deleteColumn(columnIndex)}
+        onClick={handleDelete}
         size="sm"
         variant="ghost"
         className="h-6 w-6 p-0"
       >
         <Minus className="h-4 w-4" />
       </Button>
-      {columnIndex === useScheduleStore((state) => state.columns.length - 1) && (
+      {parseInt(columnId, 10) === columnsLength - 1 && (
         <Button
-          onClick={addColumn}
+          onClick={() => scheduleStore.addColumn("New Column", "text")}
           size="sm"
           variant="ghost"
           className="h-6 w-6 p-0"

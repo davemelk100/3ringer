@@ -9,7 +9,7 @@ import { cn } from "@/lib/utils";
 interface SectionHeaderProps {
   title: string;
   isLocked: boolean;
-  onAddColumn: (title: string, type: 'text' | 'dropdown') => void;
+  onAddColumn: (title: string, type: "text" | "dropdown") => void;
   onAddRow: () => void;
   onToggleLock: () => void;
   onToggleVisibility: (visible: boolean) => void;
@@ -28,7 +28,7 @@ export function SectionHeader({
   return (
     <div className="flex items-center justify-between mb-1">
       <div className="w-32">
-        <h3 className="text-lg font-[900] text-[#0D324D] font-condensed leading-8">
+        <h3 className="text-lg font-[700] text-[#0D324D] font-condensed leading-8">
           {title}
         </h3>
       </div>
@@ -49,10 +49,7 @@ export function SectionHeader({
             {isLocked ? "Unlock" : "Lock"}
           </span>
         </Button>
-        <AddColumnDialog 
-          onAddColumn={onAddColumn} 
-          disabled={isLocked}
-        />
+        <AddColumnDialog onAddColumn={onAddColumn} disabled={isLocked} />
         <Button
           onClick={onAddRow}
           variant="ghost"
@@ -67,8 +64,8 @@ export function SectionHeader({
           <Table2 className="h-4 w-4" />
           <span className="hidden sm:inline text-sm">Add Row</span>
         </Button>
-        <TableVisibilityToggle 
-          isVisible={isTableVisible} 
+        <TableVisibilityToggle
+          isVisible={isTableVisible}
           onToggle={onToggleVisibility}
         />
       </div>

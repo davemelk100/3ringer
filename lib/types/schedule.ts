@@ -25,7 +25,7 @@ export interface ScheduleState {
 export interface ColumnHeader {
   id: string;
   title: string;
-  type: 'text' | 'dropdown';
+  type: "text" | "dropdown";
 }
 
 export interface ScheduleConfig {
@@ -45,3 +45,5 @@ export interface WeekDay {
   date: string;
   fullDate: Date;
 }
+
+export type RowStatus = "Vacant" | "Occupied" | "New";

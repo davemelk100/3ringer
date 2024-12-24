@@ -1,16 +1,21 @@
 "use client";
 
-import { useSensors, PointerSensor, KeyboardSensor } from "@dnd-kit/core";
+import {
+  useSensors,
+  useSensor,
+  PointerSensor,
+  KeyboardSensor,
+} from "@dnd-kit/core";
 import { useScheduleStore } from "@/lib/store/schedule-store";
 import { ColumnHeader } from "@/lib/types/schedule";
 
 export function useSectionState() {
-  const { 
-    updateColumn, 
-    addColumn, 
-    deleteColumn, 
+  const {
+    updateColumn,
+    addColumn,
+    deleteColumn,
     reorderColumns,
-    toggleSectionLock 
+    toggleSectionLock,
   } = useScheduleStore();
 
   const sensors = useSensors(
@@ -26,7 +31,7 @@ export function useSectionState() {
     updateColumn(index, column);
   };
 
-  const handleAddColumn = (title: string, type: 'text' | 'dropdown') => {
+  const handleAddColumn = (title: string, type: "text" | "dropdown") => {
     addColumn(title, type);
   };
 

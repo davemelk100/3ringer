@@ -4,6 +4,12 @@ import { useInView } from "react-intersection-observer";
 // Direct imports instead of lazy loading
 import ScheduleSection from "./ScheduleSection";
 
+interface ApiResponse {
+  sections?: { id: string }[];
+  columns?: any[];
+  message?: string;
+}
+
 // Implement virtual scrolling for large schedules
 export function OptimizedSchedule({ dataUrl }: { dataUrl: string }) {
   const [sections, setSections] = useState<{ id: string }[]>([]);
@@ -17,15 +23,37 @@ export function OptimizedSchedule({ dataUrl }: { dataUrl: string }) {
   // Fetch data when component mounts
   useEffect(() => {
     async function fetchData() {
+      setIsLoading(true);
       try {
         const response = await fetch(dataUrl);
-        const data = await response.json();
 
-        // Assuming the JSON structure matches your needs
-        setSections(data.sections || []);
-        setColumns(data.columns || []);
+        switch (response.status) {
+          case 200:
+          case 201:
+            const data: ApiResponse = await response.json();
+            setSections(data.sections || []);
+            setColumns(data.columns || []);
+            break;
+
+          case 204:
+            // No content
+            setSections([]);
+            setColumns([]);
+            break;
+
+          case 404:
+            console.error("Resource not found");
+            setSections([]);
+            setColumns([]);
+            break;
+
+          default:
+            throw new Error(`Unexpected status: ${response.status}`);
+        }
       } catch (error) {
         console.error("Error fetching schedule data:", error);
+        setSections([]);
+        setColumns([]);
       } finally {
         setIsLoading(false);
       }
@@ -50,7 +78,7 @@ export function OptimizedSchedule({ dataUrl }: { dataUrl: string }) {
   }, [inView, sections]);
 
   return (
-    <div ref={ref}>
+    <div className="p-4">
       <Suspense fallback={<ScheduleSkeleton />}>
         {visibleSections.map((sectionId) => (
           <ScheduleSection
