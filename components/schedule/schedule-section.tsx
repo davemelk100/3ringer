@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Table2, Lock, Unlock } from "lucide-react";
 import { EditableSectionTitle } from "./editable-section-title";
@@ -8,7 +8,11 @@ import { ScheduleRow } from "./schedule-row";
 import { DeleteConfirmation } from "./delete-confirmation";
 import { AddColumnDialog } from "./add-column-dialog";
 import { TableVisibilityToggle } from "./table-visibility-toggle";
-import { ScheduleSection as Section, ColumnHeader } from "@/lib/types/schedule";
+import {
+  ScheduleSection as Section,
+  ColumnHeader,
+  WeekDay,
+} from "@/lib/types/schedule";
 import { useScheduleStore } from "@/lib/store/schedule-store";
 import { cn } from "@/lib/utils";
 import {
@@ -29,23 +33,36 @@ import { DraggableColumnHeader } from "./draggable-column-header";
 interface ScheduleSectionProps {
   section: Section;
   columns: ColumnHeader[];
-  day: string;
-  onAddRow: (sectionId: string) => void;
-  onDeleteRow: (sectionId: string, rowIndex: number) => void;
-  className?: string;
+  selectedDay: WeekDay;
 }
 
-export function ScheduleSection({ 
-  section, 
-  columns, 
-  day,
-  onAddRow,
-  onDeleteRow,
-  className
+export function ScheduleSection({
+  section,
+  columns,
+  selectedDay,
 }: ScheduleSectionProps) {
-  const { updateColumn, addColumn, deleteColumn, reorderColumns, toggleSectionLock } = useScheduleStore();
-  const [deleteColumnIndex, setDeleteColumnIndex] = useState<number | null>(null);
+  const {
+    updateColumn,
+    addColumn,
+    deleteColumn,
+    reorderColumns,
+    toggleSectionLock,
+    addRow,
+    deleteRow,
+    updateSection,
+  } = useScheduleStore();
+  const [deleteColumnIndex, setDeleteColumnIndex] = useState<number | null>(
+    null
+  );
   const [isTableVisible, setIsTableVisible] = useState(true);
+
+  useEffect(() => {
+    console.log("ScheduleSection render:", {
+      section,
+      columns,
+      selectedDay,
+    });
+  }, [section, columns, selectedDay]);
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -60,7 +77,7 @@ export function ScheduleSection({
     return columns.length > 1 && !section.isLocked;
   };
 
-  const handleAddColumn = (title: string, type: 'text' | 'dropdown') => {
+  const handleAddColumn = (title: string, type: "text" | "dropdown") => {
     if (!section.isLocked) {
       addColumn(title, type);
     }
@@ -68,23 +85,27 @@ export function ScheduleSection({
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
-    
+
     if (over && active.id !== over.id && !section.isLocked) {
       const oldIndex = columns.findIndex((col) => col.id === active.id);
       const newIndex = columns.findIndex((col) => col.id === over.id);
-      
+
       reorderColumns(oldIndex, newIndex);
     }
   };
 
   return (
-    <div className={cn("mb-2", className)}>
+    <div className="mb-2">
       <div className="flex items-center justify-between mb-1">
-        <div className="w-32">
-          <h3 className="text-lg font-[900] text-[#0D324D] font-condensed leading-8">
-            {section.title}
-          </h3>
-        </div>
+        <EditableSectionTitle
+          section={section}
+          onUpdate={(newTitle) => {
+            updateSection({
+              ...section,
+              title: newTitle,
+            });
+          }}
+        />
         <div className="flex items-center gap-1 print-hide">
           <Button
             variant="ghost"
@@ -102,12 +123,12 @@ export function ScheduleSection({
               {section.isLocked ? "Unlock" : "Lock"}
             </span>
           </Button>
-          <AddColumnDialog 
-            onAddColumn={handleAddColumn} 
+          <AddColumnDialog
+            onAddColumn={handleAddColumn}
             disabled={section.isLocked}
           />
           <Button
-            onClick={() => onAddRow(section.id)}
+            onClick={() => addRow(section.id)}
             variant="ghost"
             size="sm"
             disabled={section.isLocked}
@@ -120,15 +141,18 @@ export function ScheduleSection({
             <Table2 className="h-4 w-4" />
             <span className="hidden sm:inline text-sm">Add Row</span>
           </Button>
-          <TableVisibilityToggle 
-            isVisible={isTableVisible} 
+          <TableVisibilityToggle
+            isVisible={isTableVisible}
             onToggle={setIsTableVisible}
           />
         </div>
       </div>
-      <div className={cn("relative transition-all duration-300", 
-        isTableVisible ? "opacity-100" : "opacity-0 h-0 overflow-hidden"
-      )}>
+      <div
+        className={cn(
+          "relative transition-all duration-300",
+          isTableVisible ? "opacity-100" : "opacity-0 h-0 overflow-hidden"
+        )}
+      >
         <DndContext
           sensors={sensors}
           collisionDetection={closestCenter}
@@ -138,16 +162,24 @@ export function ScheduleSection({
             <thead className="sticky top-0 z-10">
               <tr>
                 <SortableContext
-                  items={columns.map(col => col.id)}
+                  items={columns.map((col) => col.id)}
                   strategy={horizontalListSortingStrategy}
                 >
                   {columns.map((column, index) => (
                     <DraggableColumnHeader
-                      key={`${day}-${section.id}-header-${column.id}-${index}`}
+                      key={`${String(selectedDay)}-${section.id}-header-${
+                        column.id
+                      }-${index}`}
                       column={column}
                       index={index}
-                      onUpdate={(updatedColumn) => updateColumn(index, updatedColumn)}
-                      onDelete={canDeleteColumn(index) ? () => setDeleteColumnIndex(index) : undefined}
+                      onUpdate={(updatedColumn) =>
+                        updateColumn(index, updatedColumn)
+                      }
+                      onDelete={
+                        canDeleteColumn(index)
+                          ? () => setDeleteColumnIndex(index)
+                          : undefined
+                      }
                       canDelete={canDeleteColumn(index)}
                     />
                   ))}
@@ -157,12 +189,12 @@ export function ScheduleSection({
             <tbody>
               {Array.from({ length: section.rows }).map((_, rowIndex) => (
                 <ScheduleRow
-                  key={`${day}-${section.id}-row-${rowIndex}`}
+                  key={`${String(selectedDay)}-${section.id}-row-${rowIndex}`}
                   rowIndex={rowIndex}
                   section={section}
                   columns={columns}
-                  day={day}
-                  onDeleteRow={onDeleteRow}
+                  day={String(selectedDay)}
+                  onDeleteRow={() => deleteRow(section.id, rowIndex)}
                 />
               ))}
             </tbody>
@@ -174,7 +206,10 @@ export function ScheduleSection({
         isOpen={deleteColumnIndex !== null}
         onClose={() => setDeleteColumnIndex(null)}
         onConfirm={() => {
-          if (deleteColumnIndex !== null && canDeleteColumn(deleteColumnIndex)) {
+          if (
+            deleteColumnIndex !== null &&
+            canDeleteColumn(deleteColumnIndex)
+          ) {
             deleteColumn(deleteColumnIndex);
             setDeleteColumnIndex(null);
           }

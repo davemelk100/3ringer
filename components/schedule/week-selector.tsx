@@ -1,40 +1,70 @@
 "use client";
 
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { addWeeks, format, startOfWeek, endOfWeek, addMonths, subWeeks } from "date-fns";
+import {
+  addWeeks,
+  format,
+  startOfWeek,
+  endOfWeek,
+  addMonths,
+  subWeeks,
+} from "date-fns";
 
 interface WeekSelectorProps {
   selectedWeek: Date;
   onWeekChange: (date: Date) => void;
 }
 
-export function WeekSelector({ selectedWeek, onWeekChange }: WeekSelectorProps) {
+interface Week {
+  value: string;
+  label: string;
+  date: Date;
+  isPast: boolean;
+  isFuture: boolean;
+  isCurrent: boolean;
+}
+
+export function WeekSelector({
+  selectedWeek,
+  onWeekChange,
+}: WeekSelectorProps) {
   // Generate weeks from 6 months ago to 6 months in the future
   const startDate = addMonths(new Date(), -6);
   const endDate = addMonths(new Date(), 6);
-  
-  const weeks = [];
+
+  const weeks: Week[] = [];
   let currentDate = startDate;
-  
+
   while (currentDate <= endDate) {
     const start = startOfWeek(currentDate, { weekStartsOn: 1 });
     const end = endOfWeek(currentDate, { weekStartsOn: 1 });
-    
+
     weeks.push({
       value: format(start, "yyyy-MM-dd"),
       label: `${format(start, "MMM d")} - ${format(end, "MMM d, yyyy")}`,
       date: start,
       isPast: start < new Date(),
       isFuture: start > new Date(),
-      isCurrent: format(start, "yyyy-MM-dd") === format(startOfWeek(new Date(), { weekStartsOn: 1 }), "yyyy-MM-dd")
+      isCurrent:
+        format(start, "yyyy-MM-dd") ===
+        format(startOfWeek(new Date(), { weekStartsOn: 1 }), "yyyy-MM-dd"),
     });
-    
+
     currentDate = addWeeks(currentDate, 1);
   }
 
-  const selectedValue = format(startOfWeek(selectedWeek, { weekStartsOn: 1 }), "yyyy-MM-dd");
+  const selectedValue = format(
+    startOfWeek(selectedWeek, { weekStartsOn: 1 }),
+    "yyyy-MM-dd"
+  );
 
   const handlePreviousWeek = () => {
     onWeekChange(subWeeks(selectedWeek, 1));
@@ -58,7 +88,6 @@ export function WeekSelector({ selectedWeek, onWeekChange }: WeekSelectorProps) 
         <span className="sr-only">Previous week</span>
       </Button>
       <Select
-        id="week-selector"
         value={selectedValue}
         onValueChange={(value) => {
           const week = weeks.find((w) => w.value === value);
@@ -67,19 +96,20 @@ export function WeekSelector({ selectedWeek, onWeekChange }: WeekSelectorProps) 
           }
         }}
       >
-        <SelectTrigger 
-          className="w-[220px] sm:w-[280px] border-[#F68E5F] focus:ring-[#F68E5F] focus-visible:ring-[#F68E5F] bg-transparent text-[#0D324D] whitespace-nowrap text-sm h-8 sm:h-10" 
+        <SelectTrigger
+          className="w-[220px] sm:w-[280px] border-[#F68E5F] focus:ring-[#F68E5F] focus-visible:ring-[#F68E5F] bg-transparent text-[#0D324D] whitespace-nowrap text-sm h-8 sm:h-10"
           aria-label="Select week"
         >
           <SelectValue className="text-center text-sm">
-            {weeks.find(w => w.value === selectedValue)?.label || "Select a week"}
+            {weeks.find((w) => w.value === selectedValue)?.label ||
+              "Select a week"}
           </SelectValue>
         </SelectTrigger>
         <SelectContent align="center">
           <div className="max-h-[300px] overflow-y-auto">
             {weeks.map((week) => (
-              <SelectItem 
-                key={week.value} 
+              <SelectItem
+                key={week.value}
                 value={week.value}
                 className={`
                   text-[#0D324D] whitespace-nowrap text-sm text-center

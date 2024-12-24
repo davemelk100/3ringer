@@ -15,7 +15,7 @@ export function CurrentDate({ showIcon = false }: CurrentDateProps) {
   
   useEffect(() => {
     if (activeDay) {
-      const formattedDate = format(activeDay, "EEEE, MMMM d, yyyy").toUpperCase();
+      const formattedDate = format(activeDay, "EEEE, MMMM d, yyyy");
       setCurrentDate(formattedDate);
     }
   }, [activeDay]);
@@ -27,7 +27,7 @@ export function CurrentDate({ showIcon = false }: CurrentDateProps) {
           <Calendar className="h-7 w-7 text-white" />
         </div>
       )}
-      <span className="font-[900] font-condensed">{currentDate}</span>
+      <span className="font-[700] font-condensed">{currentDate}</span>
     </div>
   );
 }
