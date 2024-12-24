@@ -33,13 +33,19 @@ import { DraggableColumnHeader } from "./draggable-column-header";
 interface ScheduleSectionProps {
   section: Section;
   columns: ColumnHeader[];
-  selectedDay: WeekDay;
+  day: string;
+  onAddRow: (sectionId: string) => void;
+  onDeleteRow: (sectionId: string, rowIndex: number) => void;
+  className?: string;
 }
 
 export function ScheduleSection({
   section,
   columns,
-  selectedDay,
+  day,
+  onAddRow,
+  onDeleteRow,
+  className,
 }: ScheduleSectionProps) {
   const {
     updateColumn,
@@ -55,14 +61,6 @@ export function ScheduleSection({
     null
   );
   const [isTableVisible, setIsTableVisible] = useState(true);
-
-  useEffect(() => {
-    console.log("ScheduleSection render:", {
-      section,
-      columns,
-      selectedDay,
-    });
-  }, [section, columns, selectedDay]);
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -167,7 +165,7 @@ export function ScheduleSection({
                 >
                   {columns.map((column, index) => (
                     <DraggableColumnHeader
-                      key={`${String(selectedDay)}-${section.id}-header-${
+                      key={`${String(day)}-${section.id}-header-${
                         column.id
                       }-${index}`}
                       column={column}
@@ -189,11 +187,11 @@ export function ScheduleSection({
             <tbody>
               {Array.from({ length: section.rows }).map((_, rowIndex) => (
                 <ScheduleRow
-                  key={`${String(selectedDay)}-${section.id}-row-${rowIndex}`}
+                  key={`${String(day)}-${section.id}-row-${rowIndex}`}
                   rowIndex={rowIndex}
                   section={section}
                   columns={columns}
-                  day={String(selectedDay)}
+                  day={String(day)}
                   onDeleteRow={() => deleteRow(section.id, rowIndex)}
                 />
               ))}
