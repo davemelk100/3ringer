@@ -10,21 +10,12 @@ interface WeekSelectorProps {
   onWeekChange: (date: Date) => void;
 }
 
-interface Week {
-  value: string;
-  label: string;
-  date: Date;
-  isPast: boolean;
-  isFuture: boolean;
-  isCurrent: boolean;
-}
-
 export function WeekSelector({ selectedWeek, onWeekChange }: WeekSelectorProps) {
   // Generate weeks from 6 months ago to 6 months in the future
   const startDate = addMonths(new Date(), -6);
   const endDate = addMonths(new Date(), 6);
   
-  const weeks: Week[] = [];
+  const weeks = [];
   let currentDate = startDate;
   
   while (currentDate <= endDate) {

@@ -1,11 +1,5 @@
-import { ScheduleTable } from "@/components/schedule/schedule-table";
+import { LoginPage } from "@/components/auth/login-page";
 
 export default function HomePage() {
-  return (
-    <main id="main-content" className="min-h-screen p-2 bg-[#f1f5f9]">
-      <div className="max-w-[1800px] mx-auto">
-        <ScheduleTable />
-      </div>
-    </main>
-  );
+  return <LoginPage />;
 }

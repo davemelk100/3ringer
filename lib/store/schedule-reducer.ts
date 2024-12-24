@@ -18,18 +18,7 @@ export type ScheduleAction =
   | { type: 'INITIALIZE_COLUMNS'; payload: ColumnHeader[] }
   | { type: 'INITIALIZE_SECTIONS'; payload: ScheduleSection[] };
 
-// Change from const to let
-let stateCache = new WeakMap();
-
-// Optimize the reducer with better data structures and memoization
 export function scheduleReducer(state: ScheduleState, action: ScheduleAction): ScheduleState {
-  // Cache check for identical operations
-  const cacheKey = JSON.stringify(action);
-  const cached = stateCache.get(state)?.[cacheKey];
-  if (cached) return cached;
-
-  let newState: ScheduleState;
-
   switch (action.type) {
     case 'UPDATE_EVENT':
       return {
@@ -113,70 +102,42 @@ export function scheduleReducer(state: ScheduleState, action: ScheduleAction): S
         ),
       };
 
-    case 'DELETE_ROW': {
+    case 'DELETE_ROW':
       const { sectionId, rowIndex } = action.payload;
+      const section = state.sections.find(s => s.id === sectionId);
       
-      // Use Set for faster lookups
-      const keysToDelete = new Set<string>();
-      const updates = new Map<string, ScheduleEvent>();
-      const dropdownUpdates = new Map<string, string>();
+      if (!section || section.rows <= 1 || section.isLocked) return state;
 
-      // Single pass through events
-      for (const [key, event] of Object.entries(state.events)) {
-        if (event.section === sectionId) {
-          if (event.rowIndex === rowIndex) {
-            keysToDelete.add(key);
-          } else if (event.rowIndex > rowIndex) {
-            const newKey = key.replace(
-              `-${event.rowIndex}`,
-              `-${event.rowIndex - 1}`
-            );
-            
-            updates.set(newKey, {
-              ...event,
-              rowIndex: event.rowIndex - 1
-            });
-            
-            if (state.dropdownValues[key]) {
-              dropdownUpdates.set(newKey, state.dropdownValues[key]);
+      const processStateObject = (obj: Record<string, any>) => {
+        const newObj = {};
+        Object.entries(obj).forEach(([key, value]) => {
+          const [day, columnId, section, row] = key.split('-');
+          const currentRow = parseInt(row);
+          
+          if (section === sectionId) {
+            if (currentRow === rowIndex) return;
+            if (currentRow > rowIndex) {
+              newObj[`${day}-${columnId}-${section}-${currentRow - 1}`] = value;
+            } else {
+              newObj[key] = value;
             }
-            
-            keysToDelete.add(key);
+          } else {
+            newObj[key] = value;
           }
-        }
-      }
-
-      // Batch updates
-      const newEvents = { ...state.events };
-      const newDropdownValues = { ...state.dropdownValues };
-
-      // Apply deletions
-      keysToDelete.forEach(key => {
-        delete newEvents[key];
-        delete newDropdownValues[key];
-      });
-
-      // Apply updates
-      updates.forEach((event, key) => {
-        newEvents[key] = event;
-      });
-      
-      dropdownUpdates.forEach((value, key) => {
-        newDropdownValues[key] = value;
-      });
-
-      newState = {
-        ...state,
-        events: newEvents,
-        dropdownValues: newDropdownValues,
-        sections: state.sections.map(section =>
-          section.id === sectionId
-            ? { ...section, rows: section.rows - 1 }
-            : section
-        ),
+        });
+        return newObj;
       };
-      break;
-    }
+
+      return {
+        ...state,
+        sections: state.sections.map(s =>
+          s.id === sectionId
+            ? { ...s, rows: s.rows - 1 }
+            : s
+        ),
+        events: processStateObject(state.events),
+        dropdownValues: processStateObject(state.dropdownValues),
+      };
 
     case 'UPDATE_SECTION':
       return {
@@ -245,19 +206,6 @@ export function scheduleReducer(state: ScheduleState, action: ScheduleAction): S
       };
 
     default:
-      newState = state;
+      return state;
   }
-
-  // Cache the result
-  if (!stateCache.has(state)) {
-    stateCache.set(state, {});
-  }
-  stateCache.get(state)[cacheKey] = newState;
-
-  return newState;
-}
-
-// Add cleanup function to prevent memory leaks
-export function clearStateCache() {
-  stateCache = new WeakMap();
 }
