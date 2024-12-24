@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: 'export',
+  // output: 'export',
   images: { unoptimized: true },
   eslint: {
     ignoreDuringBuilds: true,
@@ -14,7 +14,7 @@ const nextConfig = {
       ...config.resolve.alias,
       punycode: false,
     };
-    
+
     config.resolve.fallback = {
       ...config.resolve.fallback,
       punycode: false,
@@ -23,9 +23,9 @@ const nextConfig = {
     // Optimize bundle size
     config.optimization = {
       ...config.optimization,
-      moduleIds: 'deterministic',
+      moduleIds: "deterministic",
       splitChunks: {
-        chunks: 'all',
+        chunks: "all",
         cacheGroups: {
           vendors: {
             test: /[\\/]node_modules[\\/]/,
@@ -40,7 +40,7 @@ const nextConfig = {
         },
       },
     };
-    
+
     return config;
   },
 };
