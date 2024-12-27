@@ -10,6 +10,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       authorizationParams={{
         redirect_uri:
           typeof window !== "undefined" ? window.location.origin : "",
+        scope: "openid profile email",
       }}
     >
       {children}
