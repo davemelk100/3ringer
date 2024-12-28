@@ -32,7 +32,14 @@ export function ScheduleTable() {
         }}
       />
       <div className="rounded-lg overflow-hidden">
-        <Tabs defaultValue={selectedDay?.fullDate.toISOString()}>
+        <Tabs
+          value={selectedDay?.fullDate.toISOString()}
+          defaultValue={
+            weekDays
+              .find((day) => isToday(day.fullDate))
+              ?.fullDate.toISOString() || weekDays[0].fullDate.toISOString()
+          }
+        >
           <TabsList className="grid grid-cols-7 h-14 border-b-2 border-[#c6e0f9]">
             {weekDays.map((day) => (
               <TabsTrigger

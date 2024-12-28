@@ -56,14 +56,6 @@ export function ScheduleSection({
   );
   const [isTableVisible, setIsTableVisible] = useState(true);
 
-  useEffect(() => {
-    console.log("ScheduleSection render:", {
-      section,
-      columns,
-      selectedDay,
-    });
-  }, [section, columns, selectedDay]);
-
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
