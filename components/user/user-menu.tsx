@@ -7,7 +7,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Settings, LogOut } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useAuth } from "@/lib/hooks/use-auth";
+import { useAuth } from "@/lib/hooks/useAuth";
 
 export function UserMenu() {
   const { logout } = useAuth();
@@ -25,7 +25,7 @@ export function UserMenu() {
         Settings
       </DropdownMenuItem>
       <DropdownMenuSeparator />
-      <DropdownMenuItem 
+      <DropdownMenuItem
         className="text-red-600 cursor-pointer"
         onClick={handleLogout}
       >

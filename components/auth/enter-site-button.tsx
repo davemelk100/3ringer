@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "lucide-react";
-import { useAuth } from "@/lib/hooks/use-auth";
+import { useAuth } from "@/lib/hooks/useAuth";
 
 export function EnterSiteButton() {
   const router = useRouter();
@@ -22,7 +22,7 @@ export function EnterSiteButton() {
       <h1 className="text-2xl font-[900] uppercase text-[#0D324D] font-condensed mb-8">
         SCHEDULE
       </h1>
-      <Button 
+      <Button
         onClick={handleClick}
         className="bg-[#0081A7] hover:bg-[#0081A7]/90 transition-all duration-150 px-8 py-6 text-lg"
       >

@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "lucide-react";
-import { useAuth } from "@/lib/hooks/use-auth";
+import { useAuth } from "@/lib/hooks/useAuth";
 import { cn } from "@/lib/utils";
 
 export function LoginForm() {
@@ -83,8 +83,8 @@ export function LoginForm() {
             )}
           </div>
 
-          <Button 
-            type="submit" 
+          <Button
+            type="submit"
             className={cn(
               "w-full bg-[#0D324D] hover:bg-[#0D324D]/90 transition-all duration-150",
               "active:scale-95 active:translate-y-0.5",
