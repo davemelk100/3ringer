@@ -31,7 +31,7 @@ export function ScheduleTable() {
       <CollapsibleHeader
         selectedWeek={selectedWeek}
         onWeekChange={(week) => {
-          // Your implementation here
+          // Your implementation here i gotta figure this
         }}
       />
       <div className="rounded-lg overflow-hidden">
