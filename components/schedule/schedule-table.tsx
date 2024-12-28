@@ -38,8 +38,8 @@ export function ScheduleTable() {
 
   return (
     <Auth0Provider
-      domain="your-domain.auth0.com"
-      clientId="your-client-id"
+      domain="dev-zkebkm0eoinkzojt.us.auth0.com"
+      clientId="uu8Nc2WajlANYUOwBdLvSYCyfW44AUvU"
       authorizationParams={{
         redirect_uri:
           typeof window !== "undefined" ? window.location.origin : "",
