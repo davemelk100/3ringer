@@ -14,7 +14,10 @@ import { TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export function ScheduleTable() {
   const { weekDays, selectedWeek, sections } = useScheduleStore();
-  const [selectedDay, setSelectedDay] = useState(weekDays[0]);
+  const [selectedDay, setSelectedDay] = useState(() => {
+    const today = weekDays.find((day) => isToday(day.fullDate));
+    return today || weekDays[0];
+  });
   const { setActiveDay } = useScheduleStore();
   const columns = useColumns();
 
@@ -33,12 +36,8 @@ export function ScheduleTable() {
       />
       <div className="rounded-lg overflow-hidden">
         <Tabs
-          value={selectedDay?.fullDate.toISOString()}
-          defaultValue={
-            weekDays
-              .find((day) => isToday(day.fullDate))
-              ?.fullDate.toISOString() || weekDays[0].fullDate.toISOString()
-          }
+          defaultValue={selectedDay.fullDate.toISOString()}
+          value={selectedDay.fullDate.toISOString()}
         >
           <TabsList className="grid grid-cols-7 h-14 border-b-2 border-[#c6e0f9]">
             {weekDays.map((day) => (
