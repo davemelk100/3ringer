@@ -71,6 +71,7 @@
     "react-intersection-observer": "^9.13.1",
     "react-resizable-panels": "^2.1.7",
     "recharts": "^2.15.0",
+    "shadcn-ui": "^0.9.4",
     "sonner": "^1.7.1",
     "tailwind-merge": "^2.1.0",
     "tailwindcss-animate": "^1.0.7",
