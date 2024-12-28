@@ -48,7 +48,7 @@ export function ScheduleTable() {
               </TabsTrigger>
             ))}
           </TabsList>
-          <div className="p-4">
+          <div className="p-4 bg-[#c6e0f9]">
             {weekDays.map((day) => (
               <TabsContent
                 key={day.fullDate.toISOString()}
