@@ -4,6 +4,7 @@ import { useDimensions } from "@/lib/hooks/useDimensions";
 import { useFormField } from "@/lib/hooks/useFormField";
 import { CellTextarea } from "./cell-textarea";
 import { useCellState } from "./use-cell-state";
+import { KeyboardEvent } from "react";
 
 interface ScheduleCellProps {
   day: string;
@@ -12,7 +13,12 @@ interface ScheduleCellProps {
   section: string;
 }
 
-export function ScheduleCell({ day, columnId, rowIndex, section }: ScheduleCellProps) {
+export function ScheduleCell({
+  day,
+  columnId,
+  rowIndex,
+  section,
+}: ScheduleCellProps) {
   const { content, handleContentChange, handleSave } = useCellState({
     day,
     columnId,
@@ -26,6 +32,27 @@ export function ScheduleCell({ day, columnId, rowIndex, section }: ScheduleCellP
     onSave: handleSave,
   });
 
+  const handleKeyDown = (
+    e: KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    if (e.key === "Tab") {
+      // Default tab behavior will work
+      return;
+    }
+
+    if (e.key === "Enter") {
+      e.preventDefault();
+      // Find next input and focus it
+      const inputs = Array.from(document.querySelectorAll("input, textarea"));
+      const currentIndex = inputs.indexOf(e.target as HTMLElement);
+      const nextInput = inputs[currentIndex + 1];
+
+      if (nextInput) {
+        (nextInput as HTMLElement).focus();
+      }
+    }
+  };
+
   return (
     <div
       ref={cellRef}
@@ -33,7 +60,9 @@ export function ScheduleCell({ day, columnId, rowIndex, section }: ScheduleCellP
       onDoubleClick={startEditing}
       tabIndex={0}
       onFocus={startEditing}
-      style={dimensions.height ? { height: `${dimensions.height}px` } : undefined}
+      style={
+        dimensions.height ? { height: `${dimensions.height}px` } : undefined
+      }
     >
       {isEditing ? (
         <CellTextarea
