@@ -7,12 +7,30 @@ export function AuthWrapper({ children }: { children: React.ReactNode }) {
     return <main>{children}</main>;
   }
 
+  const domain = process.env.NEXT_PUBLIC_AUTH0_DOMAIN;
+  const clientId = process.env.NEXT_PUBLIC_AUTH0_CLIENT_ID;
+  const redirectUri =
+    typeof window !== "undefined" ? window.location.origin : "";
+
+  // Temporary debug log for production
+  console.log("Auth0 Config:", {
+    domain,
+    clientId,
+    redirectUri,
+    origin: window.location.origin,
+  });
+
+  if (!domain || !clientId) {
+    console.error("Auth0 configuration missing:", { domain, clientId });
+    return <main>{children}</main>;
+  }
+
   return (
     <Auth0Provider
-      domain={process.env.NEXT_PUBLIC_AUTH0_DOMAIN || ""}
-      clientId={process.env.NEXT_PUBLIC_AUTH0_CLIENT_ID || ""}
+      domain={domain}
+      clientId={clientId}
       authorizationParams={{
-        redirect_uri: window.location.origin,
+        redirect_uri: redirectUri,
       }}
       cacheLocation="localstorage"
     >
