@@ -12,16 +12,7 @@ export function AuthWrapper({ children }: { children: React.ReactNode }) {
   const redirectUri =
     typeof window !== "undefined" ? window.location.origin : "";
 
-  // Temporary debug log for production
-  console.log("Auth0 Config:", {
-    domain,
-    clientId,
-    redirectUri,
-    origin: window.location.origin,
-  });
-
   if (!domain || !clientId) {
-    console.error("Auth0 configuration missing:", { domain, clientId });
     return <main>{children}</main>;
   }
 
