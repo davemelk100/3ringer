@@ -6,10 +6,13 @@ import { ArrowLeft, RefreshCw } from "lucide-react";
 import { useScheduleStore } from "@/lib/store/schedule-store";
 import { Button } from "@/components/ui/button";
 
+interface ScheduleRow {
+  [key: string]: any;
+}
+
 interface ScheduleRecord {
-  date: string;
-  sections: any[];
-  lastUpdated: number;
+  Title: string;
+  Rows: ScheduleRow[]
 }
 
 export default function ReportsPage() {
@@ -25,23 +28,32 @@ export default function ReportsPage() {
   const fetchRecords = async () => {
     try {
       setIsLoading(true);
-      const response = await fetch("/api/records", {
-        method: "POST",
+      const response = await fetch(`https://us-central1-formr-442619.cloudfunctions.net/Orders?date=${selectedDate}`, {
+        method: "GET",
         headers: {
           "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          date: selectedDate,
-          view: selectedView,
-        }),
+          // "Authorization": "Bearer {something}"
+        }
       });
 
       if (!response.ok) {
         throw new Error("Failed to fetch records");
       }
 
+      if(response.status == 204) {
+        // there is no data for the date so there is nothing to show but because
+        // the backend is unstructured it is up to the UI to show whatever configured screen
+        // the user should see to represent "new".
+        //
+        // there is no 'get multiple'. to show a week, ask for 7 days one at a time using ?date=YYYY-MM-DD
+        //
+        // submit something and ask for it back to see what the response looks like once it's saved.  it should be identical to whatever payload you provided to the POST.
+        setRecords([]);
+        return;
+      }
+
       const data = await response.json();
-      setRecords(data.records);
+      setRecords(data);
     } catch (error) {
       // Handle error appropriately - could show a toast/alert to user
     } finally {
@@ -51,7 +63,7 @@ export default function ReportsPage() {
 
   useEffect(() => {
     fetchRecords();
-  }, [selectedDate, selectedView, refreshKey]);
+  }, [selectedDate, refreshKey]);
 
   const formatDate = (timestamp: number) => {
     return new Date(timestamp).toLocaleString("en-US", {
@@ -113,57 +125,37 @@ export default function ReportsPage() {
         </div>
 
         {records.map((record) => (
-          <div key={record.date} className="mb-8">
-            <div className="mb-4">
-              <h2 className="text-xl font-bold">
-                {new Date(record.date).toLocaleDateString("en-US", {
-                  weekday: "long",
-                  year: "numeric",
-                  month: "long",
-                  day: "numeric",
-                })}
-              </h2>
-              <div className="text-sm text-gray-600">
-                Last updated: {formatDate(record.lastUpdated)}
-              </div>
-            </div>
-
-            <div className="space-y-8">
-              {record.sections.map((section) => (
-                <section
-                  key={`${section.id}-${record.date}`}
-                  className="bg-white p-6 rounded-lg shadow"
-                >
-                  <h3 className="text-lg font-bold mb-4">{section.title}</h3>
-                  <div className="overflow-x-auto">
-                    <table className="w-full border-collapse">
-                      <thead>
-                        <tr>
-                          {columns.map((column) => (
-                            <th
-                              key={column.id}
-                              className="border p-2 bg-gray-50"
-                            >
-                              {column.title}
-                            </th>
-                          ))}
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {section.rows.map((row: any, rowIndex: number) => (
-                          <tr key={rowIndex}>
-                            {columns.map((column) => (
-                              <td key={column.id} className="border p-2">
-                                {row[column.id] || ""}
-                              </td>
-                            ))}
-                          </tr>
+          <div key={record.Title} className="mb-8">
+            <h2 className="text-lg font-bold mb-4">{record.Title}</h2>
+              <div className="overflow-x-auto">
+                <table className="w-full border-collapse">
+                  <thead>
+                  <tr>
+                      {Object.keys(record.Rows[0]).map((fieldName) => (
+                        <th
+                          key={fieldName}
+                          className="border p-2 bg-gray-50"
+                        >
+                          {fieldName} 
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {record.Rows.map((row, rowIndex) => (
+                      <tr key={rowIndex}>
+                        {Object.keys(row).map((fieldName) => (
+                          <th
+                            key={fieldName}
+                            className="border p-2 bg-gray-50"
+                          >
+                            {row[fieldName]} 
+                          </th>
                         ))}
-                      </tbody>
-                    </table>
-                  </div>
-                </section>
-              ))}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
             </div>
           </div>
         ))}
