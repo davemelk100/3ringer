@@ -14,7 +14,6 @@ interface HeaderProps {
 
 export function Header({ selectedWeek, onWeekChange }: HeaderProps) {
   const pathname = usePathname();
-  console.log("Current pathname:", pathname);
 
   return (
     <div className="flex flex-row items-center gap-4 px-4 py-4 sm:h-16 bg-[#f1f5f9] print:hidden">
