@@ -99,12 +99,18 @@ export default function ReportsPage() {
   }, [selectedDate, refreshKey]);
 
   const handlePreviewData = () => {
-    // Get all data from localStorage
+    // Get all data from localStorage and shape it consistently
     const data = Object.keys(localStorage).reduce((acc, key) => {
       try {
+        const value = JSON.parse(localStorage.getItem(key) || "{}");
         return {
           ...acc,
-          [key]: JSON.parse(localStorage.getItem(key) || "{}"),
+          [key]: {
+            type: value.type || "schedule_update",
+            date: selectedDate,
+            changes: value.changes || value,
+            timestamp: value.timestamp || new Date().toISOString(),
+          },
         };
       } catch (e) {
         return acc;
@@ -120,6 +126,14 @@ export default function ReportsPage() {
       setIsLoading(true);
       const token = await getAccessTokenSilently();
 
+      // Format payload to match expected shape
+      const payload = {
+        type: "bulk_submit",
+        date: selectedDate,
+        data: localStorageData,
+        timestamp: new Date().toISOString(),
+      };
+
       const response = await fetch(
         "https://us-central1-formr-442619.cloudfunctions.net/Orders",
         {
@@ -128,7 +142,7 @@ export default function ReportsPage() {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-          body: previewData,
+          body: JSON.stringify(payload),
         }
       );
 
@@ -136,9 +150,9 @@ export default function ReportsPage() {
         throw new Error(`Failed to submit: ${response.status}`);
       }
 
-      // Show the response data
+      // Show the response data which should match our payload shape
       const result = await response.json();
-      setPreviewData(JSON.stringify(result, null, 2));
+      setLocalStorageData(result.data || {});
       alert("Data submitted successfully!");
     } catch (error) {
       console.error("Submit error:", error);
