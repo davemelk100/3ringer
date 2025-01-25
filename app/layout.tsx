@@ -7,10 +7,9 @@ import { AuthWrapper } from "./components/auth-wrapper";
 const roboto = Roboto({
   subsets: ["latin"],
   weight: ["300", "400", "500", "700"],
-  display: "swap",
   variable: "--font-roboto",
-  adjustFontFallback: false,
   preload: true,
+  display: "swap",
 });
 
 // Add Open Sans Condensed (now called Open Sans)
@@ -64,7 +63,7 @@ export default function RootLayout({
         <link rel="manifest" href="/site.webmanifest" />
       </head>
       <body
-        className={`${roboto.variable} ${openSansCondensed.variable} font-sans antialiased`}
+        className={`${roboto.className} ${openSansCondensed.variable} font-sans antialiased`}
       >
         <a href="#main-content" className="skip-link">
           Skip to main content
