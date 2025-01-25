@@ -53,9 +53,12 @@ export function ScheduleTable() {
           }
         }}
       >
-        <div className="mt-0 bg-white rounded-[8px] shadow-lg overflow-hidden">
+        <div className="mt-0 bg-white rounded-[8px] shadow-xl shadow-gray-200/80 overflow-hidden border border-gray-200">
           <div className="sticky top-0 z-20 bg-white">
-            <ScheduleHeader weekDays={weekDays} />
+            <ScheduleHeader
+              weekDays={weekDays}
+              className="border-b border-gray-200"
+            />
           </div>
           {weekDays.map(({ day }) => (
             <TabsContent
