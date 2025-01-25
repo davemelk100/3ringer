@@ -53,7 +53,7 @@ export function ScheduleTable() {
           }
         }}
       >
-        <div className="mt-0 bg-white rounded-[8px] shadow-xl shadow-gray-200/80 overflow-hidden border border-gray-200">
+        <div className="mt-0 bg-white rounded-[8px] shadow-lg overflow-hidden border border-gray-200">
           <div className="sticky top-0 z-20 bg-white">
             <ScheduleHeader
               weekDays={weekDays}
