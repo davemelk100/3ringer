@@ -16,7 +16,8 @@ export type ScheduleAction =
   | { type: 'ADD_DROPDOWN_OPTION'; payload: { dropdownId: string; option: string } }
   | { type: 'DELETE_DROPDOWN_OPTION'; payload: { dropdownId: string; option: string } }
   | { type: 'INITIALIZE_COLUMNS'; payload: ColumnHeader[] }
-  | { type: 'INITIALIZE_SECTIONS'; payload: ScheduleSection[] };
+  | { type: 'INITIALIZE_SECTIONS'; payload: ScheduleSection[] }
+  | { type: 'SAVE_DAY'; payload: ScheduleSection[] };
 
 // Change from const to let
 let stateCache = new WeakMap();
@@ -32,6 +33,10 @@ export function scheduleReducer(state: ScheduleState, action: ScheduleAction): S
 
   switch (action.type) {
     case 'UPDATE_EVENT':
+
+      console.log("UPDATE EVENT", state, action);
+      // If you want to save immediately upon change of a cell, do the same thing as saveDay here. Just save the entire day again, don't worry about figuring out what changed.
+
       return {
         ...state,
         events: {
@@ -88,6 +93,9 @@ export function scheduleReducer(state: ScheduleState, action: ScheduleAction): S
       if (deletedColumn.type === 'dropdown') {
         delete newDropdownOptions[deletedColumn.id];
       }
+
+      console.log("DELETE COLUMN", state);
+      // If you want to save immediately upon removal of a column, do the same thing as saveDay here. Just save the entire day again, don't worry about figuring out what changed.
 
       return {
         ...state,
@@ -175,6 +183,10 @@ export function scheduleReducer(state: ScheduleState, action: ScheduleAction): S
             : section
         ),
       };
+
+      console.log("DELETE ROW", state, action);
+      // If you want to save immediately upon removal of a row, do the same thing as saveDay here. Just save the entire day again, don't worry about figuring out what changed.
+      
       break;
     }
 
@@ -243,6 +255,94 @@ export function scheduleReducer(state: ScheduleState, action: ScheduleAction): S
         ...state,
         sections: action.payload,
       };
+
+    case 'SAVE_DAY':
+      console.log("SAVE DAY REDUCER", state, action);
+      // If you want a save button, you'd take state.events here which looks like this:
+      // {"something": {
+      //   columnId: "name",
+      //   content: "value in cell",
+      //   day: "Monday",
+      //   id: "Monday-name-carpet-0",
+      //   rowIndex: 0,
+      //   section: "carpet"
+      // }, ...}
+      //
+      // and piece together the appropriate data structure that the web service wants which looks like this:
+      // [{
+      //   title: "carpet",
+      //   rows: [{
+      //        propertyType: "Vacant", // Occupied, New
+      //        customer: "Something",
+      //        installer: "Something",
+      //        salesperson: "Something",
+      //        city: "Something",
+      //        steps: true,
+      //        material: ["Something", "else"],
+      //        floorStock: true,
+      //        yardageFootage: "Something",
+      //        takeup: true,
+      //        jobNumber: "Something",
+      //        lotNumber: "Something",
+      //        address: "Something",
+      //        cod: true,
+      //        notes: "Something"
+      //   }, {
+      //        propertyType: "Vacant", // Occupied, New
+      //        customer: "Something",
+      //        installer: "Something",
+      //        salesperson: "Something",
+      //        city: "Something",
+      //        steps: true,
+      //        material: ["Something", "else"],
+      //        floorStock: true,
+      //        yardageFootage: "Something",
+      //        takeup: true,
+      //        jobNumber: "Something",
+      //        lotNumber: "Something",
+      //        address: "Something",
+      //        cod: true,
+      //        notes: "Something"
+      //   }]
+      // }, {
+      //   title: "cpu",
+      //   rows: [{
+      //        propertyType: "Vacant", // Occupied, New
+      //        customer: "Something",
+      //        installer: "Something",
+      //        salesperson: "Something",
+      //        city: "Something",
+      //        steps: true,
+      //        material: ["Something", "else"],
+      //        floorStock: true,
+      //        yardageFootage: "Something",
+      //        takeup: true,
+      //        jobNumber: "Something",
+      //        lotNumber: "Something",
+      //        address: "Something",
+      //        cod: true,
+      //        notes: "Something"
+      //   }, {
+      //        propertyType: "Vacant", // Occupied, New
+      //        customer: "Something",
+      //        installer: "Something",
+      //        salesperson: "Something",
+      //        city: "Something",
+      //        steps: true,
+      //        material: ["Something", "else"],
+      //        floorStock: true,
+      //        yardageFootage: "Something",
+      //        takeup: true,
+      //        jobNumber: "Something",
+      //        lotNumber: "Something",
+      //        address: "Something",
+      //        cod: true,
+      //        notes: "Something"
+      //   }]
+      // }]
+      return {
+        ...state,
+      }
 
     default:
       newState = state;

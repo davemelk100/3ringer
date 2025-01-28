@@ -32,6 +32,7 @@ interface ScheduleSectionProps {
   day: string;
   onAddRow: (sectionId: string) => void;
   onDeleteRow: (sectionId: string, rowIndex: number) => void;
+  onSave: () => void;
   className?: string;
 }
 
@@ -41,6 +42,7 @@ export function ScheduleSection({
   day,
   onAddRow,
   onDeleteRow,
+  onSave,
   className
 }: ScheduleSectionProps) {
   const { updateColumn, addColumn, deleteColumn, reorderColumns, toggleSectionLock } = useScheduleStore();
@@ -79,6 +81,8 @@ export function ScheduleSection({
 
   return (
     <div className={cn("mb-2", className)}>
+      <button onClick={() => onSave()}>Save</button>
+      
       <div className="flex items-center justify-between mb-1">
         <div className="w-32">
           <h3 className="text-lg font-[900] text-[#0D324D] font-condensed leading-8">

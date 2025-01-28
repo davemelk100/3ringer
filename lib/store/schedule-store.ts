@@ -29,6 +29,7 @@ interface ScheduleStore extends ScheduleState {
   reorderColumns: (oldIndex: number, newIndex: number) => void;
   addRow: (sectionId: string) => void;
   deleteRow: (sectionId: string, rowIndex: number) => void;
+  saveDay: () => void;
   updateSection: (section: ScheduleSection) => void;
   initializeColumns: () => void;
   initializeSections: () => void;
@@ -97,6 +98,7 @@ export const useScheduleStore = create<ScheduleStore>()(
             type: "ADD_ROW",
             payload: sectionId,
           })
+          // POST new state data to endpoint
         ),
       deleteRow: (sectionId, rowIndex) =>
         set((state) =>
@@ -104,6 +106,7 @@ export const useScheduleStore = create<ScheduleStore>()(
             type: "DELETE_ROW",
             payload: { sectionId, rowIndex },
           })
+          // POST new state data to endpoint
         ),
       updateSection: (section) =>
         set((state) =>
@@ -111,6 +114,7 @@ export const useScheduleStore = create<ScheduleStore>()(
             type: "UPDATE_SECTION",
             payload: section,
           })
+          // POST new state data to endpoint
         ),
       initializeColumns: () =>
         set((state) =>
@@ -157,6 +161,13 @@ export const useScheduleStore = create<ScheduleStore>()(
           scheduleReducer(state, {
             type: "TOGGLE_SECTION_LOCK",
             payload: sectionId,
+          })
+        ),
+      saveDay: () => 
+        set((state) => 
+          scheduleReducer(state, {
+            type: "SAVE_DAY",
+            payload: state.sections
           })
         ),
       lastUpdated: null,

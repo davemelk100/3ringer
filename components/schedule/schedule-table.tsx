@@ -15,7 +15,7 @@ export function ScheduleTable() {
     startOfWeek(new Date(), { weekStartsOn: 1 })
   );
   const weekDays = getCurrentWeekDates(selectedWeek);
-  const { sections, addRow, deleteRow, initializeSections, setActiveDay } =
+  const { sections, addRow, deleteRow, initializeSections, setActiveDay, saveDay } =
     useScheduleStore();
   const columns = useColumns();
   const [selectedDay, setSelectedDay] = useState(() => {
@@ -70,6 +70,7 @@ export function ScheduleTable() {
                     section={section}
                     columns={columns}
                     day={day}
+                    onSave={saveDay}
                     onAddRow={addRow}
                     onDeleteRow={deleteRow}
                     className={index > 0 ? "section-break" : ""}
