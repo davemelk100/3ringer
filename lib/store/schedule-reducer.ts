@@ -1,7 +1,8 @@
 import { ScheduleState, ScheduleEvent, ColumnHeader, ScheduleSection } from "@/lib/types/schedule";
 import { moveItem, removeItem } from "@/lib/utils/array";
+import { saveScheduleSections } from "../actions/server-schedule-actions";
 
-export type ScheduleAction = 
+export type ScheduleAction =
   | { type: 'UPDATE_EVENT'; payload: ScheduleEvent }
   | { type: 'DELETE_EVENT'; payload: string }
   | { type: 'UPDATE_COLUMN'; payload: { index: number; column: ColumnHeader } }
@@ -17,7 +18,12 @@ export type ScheduleAction =
   | { type: 'DELETE_DROPDOWN_OPTION'; payload: { dropdownId: string; option: string } }
   | { type: 'INITIALIZE_COLUMNS'; payload: ColumnHeader[] }
   | { type: 'INITIALIZE_SECTIONS'; payload: ScheduleSection[] }
-  | { type: 'SAVE_DAY'; payload: ScheduleSection[] };
+  | { type: 'SAVE_DAY'; payload: ScheduleSection[] }
+  | { type: 'SCHEDULE_DAY_LOADED'; payload: {
+      sections: ScheduleSection[],
+      events: Record<string, ScheduleEvent>,
+      date: Date }
+    }
 
 // Change from const to let
 let stateCache = new WeakMap();
@@ -63,7 +69,7 @@ export function scheduleReducer(state: ScheduleState, action: ScheduleAction): S
     case 'ADD_COLUMN':
       const newColumnId = `column-${state.columns.length + 1}`;
       const newColumn = { id: newColumnId, ...action.payload };
-      
+
       return {
         ...state,
         columns: [...state.columns, newColumn],
@@ -123,7 +129,7 @@ export function scheduleReducer(state: ScheduleState, action: ScheduleAction): S
 
     case 'DELETE_ROW': {
       const { sectionId, rowIndex } = action.payload;
-      
+
       // Use Set for faster lookups
       const keysToDelete = new Set<string>();
       const updates = new Map<string, ScheduleEvent>();
@@ -139,16 +145,16 @@ export function scheduleReducer(state: ScheduleState, action: ScheduleAction): S
               `-${event.rowIndex}`,
               `-${event.rowIndex - 1}`
             );
-            
+
             updates.set(newKey, {
               ...event,
               rowIndex: event.rowIndex - 1
             });
-            
+
             if (state.dropdownValues[key]) {
               dropdownUpdates.set(newKey, state.dropdownValues[key]);
             }
-            
+
             keysToDelete.add(key);
           }
         }
@@ -168,7 +174,7 @@ export function scheduleReducer(state: ScheduleState, action: ScheduleAction): S
       updates.forEach((event, key) => {
         newEvents[key] = event;
       });
-      
+
       dropdownUpdates.forEach((value, key) => {
         newDropdownValues[key] = value;
       });
@@ -186,7 +192,7 @@ export function scheduleReducer(state: ScheduleState, action: ScheduleAction): S
 
       console.log("DELETE ROW", state, action);
       // If you want to save immediately upon removal of a row, do the same thing as saveDay here. Just save the entire day again, don't worry about figuring out what changed.
-      
+
       break;
     }
 
@@ -258,91 +264,23 @@ export function scheduleReducer(state: ScheduleState, action: ScheduleAction): S
 
     case 'SAVE_DAY':
       console.log("SAVE DAY REDUCER", state, action);
-      // If you want a save button, you'd take state.events here which looks like this:
-      // {"something": {
-      //   columnId: "name",
-      //   content: "value in cell",
-      //   day: "Monday",
-      //   id: "Monday-name-carpet-0",
-      //   rowIndex: 0,
-      //   section: "carpet"
-      // }, ...}
-      //
-      // and piece together the appropriate data structure that the web service wants which looks like this:
-      // [{
-      //   title: "carpet",
-      //   rows: [{
-      //        propertyType: "Vacant", // Occupied, New
-      //        customer: "Something",
-      //        installer: "Something",
-      //        salesperson: "Something",
-      //        city: "Something",
-      //        steps: true,
-      //        material: ["Something", "else"],
-      //        floorStock: true,
-      //        yardageFootage: "Something",
-      //        takeup: true,
-      //        jobNumber: "Something",
-      //        lotNumber: "Something",
-      //        address: "Something",
-      //        cod: true,
-      //        notes: "Something"
-      //   }, {
-      //        propertyType: "Vacant", // Occupied, New
-      //        customer: "Something",
-      //        installer: "Something",
-      //        salesperson: "Something",
-      //        city: "Something",
-      //        steps: true,
-      //        material: ["Something", "else"],
-      //        floorStock: true,
-      //        yardageFootage: "Something",
-      //        takeup: true,
-      //        jobNumber: "Something",
-      //        lotNumber: "Something",
-      //        address: "Something",
-      //        cod: true,
-      //        notes: "Something"
-      //   }]
-      // }, {
-      //   title: "cpu",
-      //   rows: [{
-      //        propertyType: "Vacant", // Occupied, New
-      //        customer: "Something",
-      //        installer: "Something",
-      //        salesperson: "Something",
-      //        city: "Something",
-      //        steps: true,
-      //        material: ["Something", "else"],
-      //        floorStock: true,
-      //        yardageFootage: "Something",
-      //        takeup: true,
-      //        jobNumber: "Something",
-      //        lotNumber: "Something",
-      //        address: "Something",
-      //        cod: true,
-      //        notes: "Something"
-      //   }, {
-      //        propertyType: "Vacant", // Occupied, New
-      //        customer: "Something",
-      //        installer: "Something",
-      //        salesperson: "Something",
-      //        city: "Something",
-      //        steps: true,
-      //        material: ["Something", "else"],
-      //        floorStock: true,
-      //        yardageFootage: "Something",
-      //        takeup: true,
-      //        jobNumber: "Something",
-      //        lotNumber: "Something",
-      //        address: "Something",
-      //        cod: true,
-      //        notes: "Something"
-      //   }]
-      // }]
+      saveScheduleSections(state)
+
       return {
         ...state,
       }
+
+    case 'SCHEDULE_DAY_LOADED':
+      console.log("SCHEDULE_DAY_LOADED", state, action);
+      const { sections, events } = action.payload
+
+      const nextState = { ...state, loading: false }
+      if (sections) {
+        nextState.sections = sections
+        nextState.events = { ...state.events, ...events }
+      }
+
+      return nextState
 
     default:
       newState = state;

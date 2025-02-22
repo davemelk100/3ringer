@@ -15,6 +15,8 @@ export interface ScheduleSection {
 }
 
 export interface ScheduleState {
+  activeDay: Date | null;
+  loading: boolean;
   columns: ColumnHeader[];
   events: Record<string, ScheduleEvent>;
   sections: ScheduleSection[];

@@ -10,9 +10,9 @@ import {
 } from "@/lib/types/schedule";
 import { scheduleConfig } from "@/lib/config/schedule";
 import { scheduleReducer } from "./schedule-reducer";
+import { loadScheduleSections } from "../actions/server-schedule-actions";
 
 interface ScheduleStore extends ScheduleState {
-  activeDay: Date | null;
   setActiveDay: (date: Date) => void;
   updateEvent: (event: ScheduleEvent) => void;
   deleteEvent: (eventId: string) => void;
@@ -52,7 +52,25 @@ export const useScheduleStore = create<ScheduleStore>()(
       dropdownValues: {},
       dropdownOptions: {},
       activeDay: null,
-      setActiveDay: (date) => set({ activeDay: date }),
+      loading: false,
+      setActiveDay: (date) => {
+        set((state) => {
+          if (state.activeDay != date) {
+            loadScheduleSections(date).then(({ sections, events }) => {
+              set((state) =>
+                scheduleReducer(state, { type: "SCHEDULE_DAY_LOADED", payload: {
+                  sections: sections!,
+                  events: events!,
+                  date
+                }})
+              )
+            })
+            return { activeDay: date, loading: true }
+          }
+
+          return state
+        })
+      },
       updateEvent: (event) =>
         set((state) =>
           scheduleReducer(state, { type: "UPDATE_EVENT", payload: event })
@@ -163,8 +181,8 @@ export const useScheduleStore = create<ScheduleStore>()(
             payload: sectionId,
           })
         ),
-      saveDay: () => 
-        set((state) => 
+      saveDay: () =>
+        set((state) =>
           scheduleReducer(state, {
             type: "SAVE_DAY",
             payload: state.sections
