@@ -11,6 +11,9 @@ import {
 import { scheduleConfig } from "@/lib/config/schedule";
 import { scheduleReducer } from "./schedule-reducer";
 import { loadScheduleSections } from "../actions/server-schedule-actions";
+import { Auth0ContextInterface } from "@auth0/auth0-react";
+
+type GetAccessTokenSilentlyType = Auth0ContextInterface['getAccessTokenSilently']
 
 interface ScheduleStore extends ScheduleState {
   setActiveDay: (date: Date) => void;
@@ -40,6 +43,8 @@ interface ScheduleStore extends ScheduleState {
   getDropdownOptions: (dropdownId: string) => string[];
   getColumnDropdownId: (columnId: string) => string;
   toggleSectionLock: (sectionId: string) => void;
+  setGetAccessToken: (getAccessTokenSilently: GetAccessTokenSilentlyType) => void;
+  getAccessTokenSilently?: GetAccessTokenSilentlyType;
   lastUpdated: number | null;
 }
 
@@ -56,7 +61,7 @@ export const useScheduleStore = create<ScheduleStore>()(
       setActiveDay: (date) => {
         set((state) => {
           if (state.activeDay != date) {
-            loadScheduleSections(date).then(({ sections, events }) => {
+            loadScheduleSections(state.getAccessTokenSilently, date).then(({ sections, events }) => {
               set((state) =>
                 scheduleReducer(state, { type: "SCHEDULE_DAY_LOADED", payload: {
                   sections: sections!,
@@ -185,10 +190,15 @@ export const useScheduleStore = create<ScheduleStore>()(
         set((state) =>
           scheduleReducer(state, {
             type: "SAVE_DAY",
-            payload: state.sections
+            payload: {
+              sections: state.sections,
+              getAccessTokenSilently: state.getAccessTokenSilently,
+            }
           })
         ),
       lastUpdated: null,
+      setGetAccessToken: (getAccessTokenSilently: GetAccessTokenSilentlyType) =>
+        set((state) => ({ ...state, getAccessTokenSilently })),
     }),
     {
       name: "schedule-storage",
