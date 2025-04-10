@@ -10,9 +10,12 @@ import {
 } from "@/lib/types/schedule";
 import { scheduleConfig } from "@/lib/config/schedule";
 import { scheduleReducer } from "./schedule-reducer";
+import { loadScheduleSections } from "../actions/server-schedule-actions";
+import { Auth0ContextInterface } from "@auth0/auth0-react";
+
+type GetAccessTokenSilentlyType = Auth0ContextInterface['getAccessTokenSilently']
 
 interface ScheduleStore extends ScheduleState {
-  activeDay: Date | null;
   setActiveDay: (date: Date) => void;
   updateEvent: (event: ScheduleEvent) => void;
   deleteEvent: (eventId: string) => void;
@@ -29,6 +32,7 @@ interface ScheduleStore extends ScheduleState {
   reorderColumns: (oldIndex: number, newIndex: number) => void;
   addRow: (sectionId: string) => void;
   deleteRow: (sectionId: string, rowIndex: number) => void;
+  saveDay: () => void;
   updateSection: (section: ScheduleSection) => void;
   initializeColumns: () => void;
   initializeSections: () => void;
@@ -39,6 +43,8 @@ interface ScheduleStore extends ScheduleState {
   getDropdownOptions: (dropdownId: string) => string[];
   getColumnDropdownId: (columnId: string) => string;
   toggleSectionLock: (sectionId: string) => void;
+  setGetAccessToken: (getAccessTokenSilently: GetAccessTokenSilentlyType) => void;
+  getAccessTokenSilently?: GetAccessTokenSilentlyType;
   lastUpdated: number | null;
 }
 
@@ -51,7 +57,25 @@ export const useScheduleStore = create<ScheduleStore>()(
       dropdownValues: {},
       dropdownOptions: {},
       activeDay: null,
-      setActiveDay: (date) => set({ activeDay: date }),
+      loading: false,
+      setActiveDay: (date) => {
+        set((state) => {
+          if (state.activeDay != date) {
+            loadScheduleSections(state.getAccessTokenSilently, date).then(({ sections, events }) => {
+              set((state) =>
+                scheduleReducer(state, { type: "SCHEDULE_DAY_LOADED", payload: {
+                  sections: sections!,
+                  events: events!,
+                  date
+                }})
+              )
+            })
+            return { activeDay: date, loading: true }
+          }
+
+          return state
+        })
+      },
       updateEvent: (event) =>
         set((state) =>
           scheduleReducer(state, { type: "UPDATE_EVENT", payload: event })
@@ -97,6 +121,7 @@ export const useScheduleStore = create<ScheduleStore>()(
             type: "ADD_ROW",
             payload: sectionId,
           })
+          // POST new state data to endpoint
         ),
       deleteRow: (sectionId, rowIndex) =>
         set((state) =>
@@ -104,6 +129,7 @@ export const useScheduleStore = create<ScheduleStore>()(
             type: "DELETE_ROW",
             payload: { sectionId, rowIndex },
           })
+          // POST new state data to endpoint
         ),
       updateSection: (section) =>
         set((state) =>
@@ -111,6 +137,7 @@ export const useScheduleStore = create<ScheduleStore>()(
             type: "UPDATE_SECTION",
             payload: section,
           })
+          // POST new state data to endpoint
         ),
       initializeColumns: () =>
         set((state) =>
@@ -159,7 +186,19 @@ export const useScheduleStore = create<ScheduleStore>()(
             payload: sectionId,
           })
         ),
+      saveDay: () =>
+        set((state) =>
+          scheduleReducer(state, {
+            type: "SAVE_DAY",
+            payload: {
+              sections: state.sections,
+              getAccessTokenSilently: state.getAccessTokenSilently,
+            }
+          })
+        ),
       lastUpdated: null,
+      setGetAccessToken: (getAccessTokenSilently: GetAccessTokenSilentlyType) =>
+        set((state) => ({ ...state, getAccessTokenSilently })),
     }),
     {
       name: "schedule-storage",

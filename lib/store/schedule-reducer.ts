@@ -1,7 +1,8 @@
 import { ScheduleState, ScheduleEvent, ColumnHeader, ScheduleSection } from "@/lib/types/schedule";
 import { moveItem, removeItem } from "@/lib/utils/array";
+import { saveScheduleSections } from "../actions/server-schedule-actions";
 
-export type ScheduleAction = 
+export type ScheduleAction =
   | { type: 'UPDATE_EVENT'; payload: ScheduleEvent }
   | { type: 'DELETE_EVENT'; payload: string }
   | { type: 'UPDATE_COLUMN'; payload: { index: number; column: ColumnHeader } }
@@ -16,7 +17,13 @@ export type ScheduleAction =
   | { type: 'ADD_DROPDOWN_OPTION'; payload: { dropdownId: string; option: string } }
   | { type: 'DELETE_DROPDOWN_OPTION'; payload: { dropdownId: string; option: string } }
   | { type: 'INITIALIZE_COLUMNS'; payload: ColumnHeader[] }
-  | { type: 'INITIALIZE_SECTIONS'; payload: ScheduleSection[] };
+  | { type: 'INITIALIZE_SECTIONS'; payload: ScheduleSection[] }
+  | { type: 'SAVE_DAY'; payload: { sections: ScheduleSection[], getAccessTokenSilently: any } }
+  | { type: 'SCHEDULE_DAY_LOADED'; payload: {
+      sections: ScheduleSection[],
+      events: Record<string, ScheduleEvent>,
+      date: Date }
+    }
 
 // Change from const to let
 let stateCache = new WeakMap();
@@ -32,6 +39,10 @@ export function scheduleReducer(state: ScheduleState, action: ScheduleAction): S
 
   switch (action.type) {
     case 'UPDATE_EVENT':
+
+      console.log("UPDATE EVENT", state, action);
+      // If you want to save immediately upon change of a cell, do the same thing as saveDay here. Just save the entire day again, don't worry about figuring out what changed.
+
       return {
         ...state,
         events: {
@@ -58,7 +69,7 @@ export function scheduleReducer(state: ScheduleState, action: ScheduleAction): S
     case 'ADD_COLUMN':
       const newColumnId = `column-${state.columns.length + 1}`;
       const newColumn = { id: newColumnId, ...action.payload };
-      
+
       return {
         ...state,
         columns: [...state.columns, newColumn],
@@ -89,6 +100,9 @@ export function scheduleReducer(state: ScheduleState, action: ScheduleAction): S
         delete newDropdownOptions[deletedColumn.id];
       }
 
+      console.log("DELETE COLUMN", state);
+      // If you want to save immediately upon removal of a column, do the same thing as saveDay here. Just save the entire day again, don't worry about figuring out what changed.
+
       return {
         ...state,
         columns: removeItem(state.columns, action.payload),
@@ -115,7 +129,7 @@ export function scheduleReducer(state: ScheduleState, action: ScheduleAction): S
 
     case 'DELETE_ROW': {
       const { sectionId, rowIndex } = action.payload;
-      
+
       // Use Set for faster lookups
       const keysToDelete = new Set<string>();
       const updates = new Map<string, ScheduleEvent>();
@@ -131,16 +145,16 @@ export function scheduleReducer(state: ScheduleState, action: ScheduleAction): S
               `-${event.rowIndex}`,
               `-${event.rowIndex - 1}`
             );
-            
+
             updates.set(newKey, {
               ...event,
               rowIndex: event.rowIndex - 1
             });
-            
+
             if (state.dropdownValues[key]) {
               dropdownUpdates.set(newKey, state.dropdownValues[key]);
             }
-            
+
             keysToDelete.add(key);
           }
         }
@@ -160,7 +174,7 @@ export function scheduleReducer(state: ScheduleState, action: ScheduleAction): S
       updates.forEach((event, key) => {
         newEvents[key] = event;
       });
-      
+
       dropdownUpdates.forEach((value, key) => {
         newDropdownValues[key] = value;
       });
@@ -175,6 +189,10 @@ export function scheduleReducer(state: ScheduleState, action: ScheduleAction): S
             : section
         ),
       };
+
+      console.log("DELETE ROW", state, action);
+      // If you want to save immediately upon removal of a row, do the same thing as saveDay here. Just save the entire day again, don't worry about figuring out what changed.
+
       break;
     }
 
@@ -243,6 +261,27 @@ export function scheduleReducer(state: ScheduleState, action: ScheduleAction): S
         ...state,
         sections: action.payload,
       };
+
+    case 'SAVE_DAY':
+      console.log("SAVE DAY REDUCER", state, action);
+      const { getAccessTokenSilently } = action.payload
+      saveScheduleSections(getAccessTokenSilently, state)
+
+      return {
+        ...state,
+      }
+
+    case 'SCHEDULE_DAY_LOADED':
+      console.log("SCHEDULE_DAY_LOADED", state, action);
+      const { sections, events } = action.payload
+
+      const nextState = { ...state, loading: false }
+      if (sections) {
+        nextState.sections = sections
+        nextState.events = { ...state.events, ...events }
+      }
+
+      return nextState
 
     default:
       newState = state;
