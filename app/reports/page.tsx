@@ -150,7 +150,8 @@ export default function ReportsPage() {
         throw new Error(`Failed to submit: ${response.status}`);
       }
 
-      // Show the response data which should match our payload shape
+      // Show the response data which 
+      // should match our payload shape
       const result = await response.json();
       setLocalStorageData(result.data || {});
       alert("Data submitted successfully!");
