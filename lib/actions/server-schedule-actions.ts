@@ -1,22 +1,38 @@
 import { format } from "date-fns";
 import { ScheduleEvent, ScheduleSection, ScheduleState } from "../types/schedule";
 
+// auth'd
+const SERVER_BASE_URL = 'https://orders-gateway-250f3dmu.uc.gateway.dev'
+
+// open
+//const SERVER_BASE_URL = 'https://us-central1-formr-442619.cloudfunctions.net'
+
 type ServerSchedule = {
   Title: string,
   Rows: Record<string, string>[],
 }[]
 
-export async function saveScheduleSections(state: ScheduleState) {
+export async function saveScheduleSections(getAccessTokenSilently: any, state: ScheduleState) {
+  let token
+  try {
+    token = await getAccessTokenSilently();
+    //console.log(token)
+  } catch {
+    console.log('not authentiated')
+    return {}
+  }
+
   const schedule = convertState(state)
 
   const date = format(state.activeDay!, 'yyyy-MM-dd')
 
   try {
     const response = await fetch(
-      `https://us-central1-formr-442619.cloudfunctions.net/Orders?date=${date}`,
+      `${SERVER_BASE_URL}/orders?date=${date}`,
       {
         method: "POST",
         headers: {
+          Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify(schedule),
@@ -31,13 +47,24 @@ export async function saveScheduleSections(state: ScheduleState) {
   }
 }
 
-export async function loadScheduleSections(activeDay: Date): Promise<Partial<ScheduleState>> {
+export async function loadScheduleSections(getAccessTokenSilently: any, activeDay: Date): Promise<Partial<ScheduleState>> {
+  let token
+  try {
+    token = await getAccessTokenSilently();
+    //console.log(token)
+  } catch {
+    console.log('not authentiated')
+    return {}
+  }
 
   const date = format(activeDay, 'yyyy-MM-dd')
 
   try {
     const response = await fetch(
-      `https://us-central1-formr-442619.cloudfunctions.net/Orders?date=${date}`,
+      `${SERVER_BASE_URL}/orders?date=${date}`,
+      {
+        headers: { Authorization: `Bearer ${token}`},
+      }
     );
 
     if (!response.ok) {

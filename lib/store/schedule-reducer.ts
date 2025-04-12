@@ -18,7 +18,7 @@ export type ScheduleAction =
   | { type: 'DELETE_DROPDOWN_OPTION'; payload: { dropdownId: string; option: string } }
   | { type: 'INITIALIZE_COLUMNS'; payload: ColumnHeader[] }
   | { type: 'INITIALIZE_SECTIONS'; payload: ScheduleSection[] }
-  | { type: 'SAVE_DAY'; payload: ScheduleSection[] }
+  | { type: 'SAVE_DAY'; payload: { sections: ScheduleSection[], getAccessTokenSilently: any } }
   | { type: 'SCHEDULE_DAY_LOADED'; payload: {
       sections: ScheduleSection[],
       events: Record<string, ScheduleEvent>,
@@ -264,7 +264,8 @@ export function scheduleReducer(state: ScheduleState, action: ScheduleAction): S
 
     case 'SAVE_DAY':
       console.log("SAVE DAY REDUCER", state, action);
-      saveScheduleSections(state)
+      const { getAccessTokenSilently } = action.payload
+      saveScheduleSections(getAccessTokenSilently, state)
 
       return {
         ...state,
