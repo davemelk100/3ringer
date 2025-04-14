@@ -3,11 +3,18 @@ import { format } from "date-fns";
 
 const API_BASE_URL = "https://orders-gateway-250f3dmu.uc.gateway.dev";
 const TOKEN_TIMEOUT = 5000; // 5 seconds timeout for token retrieval
+const AUTH0_AUDIENCE = "https://davidmelkonian.com";
 
 export class ApiClient {
-  private getAccessTokenSilently: () => Promise<string>;
+  private getAccessTokenSilently: (options?: {
+    authorizationParams?: { audience?: string };
+  }) => Promise<string>;
 
-  constructor(getAccessTokenSilently: () => Promise<string>) {
+  constructor(
+    getAccessTokenSilently: (options?: {
+      authorizationParams?: { audience?: string };
+    }) => Promise<string>
+  ) {
     this.getAccessTokenSilently = getAccessTokenSilently;
   }
 
@@ -24,7 +31,11 @@ export class ApiClient {
 
       // Race between token retrieval and timeout
       const token = await Promise.race([
-        this.getAccessTokenSilently(),
+        this.getAccessTokenSilently({
+          authorizationParams: {
+            audience: AUTH0_AUDIENCE,
+          },
+        }),
         timeoutPromise,
       ]);
 
@@ -61,6 +72,19 @@ export class ApiClient {
         signal: controller.signal,
       });
       clearTimeout(id);
+
+      // Handle specific error cases
+      if (response.status === 401) {
+        throw new Error("Authentication failed - token may be expired");
+      }
+      if (response.status === 400) {
+        const errorText = await response.text();
+        throw new Error(`Bad request: ${errorText}`);
+      }
+      if (response.status === 404) {
+        throw new Error("Resource not found");
+      }
+
       return response;
     } catch (error) {
       clearTimeout(id);
@@ -71,25 +95,24 @@ export class ApiClient {
     }
   }
 
-  async getOrders(date: Date): Promise<any> {
+  async getOrders(date: Date, version?: number): Promise<any> {
     try {
       console.log("Fetching orders for date:", format(date, "yyyy-MM-dd"));
       const formattedDate = format(date, "yyyy-MM-dd");
       const headers = await this.getHeaders();
 
-      console.log(
-        "Making API request to:",
-        `${API_BASE_URL}/orders?date=${formattedDate}`
-      );
+      const url =
+        version !== undefined
+          ? `${API_BASE_URL}/orders?date=${formattedDate}&v=${version}`
+          : `${API_BASE_URL}/orders?date=${formattedDate}`;
+
+      console.log("Making API request to:", url);
       console.log("Request headers:", headers);
 
-      const response = await this.fetchWithTimeout(
-        `${API_BASE_URL}/orders?date=${formattedDate}`,
-        {
-          method: "GET",
-          headers,
-        }
-      );
+      const response = await this.fetchWithTimeout(url, {
+        method: "GET",
+        headers,
+      });
 
       console.log("API response status:", response.status);
       console.log(
@@ -100,14 +123,6 @@ export class ApiClient {
       if (response.status === 204) {
         console.log("No content returned from API for date:", formattedDate);
         return null;
-      }
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error("API error response:", errorText);
-        throw new Error(
-          `Failed to fetch orders: ${response.statusText} - ${errorText}`
-        );
       }
 
       const data = await response.json();
