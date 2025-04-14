@@ -1,8 +1,7 @@
 import { Auth0ContextInterface } from "@auth0/auth0-react";
 import { format } from "date-fns";
 
-const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3000/api";
+const API_BASE_URL = "https://orders-gateway-250f3dmu.uc.gateway.dev";
 const TOKEN_TIMEOUT = 5000; // 5 seconds timeout for token retrieval
 
 export class ApiClient {
@@ -80,10 +79,10 @@ export class ApiClient {
 
       console.log(
         "Making API request to:",
-        `${API_BASE_URL}/orders/${formattedDate}`
+        `${API_BASE_URL}/orders?date=${formattedDate}`
       );
       const response = await this.fetchWithTimeout(
-        `${API_BASE_URL}/orders/${formattedDate}`,
+        `${API_BASE_URL}/orders?date=${formattedDate}`,
         {
           method: "GET",
           headers,
@@ -124,10 +123,10 @@ export class ApiClient {
 
       console.log(
         "Making API request to:",
-        `${API_BASE_URL}/orders/${formattedDate}`
+        `${API_BASE_URL}/orders?date=${formattedDate}`
       );
       const response = await this.fetchWithTimeout(
-        `${API_BASE_URL}/orders/${formattedDate}`,
+        `${API_BASE_URL}/orders?date=${formattedDate}`,
         {
           method: "POST",
           headers,
