@@ -2,6 +2,7 @@
 
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import { format } from "date-fns";
 import {
   ScheduleState,
   ScheduleEvent,
@@ -10,12 +11,16 @@ import {
 } from "@/lib/types/schedule";
 import { scheduleConfig } from "@/lib/config/schedule";
 import { scheduleReducer } from "./schedule-reducer";
-import { loadScheduleSections } from "../actions/server-schedule-actions";
+import { ApiClient } from "../api/client";
 import { Auth0ContextInterface } from "@auth0/auth0-react";
 
-type GetAccessTokenSilentlyType = Auth0ContextInterface['getAccessTokenSilently']
+type GetAccessTokenSilentlyType =
+  Auth0ContextInterface["getAccessTokenSilently"];
 
 interface ScheduleStore extends ScheduleState {
+  getAccessTokenSilently?: GetAccessTokenSilentlyType;
+  apiClient?: ApiClient;
+  setAccessTokenGetter: (getter: GetAccessTokenSilentlyType) => void;
   setActiveDay: (date: Date) => void;
   updateEvent: (event: ScheduleEvent) => void;
   deleteEvent: (eventId: string) => void;
@@ -25,14 +30,12 @@ interface ScheduleStore extends ScheduleState {
     rowIndex: number,
     section: string
   ) => ScheduleEvent | undefined;
-  columns: ColumnHeader[];
   updateColumn: (index: number, column: ColumnHeader) => void;
-  addColumn: (title: string, type: "text" | "dropdown") => void;
+  addColumn: (title: string, type: string) => void;
   deleteColumn: (index: number) => void;
   reorderColumns: (oldIndex: number, newIndex: number) => void;
   addRow: (sectionId: string) => void;
   deleteRow: (sectionId: string, rowIndex: number) => void;
-  saveDay: () => void;
   updateSection: (section: ScheduleSection) => void;
   initializeColumns: () => void;
   initializeSections: () => void;
@@ -43,8 +46,7 @@ interface ScheduleStore extends ScheduleState {
   getDropdownOptions: (dropdownId: string) => string[];
   getColumnDropdownId: (columnId: string) => string;
   toggleSectionLock: (sectionId: string) => void;
-  setGetAccessToken: (getAccessTokenSilently: GetAccessTokenSilentlyType) => void;
-  getAccessTokenSilently?: GetAccessTokenSilentlyType;
+  saveDay: () => void;
   lastUpdated: number | null;
 }
 
@@ -58,23 +60,46 @@ export const useScheduleStore = create<ScheduleStore>()(
       dropdownOptions: {},
       activeDay: null,
       loading: false,
+      getAccessTokenSilently: undefined,
+      apiClient: undefined,
+      setAccessTokenGetter: (getAccessTokenSilently) => {
+        set((state) => ({
+          ...state,
+          getAccessTokenSilently,
+          apiClient: new ApiClient(getAccessTokenSilently),
+        }));
+      },
       setActiveDay: (date) => {
         set((state) => {
           if (state.activeDay != date) {
-            loadScheduleSections(state.getAccessTokenSilently, date).then(({ sections, events }) => {
-              set((state) =>
-                scheduleReducer(state, { type: "SCHEDULE_DAY_LOADED", payload: {
-                  sections: sections!,
-                  events: events!,
-                  date
-                }})
-              )
-            })
-            return { activeDay: date, loading: true }
+            if (state.apiClient) {
+              state.apiClient.getOrders(date).then((data) => {
+                if (data) {
+                  set((state) =>
+                    scheduleReducer(state, {
+                      type: "SCHEDULE_DAY_LOADED",
+                      payload: {
+                        sections: data.sections || [],
+                        events: data.events || {},
+                        date,
+                      },
+                    })
+                  );
+                } else {
+                  // Initialize with default sections if no data exists
+                  set((state) =>
+                    scheduleReducer(state, {
+                      type: "INITIALIZE_SECTIONS",
+                      payload: scheduleConfig.defaultSections,
+                    })
+                  );
+                }
+              });
+              return { activeDay: date, loading: true };
+            }
           }
-
-          return state
-        })
+          return state;
+        });
       },
       updateEvent: (event) =>
         set((state) =>
@@ -121,7 +146,6 @@ export const useScheduleStore = create<ScheduleStore>()(
             type: "ADD_ROW",
             payload: sectionId,
           })
-          // POST new state data to endpoint
         ),
       deleteRow: (sectionId, rowIndex) =>
         set((state) =>
@@ -129,7 +153,6 @@ export const useScheduleStore = create<ScheduleStore>()(
             type: "DELETE_ROW",
             payload: { sectionId, rowIndex },
           })
-          // POST new state data to endpoint
         ),
       updateSection: (section) =>
         set((state) =>
@@ -137,7 +160,6 @@ export const useScheduleStore = create<ScheduleStore>()(
             type: "UPDATE_SECTION",
             payload: section,
           })
-          // POST new state data to endpoint
         ),
       initializeColumns: () =>
         set((state) =>
@@ -186,19 +208,16 @@ export const useScheduleStore = create<ScheduleStore>()(
             payload: sectionId,
           })
         ),
-      saveDay: () =>
-        set((state) =>
-          scheduleReducer(state, {
-            type: "SAVE_DAY",
-            payload: {
-              sections: state.sections,
-              getAccessTokenSilently: state.getAccessTokenSilently,
-            }
-          })
-        ),
+      saveDay: () => {
+        const state = get();
+        if (state.activeDay && state.apiClient) {
+          state.apiClient.saveOrders(state.activeDay, {
+            sections: state.sections,
+            events: state.events,
+          });
+        }
+      },
       lastUpdated: null,
-      setGetAccessToken: (getAccessTokenSilently: GetAccessTokenSilentlyType) =>
-        set((state) => ({ ...state, getAccessTokenSilently })),
     }),
     {
       name: "schedule-storage",
