@@ -81,6 +81,8 @@ export class ApiClient {
         "Making API request to:",
         `${API_BASE_URL}/orders?date=${formattedDate}`
       );
+      console.log("Request headers:", headers);
+
       const response = await this.fetchWithTimeout(
         `${API_BASE_URL}/orders?date=${formattedDate}`,
         {
@@ -90,8 +92,13 @@ export class ApiClient {
       );
 
       console.log("API response status:", response.status);
+      console.log(
+        "API response headers:",
+        Object.fromEntries(response.headers.entries())
+      );
+
       if (response.status === 204) {
-        console.log("No content returned from API");
+        console.log("No content returned from API for date:", formattedDate);
         return null;
       }
 
@@ -104,10 +111,15 @@ export class ApiClient {
       }
 
       const data = await response.json();
-      console.log("Successfully fetched orders");
+      console.log("Successfully fetched orders for date:", formattedDate);
+      console.log("Response data:", JSON.stringify(data, null, 2));
       return data;
     } catch (error) {
-      console.error("Error in getOrders:", error);
+      console.error(
+        "Error in getOrders for date:",
+        format(date, "yyyy-MM-dd"),
+        error
+      );
       if (error instanceof Error) {
         throw new Error(`Failed to fetch orders: ${error.message}`);
       }
