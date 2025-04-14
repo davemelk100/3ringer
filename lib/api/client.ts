@@ -3,6 +3,7 @@ import { format } from "date-fns";
 
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3000/api";
+const TOKEN_TIMEOUT = 5000; // 5 seconds timeout for token retrieval
 
 export class ApiClient {
   private getAccessTokenSilently: () => Promise<string>;
@@ -14,7 +15,20 @@ export class ApiClient {
   private async getHeaders(): Promise<HeadersInit> {
     try {
       console.log("Attempting to get access token...");
-      const token = await this.getAccessTokenSilently();
+
+      // Create a promise that rejects after timeout
+      const timeoutPromise = new Promise<never>((_, reject) => {
+        setTimeout(() => {
+          reject(new Error("Token retrieval timed out"));
+        }, TOKEN_TIMEOUT);
+      });
+
+      // Race between token retrieval and timeout
+      const token = await Promise.race([
+        this.getAccessTokenSilently(),
+        timeoutPromise,
+      ]);
+
       console.log("Successfully retrieved access token");
 
       if (!token) {
