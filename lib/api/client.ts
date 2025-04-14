@@ -18,7 +18,18 @@ export class ApiClient {
     this.getAccessTokenSilently = getAccessTokenSilently;
   }
 
-  private async getHeaders(): Promise<HeadersInit> {
+  private async getHeaders(requireAuth: boolean = false): Promise<HeadersInit> {
+    const headers: HeadersInit = {
+      "Content-Type": "application/json",
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+      "Access-Control-Allow-Headers": "Content-Type, Authorization",
+    };
+
+    if (!requireAuth) {
+      return headers;
+    }
+
     try {
       console.log("Attempting to get access token...");
 
@@ -46,7 +57,7 @@ export class ApiClient {
       }
 
       return {
-        "Content-Type": "application/json",
+        ...headers,
         Authorization: `Bearer ${token}`,
       };
     } catch (error) {
@@ -70,6 +81,14 @@ export class ApiClient {
       const response = await fetch(url, {
         ...options,
         signal: controller.signal,
+        mode: "cors",
+        credentials: "include",
+        headers: {
+          ...options.headers,
+          "Access-Control-Allow-Origin": "*",
+          "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+          "Access-Control-Allow-Headers": "Content-Type, Authorization",
+        },
       });
       clearTimeout(id);
 
@@ -99,7 +118,7 @@ export class ApiClient {
     try {
       console.log("Fetching orders for date:", format(date, "yyyy-MM-dd"));
       const formattedDate = format(date, "yyyy-MM-dd");
-      const headers = await this.getHeaders();
+      const headers = await this.getHeaders(false); // No auth required for reading
 
       const url =
         version !== undefined
@@ -146,7 +165,7 @@ export class ApiClient {
     try {
       console.log("Saving orders for date:", format(date, "yyyy-MM-dd"));
       const formattedDate = format(date, "yyyy-MM-dd");
-      const headers = await this.getHeaders();
+      const headers = await this.getHeaders(true); // Auth required for saving
 
       console.log(
         "Making API request to:",
